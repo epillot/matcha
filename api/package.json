@@ -1,0 +1,24 @@
+{
+  "name": "matchaserver",
+  "version": "1.0.0",
+  "description": "a website about meeting people",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon --exec 'babel-node server.js'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "epillot",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.24.0",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "morgan": "^1.8.2",
+    "nodemon": "^1.11.0",
+    "path": "^0.12.7",
+    "query-string": "^4.3.4"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.5.1"
+  }
+}
