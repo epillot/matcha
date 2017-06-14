@@ -1,0 +1,8 @@
+.err_input {
+  border: 1px inset red;
+  margin-right: 5px;
+}
+
+.err_msg {
+  color: red;
+}
