@@ -6,6 +6,7 @@ class Signup extends Component {
 
   state = {
     errors: {},
+    confirmation: '',
     firstname: '',
     lastname: '',
     login: '',
@@ -31,22 +32,13 @@ class Signup extends Component {
   signupHandler = (e) => {
     e.preventDefault();
 
-    const {
-      firstname,
-      lastname,
-      login,
-      password,
-      confirmPassword,
-      email
-    } = this.state;
-
     const input = {
-      firstname: firstname.trim(),
-      lastname: lastname.trim(),
-      login: login.trim(),
-      password: password,
-      confirmPassword: confirmPassword,
-      email: email.trim()
+      firstname: this.state.firstname.trim(),
+      lastname: this.state.lastname.trim(),
+      login: this.state.login.trim(),
+      password: this.state.password,
+      confirmPassword: this.state.confirmPassword,
+      email: this.state.email.trim()
     };
 
     axios.post('/api/signup', input)
@@ -140,6 +132,7 @@ class Signup extends Component {
         <p>
           <input type='submit' value='Create my account !'></input>
         </p>
+        <p>{this.state.confirmation}</p>
       </form>
     );
   }
