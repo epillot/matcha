@@ -5,9 +5,11 @@
   "proxy": "http://localhost:8000",
   "dependencies": {
     "axios": "^0.16.2",
-    "knacss": "^6.1.0",
+    "material-ui": "^0.18.3",
     "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react-dom": "^15.5.4",
+    "react-router-dom": "^4.1.1",
+    "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"

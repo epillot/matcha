@@ -13,16 +13,4 @@ class Database {
   }
 }
 
-// const Database = () => {
-//   return new Promise( (resolve, reject) => {
-//     MongoClient.connect(config.database, (err, db) => {
-//       if (err !== null) {
-//         reject(db);
-//       } else {
-//       resolve(db);
-//       }
-//     });
-//   });
-// }
-
 export default Database;

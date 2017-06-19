@@ -1,48 +1,23 @@
 import parser from './parser';
 import Database from './Database';
 
-//const mongoDb = new Promise(resolve => resolve( new Database() ));
 const mongoDb = new Database();
-//mongoDb.then(v => console.log(v.users));
-//console.log(mongoDb);
 
+const getSignupErrors = async (input) => {
+  const err = parser.signup(input);
 
-
-const signup = async (req, res) => {
-  const err = parser.signup(req.body);
-
-  if (err.login === undefined) {
-    const userExists = await mongoDb.users.findOne({login: req.body.login});
-
-    if (userExists !== null) {
+  if (err.login === undefined && await mongoDb.users.findOne({login: input.login}) !== null) {
       Object.assign(err, {login: 'This login is not availaible, please choose an other'});
-      console.log('Normalement en preums', err);
-    }
   }
 
-  if (err.email === undefined) {
-    const emailExists = await mongoDb.users.findOne({email: req.body.email});
-
-    if (emailExists !== null) {
+  if (err.email === undefined && await mongoDb.users.findOne({email: input.email}) !== null) {
       Object.assign(err, {email: 'This email was already used for signup, please use an other'});
-      console.log('normalement en deuz', err);
-    }
   }
+  return err;
+}
 
-
-  // .catch(err => console.log(err))
-  // .then(() => {
-  //   mongoDb.users.findOne({email: req.body.email});
-  //   .then(email => {
-  //     if (email && err.email === undefined) {
-  //       Object.assign(err, {email: 'This email was already used for signup, please use an other'});
-  //       console.log('normalement en deuz', err);
-  //     }
-  //   });
-  // })
-  // .catch(err => console.log(err))
-  // .then(() => {
-    console.log('Normalement en troiz', err);
+const signup = (req, res) => {
+  getSignupErrors(req.body).then(err => {
     if (Object.keys(err).length === 0) {
       const input = {
         firstname: req.body.firstname,
@@ -54,6 +29,7 @@ const signup = async (req, res) => {
       mongoDb.users.insertOne(input);
     }
     res.send(err);
+  }).catch(e => console.log(e));
 }
 
 export default { signup }

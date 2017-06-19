@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import Signup from './Signup';
+import { Switch, Route } from 'react-router-dom';
+import SignupForm from './SignupForm';
+import SigninForm from './SigninForm';
 
 class App extends Component {
   render() {
     return (
-      <div>
-        <Signup></Signup>
-      </div>
+      <Switch>
+        <Route exact path='/' component={SignupForm}/>
+        <Route path='/signin' component={SigninForm}/>
+      </Switch>
     );
   }
 }
