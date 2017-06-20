@@ -14,21 +14,24 @@ const nameField = (name, field) => {
 }
 
 //Check if login is well formated
-const loginField = (login) => {
+const loginField = (action, login) => {
   if (login === '' || login === undefined) {
     return {login: 'This field is required'};
   }
-  if (!login.match(/^[a-zA-Z0-9]{2,16}$/)) {
+  if (action === 'signup' && !login.match(/^[a-zA-Z0-9]{2,16}$/)) {
     return {login: 'This field must contain between 2 and 16 characters and only letters or digits'};
   }
   return null;
 }
 
 //Check if password is well formated
-const passwordFields = (password, confirmPassword) => {
+const passwordFields = (action, password, confirmPassword) => {
   let err = {};
   if (password === '' || password === undefined) {
     Object.assign(err, {password: 'This field is required'});
+  }
+  if (action === 'signin') {
+    return err;
   }
   if (confirmPassword === '' || confirmPassword === undefined) {
     Object.assign(err, {confirmPassword: 'This field is required'});
@@ -66,10 +69,18 @@ const signup = (input) => {
     Object.assign({},
         nameField(input.firstname, 'firstname'),
         nameField(input.lastname, 'lastname'),
-        loginField(input.login),
-        passwordFields(input.password, input.confirmPassword),
+        loginField('signup', input.login),
+        passwordFields('signup', input.password, input.confirmPassword),
         emailField(input.email))
   );
 }
 
-export default { signup };
+const signin = (input) => {
+  return (
+    Object.assign({},
+      loginField('signin', input.login),
+      passwordFields('signin', input.password))
+  );
+}
+
+export default { signup, signin };

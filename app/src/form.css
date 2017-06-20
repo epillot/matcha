@@ -1,8 +1,8 @@
-.err_input {
-  border: 1px inset red;
-  margin-right: 5px;
+form input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
 }
 
-.err_msg {
-  color: red;
+.container {
+  display: flex;
+  justify-content: center;
 }

@@ -1,17 +1,30 @@
 import React from 'react';
+import TextField from 'material-ui/TextField';
 import './form.css';
 
+// const FormInput = props => (
+//   <p>
+//     <label htmlFor={props.name}>{props.name}: </label>
+//     <input
+//       type={props.type}
+//       name={props.name}
+//       value={props.value}
+//       className={props.error ? 'err_input' : ''}
+//     ></input>
+//     <span className='err_msg'>{props.error}</span>
+//   </p>
+// );
+
 const FormInput = props => (
-  <p>
-    <label htmlFor={props.name}>{props.name}: </label>
-    <input
-      type={props.type}
-      name={props.name}
+  <div>
+    <TextField
       value={props.value}
-      className={props.error ? 'err_input' : ''}
-    ></input>
-    <span className='err_msg'>{props.error}</span>
-  </p>
+      name={props.name}
+      floatingLabelText={props.name}
+      type={props.type}
+      errorText={props.error}
+    /><br />
+  </div>
 );
 
 export default FormInput;

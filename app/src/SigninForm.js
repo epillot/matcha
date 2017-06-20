@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import FormInput from './FormInput';
+import RaisedButton from 'material-ui/RaisedButton';
 import './form.css';
 
 class SigninForm extends Component {
@@ -17,30 +18,50 @@ class SigninForm extends Component {
     });
   }
 
-  signinHandler = (e) => {
+  handleSelect = ({ target }) => {
+    let errors = this.state.errors;
+    errors[target.name] = '';
+    this.setState({
+      errors: errors
+    });
+  }
+
+  signinHandler = async (e) => {
     e.preventDefault();
+    const input = {
+      login: this.state.login.trim(),
+      password: this.state.password
+    }
+    try {
+      const { data } = await axios.post('/api/signin', input);
+      this.setState({
+        errors: data
+      })
+    } catch (e) {
+      console.log(e);
+    }
+
   }
 
   render() {
     return (
-      <form onSubmit={this.signinHandler} onChange={this.handleChange}>
-        <FormInput
-          name='login'
-          type='text'
-          value={this.state.login}
-          error={this.state.errors.login}
-        ></FormInput>
-        <FormInput
-          name='password'
-          type='password'
-          value={this.state.password}
-          error={this.state.errors.password}
-        ></FormInput>
-        <p>
-          <input type='submit' value='Signin !'></input>
-        </p>
-      </form>
-
+      <div className='container'>
+        <form onSubmit={this.signinHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
+          <FormInput
+            name='login'
+            type='text'
+            value={this.state.login}
+            error={this.state.errors.login}
+          ></FormInput>
+          <FormInput
+            name='password'
+            type='password'
+            value={this.state.password}
+            error={this.state.errors.password}
+          ></FormInput>
+          <RaisedButton type='submit' label='Signin' primary={true}></RaisedButton>
+        </form>
+        </div>
     );
   }
 }
