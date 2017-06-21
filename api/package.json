@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon --exec 'babel-node server.js'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "babel-node t.js"
   },
   "author": "epillot",
   "license": "ISC",
@@ -16,6 +16,7 @@
     "express": "^4.15.3",
     "mongodb": "^2.2.28",
     "morgan": "^1.8.2",
+    "nodemailer": "^4.0.1",
     "nodemon": "^1.11.0",
     "path": "^0.12.7",
     "query-string": "^4.3.4"

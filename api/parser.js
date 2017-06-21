@@ -63,6 +63,15 @@ const emailField = (email) => {
   return null;
 }
 
+const keyField = (key) => {
+  if (key === '' || key === undefined) {
+    return {key: 'This field is required'};
+  }
+  if (!key.match(/^[a-zA-Z0-9]{16}$/)) {
+    return {key: 'Invalid key'};
+  }
+}
+
 //Performs all verifications for inputs signup form, return an object containing each error
 const signup = (input) => {
   return (
@@ -83,4 +92,12 @@ const signin = (input) => {
   );
 }
 
-export default { signup, signin };
+const activation = (input) => {
+    return (
+      Object.assign({},
+        loginField('activation', input.login),
+        keyField(input.key))
+    );
+}
+
+export default { signup, signin, activation };

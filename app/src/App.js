@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import SignupForm from './SignupForm';
 import SigninForm from './SigninForm';
 import Header from './Header';
+import ActivationForm from './ActivationForm';
 
 class App extends Component {
   render() {
@@ -13,6 +14,7 @@ class App extends Component {
           <Route exact path='/' component={SigninForm}/>
           <Route exact path='/signin' component={SigninForm}/>
           <Route path='/signup' component={SignupForm}/>
+          <Route path='/activation' component={ActivationForm}/>
         </Switch>
       </div>
     );

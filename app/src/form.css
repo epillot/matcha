@@ -3,6 +3,7 @@ form input:-webkit-autofill {
 }
 
 .container {
+  padding: 50px;
   display: flex;
   justify-content: center;
 }

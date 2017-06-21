@@ -1,9 +1,11 @@
 import config from './config/config';
 import { MongoClient } from 'mongodb';
 
+const { mongoConfig } = config;
+
 class Database {
   constructor() {
-    MongoClient.connect(config.database)
+    MongoClient.connect(mongoConfig.database)
     .then(db => {
       console.log('Connected correctly to database');
       this.db = db;
