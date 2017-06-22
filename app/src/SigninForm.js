@@ -35,9 +35,15 @@ class SigninForm extends Component {
     }
     try {
       const { data } = await axios.post('/api/signin', input);
-      this.setState({
-        errors: data
-      })
+      if (data.token === undefined) {
+        this.setState({
+          errors: data
+        })
+      }
+      else {
+        localStorage.setItem('c_user', data.token);
+        this.props.history.push('/')
+      }
     } catch (e) { console.log(e) }
 
   }

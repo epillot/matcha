@@ -1,7 +1,9 @@
 import parser from './parser';
 import Database from './Database';
 import bcrypt from 'bcrypt';
-import mailer from './mailer'
+import mailer from './mailer';
+import jwt from 'jsonwebtoken';
+import { jwtSecret } from './config/config';
 
 const mongoDb = new Database();
 
@@ -93,8 +95,11 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
   try {
-    const err = await getSigninErrors(req.body);
-    res.send(err);
+    const response = await getSigninErrors(req.body);
+    if (Object.keys(response).length === 0) {
+      response.token = jwt.sign( {user: req.body.login}, jwtSecret, {expiresIn: '60 days'} );
+    }
+    res.send(response);
   } catch (e) { console.log(e) }
 }
 
@@ -108,4 +113,12 @@ const activation = async (req, res) => {
   } catch (e) { console.log(e) }
 }
 
-export default { signup, signin, activation }
+const auth = (req, res) => {
+  const token = req.body.token;
+  jwt.verify(token, jwtSecret, (err, decoded) => {
+    if (err) res.send({auth: false});
+    else res.send({auth: true, user: decoded.user})
+  })
+}
+
+export default { signup, signin, activation, auth }

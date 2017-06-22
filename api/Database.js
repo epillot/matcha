@@ -1,7 +1,7 @@
-import config from './config/config';
+import { mongoConfig } from './config/config';
 import { MongoClient } from 'mongodb';
 
-const { mongoConfig } = config;
+//const { mongoConfig } = config;
 
 class Database {
   constructor() {

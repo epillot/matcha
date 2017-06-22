@@ -12,4 +12,6 @@ const mailerConfig = {
   }
 }
 
-export default { mongoConfig, mailerConfig };
+const jwtSecret = 'JLsnn45HdSlmKsjkslskl';
+
+export { mongoConfig, mailerConfig , jwtSecret};
