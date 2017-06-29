@@ -2,12 +2,8 @@ import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 //import auth from './auth';
 
-class PrivateRoute extends Component {
+class UnlogguedRoute extends Component {
 
-  // state = {
-  //   loggued: null
-  // }
-  //
   // componentDidMount() {
   //   console.log('componentDidMount ' + this.props.component.name);
   //   auth.secureRequest('get', '/api/auth', null, err => {
@@ -22,12 +18,13 @@ class PrivateRoute extends Component {
     console.log(Component.name + ' is rendering...');
     return (
       <Route {...rest} render={props => {
-        if (this.props.loggued === true) {
-          return <Component {...props}/>;
-        } else if (this.props.loggued === false) {
+        console.log(props);
+        if (this.props.loggued === false) {
+          return <Component {...this.props}/>;
+        } else if (this.props.loggued === true) {
           return (
             <Redirect to={{
-              pathname: '/signin',
+              pathname: '/',
               state: { from: props.location }
             }}/>
           );
@@ -37,4 +34,4 @@ class PrivateRoute extends Component {
   }
 }
 
-export default PrivateRoute;
+export default UnlogguedRoute;

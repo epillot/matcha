@@ -42,13 +42,14 @@ class SigninForm extends Component {
       }
       else {
         localStorage.setItem('c_user', data.token);
-        this.props.history.push('/')
+        this.props.onLog();
       }
     } catch (e) { console.log(e) }
 
   }
 
   render() {
+    console.log(this.props);
     return (
       <div className='container'>
         <Paper zDepth={3} style={{padding: 20}}>

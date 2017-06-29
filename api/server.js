@@ -4,6 +4,8 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import routes from './routes';
 import Database from './Database';
+import expressJwt from 'express-jwt';
+
 //import session from 'cookie-session';
 
 const app = express();
@@ -17,6 +19,8 @@ const port = 8000;
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(expressJwt({ secret: 'JLsnn45HdSlmKsjkslskl'})
+.unless({path: ['/api/signin', '/api/signup', '/api/activation']}));
 
 routes(app);
 

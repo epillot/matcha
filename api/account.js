@@ -114,11 +114,7 @@ const activation = async (req, res) => {
 }
 
 const auth = (req, res) => {
-  const token = req.body.token;
-  jwt.verify(token, jwtSecret, (err, decoded) => {
-    if (err) res.send({auth: false});
-    else res.send({auth: true, user: decoded.user})
-  })
+  res.sendStatus(200);
 }
 
 export default { signup, signin, activation, auth }
