@@ -4,27 +4,24 @@ import SignupForm from './SignupForm';
 import SigninForm from './SigninForm';
 import Header from './Header';
 import ActivationForm from './ActivationForm';
-import axios from 'axios';
+import PrivateRoute from './privateRoute';
+//import auth from './auth';
+
+const myprivate = () => <h1>Protected</h1>;
 
 class App extends Component {
 
-
-  // isLoggued =  async () => {
-  //   const token = localStorage.c_user;
-  //   if (token === undefined) {
-  //     return { auth: false };
-  //   }
-  //   return axios.post('/api/auth', {token: token});
-  // }
+  state = {
+    loggued: false,
+  }
 
   render() {
-  //  this.isLoggued().then((res) => console.log(res.data));
     return (
       <div>
-        <Header history={this.props.history}/>
+        <Header/>
         <Switch>
-          <Route exact path='/' component={SigninForm}/>
-          <Route exact path='/signin' component={SigninForm}/>
+          <PrivateRoute exact path='/' component={myprivate}/>
+          <Route path='/signin' component={SigninForm}/>
           <Route path='/signup' component={SignupForm}/>
           <Route path='/activation' component={ActivationForm}/>
         </Switch>

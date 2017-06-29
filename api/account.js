@@ -1,11 +1,11 @@
 import parser from './parser';
-import Database from './Database';
+import mongoDb from './Database';
 import bcrypt from 'bcrypt';
 import mailer from './mailer';
 import jwt from 'jsonwebtoken';
 import { jwtSecret } from './config/config';
 
-const mongoDb = new Database();
+//const mongoDb2 = Database();
 
 const getSignupErrors = async (input) => {
   const err = parser.signup(input);
