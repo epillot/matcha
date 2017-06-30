@@ -21,6 +21,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(expressJwt({ secret: 'JLsnn45HdSlmKsjkslskl'})
 .unless({path: ['/api/signin', '/api/signup', '/api/activation']}));
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.send('Unauthorized');
+  }
+});
 
 routes(app);
 

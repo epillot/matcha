@@ -1,10 +1,6 @@
 import axios from 'axios';
 
-class auth {
-  constructor() {
-    this.isAuth = false;
-  }
-
+const auth = {
   secureRequest(method, url, data, cb) {
     const token = localStorage.c_user;
     if (token === undefined) {
@@ -16,42 +12,14 @@ class auth {
     };
     if (data) config.data = data;
     config.headers = {Authorization: `Bearer ${token}`};
-    console.log(config);
+    //console.log(config);
     axios(config)
-    .then(response => cb(null, response))
-    .catch(() => cb('Invalid or expired token'));
+    .then(response => {
+      if (response.data === 'Unauthorized') cb('invalid or expired token');
+      else cb(null, response);
+    })
+    .catch(err => console.log(err));
   }
-
-  // authenticate() {
-  //   // const token = localStorage.c_user;
-  //   // if (token === undefined) {
-  //   //   this.isAuth = false;
-  //   //   if (cb) cb(false);
-  //   // }
-  //   // else {
-  //   //   axios.get('/api/auth', {headers: {Authorization: `Bearer ${localStorage.getItem('c_user')}`}})
-  //   //   .then( ({ status }) => {
-  //   //     if (status === 200) this.isAuth = true;
-  //   //     else this.isAuth = false;
-  //   //     if (cb) cb(this.isAuth);
-  //   //   });
-  //   // }
-  //   this.secureRequest('get', '/api/auth', null, (err, response) => {
-  //     if (err) this.isAuth = false;
-  //     else this.isAuth = true
-  //   })
-  // }
-
-  // verifyAuth() {
-  //   const token = localStorage.c_user;
-  //   try {
-  //     const decoded = jwtDecode(token);
-  //     if (decoded && decoded.exp > Date.now() / 1000) {this.isAuth = true}
-  //     else {this.isAuth = false}
-  //   }
-  //   catch (e) {this.isAuth = false}
-  //   return (this.isAuth);
-  // }
 }
 
-export default new auth();
+export default auth;

@@ -8,7 +8,7 @@ const nameField = (name, field) => {
     return {[field]: 'This field is required'};
   }
   if (!name.match(/^[a-zA-Z]{2,32}$/)) {
-    return {[field]: 'This field must contain between 2 and 32 characters and only letters'};
+    return {[field]: 'Name must contain between 2 and 32 characters and only letters'};
   }
   return null;
 }
@@ -19,7 +19,7 @@ const loginField = (action, login) => {
     return {login: 'This field is required'};
   }
   if (action === 'signup' && !login.match(/^[a-zA-Z0-9]{2,16}$/)) {
-    return {login: 'This field must contain between 2 and 16 characters and only letters or digits'};
+    return {login: 'Login must contain between 2 and 16 characters and only letters or digits'};
   }
   return null;
 }

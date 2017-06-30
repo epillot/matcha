@@ -15,10 +15,10 @@ class UnlogguedRoute extends Component {
 
   render() {
     const { component: Component, ...rest } = this.props;
-    console.log(Component.name + ' is rendering...');
+    //console.log(Component.name + ' is rendering...');
     return (
       <Route {...rest} render={props => {
-        console.log(props);
+        //console.log(props);
         if (this.props.loggued === false) {
           return <Component {...this.props}/>;
         } else if (this.props.loggued === true) {
