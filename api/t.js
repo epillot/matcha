@@ -13,7 +13,10 @@
 // //   else console.log(decoded)
 // // });
 // //
-let { a, b, ...rest } = {a:1, b:2, c:3, d:4};
-let f = r;
+// let { a, b, ...rest } = {a:1, b:2, c:3, d:4};
+// let f = r;
 
-console.log(rest);
+let a = {};
+
+if (a) console.log('salut')
+else console.log('lolo');

@@ -16,7 +16,7 @@ class Header extends Component {
 
   componentWillReceiveProps(nextProps) {
     //console.log('la');
-    if (nextProps.loggued === true) this.setState({ label: 'logout' });
+    if (nextProps.loggued === true) this.setState({label: 'logout'});
     else {
       this.setState({
         label: this.props.history.location.pathname !== '/signup' ? 'signup' : 'signin'

@@ -1,7 +1,4 @@
 import nodemailer from 'nodemailer';
-import { mailerConfig } from './config/config';
-
-const transporter = nodemailer.createTransport(mailerConfig);
 
 const createConfirmationMail = (name, key) => {
   const msgTxt = `Hey ${name} ! Welcome to Matcha :)
@@ -17,6 +14,8 @@ const createConfirmationMail = (name, key) => {
 }
 
 const sendMail = (to, subject, msgTxt, msgHtml) => {
+  const transporter = nodemailer.createTransport(config.mailerConfig);
+
   const mail = {
     from: '"Matcha" <matcha-epillot@laposte.net>',
     to: to,

@@ -23,7 +23,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    //console.log('lalal');
     auth.secureRequest('get', '/api/auth', null, err => {
       this.setState({
         loggued: err ? false : true
@@ -44,9 +43,7 @@ class App extends Component {
   }
 
   render() {
-    console.log('App is rendering...');
-    //console.log(this.state.loggued);
-    //console.log(this.state.loggued);
+    //console.log('App is rendering...');
     const { loggued } = this.state;
     return (
       <div>

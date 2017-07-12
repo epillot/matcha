@@ -1,63 +1,58 @@
 import parser from './parser';
-import mongoDb from './Database';
 import bcrypt from 'bcrypt';
 import mailer from './mailer';
 import jwt from 'jsonwebtoken';
-import { jwtSecret } from './config/config';
-
-//const mongoDb2 = Database();
 
 const getSignupErrors = async (input) => {
   const err = parser.signup(input);
+  if (Object.keys(err).length !== 0) return err;
 
-  if (err.login === undefined && await mongoDb.users.findOne({login: input.login}) !== null) {
-      Object.assign(err, {login: 'This login is not availaible, please choose an other'});
+  const { login, email } = input;
+  let user = await db.collection('Users').findOne({login});
+  if (user) {
+    err.login = 'This login is not availaible, please choose an other';
+    return err;
   }
-
-  if (err.email === undefined && await mongoDb.users.findOne({email: input.email}) !== null) {
-      Object.assign(err, {email: 'This email was already used for signup, please use an other'});
+  user = await db.collection('Users').findOne({email});
+  if (user) {
+    err.email = 'This email was already used for signup, please use an other';
   }
   return err;
 }
 
 const getSigninErrors = async (input) => {
   const err = parser.signin(input);
+  if (Object.keys(err).length !== 0) return err;
 
-  if (err.login === undefined) {
-    const user = await mongoDb.users.findOne({login: input.login});
-    if (!user) {
-      err.login = 'There is no user with this login';
-    }
-    else if (err.password === undefined) {
-      const auth = await bcrypt.compare(input.password, user.password);
-      if (!auth) {
-        err.password = 'Invalid password';
-      }
-      else if (!user.active) {
-        err.login = 'Your account is not active';
-      }
-    }
+  const { login, password } = input;
+  const user = await db.collection('Users').findOne({login});
+  if (!user) {
+    err.login = 'There is no user with this login';
+    return err;
   }
+  const auth = await bcrypt.compare(password, user.password);
+  if (!auth) {
+    err.password = 'Invalid password';
+    return err;
+  }
+  if (!user.active) err.login = 'Your account is not active';
   return err;
 }
 
 const getActivationErrors = async (input) => {
   const err = parser.activation(input);
+  if (Object.keys(err).length !== 0) return err;
 
-  if (err.login === undefined) {
-    const user = await mongoDb.users.findOne({login: input.login});
-    if (!user) {
-      err.login = 'There is no user with this login';
-    }
-    else if (user.active) {
-        err.login = 'Your account is already active';
-    }
-    else if (err.key === undefined) {
-      if (input.key !== user.key) {
-        err.key = 'Invalid key';
-      }
-    }
+  const user = await db.collection('Users').findOne({login: input.login});
+  if (!user) {
+    err.login = 'There is no user with this login';
+    return err;
   }
+  if (user.active) {
+    err.login = 'Your account is already active';
+    return err;
+  }
+  if (input.key !== user.key) err.key = 'Invalid key';
   return err;
 }
 
@@ -87,7 +82,7 @@ const signup = async (req, res) => {
       };
       const mail = mailer.createConfirmationMail(user.firstname, key);
       mailer.sendMail(user.email, 'Confirm your inscription to Matcha', mail['txt'], mail['html']);
-      mongoDb.users.insertOne(user);
+      db.collection('Users').insertOne(user);
     }
     res.send(err);
   } catch (e) { console.log(e) }
@@ -97,7 +92,7 @@ const signin = async (req, res) => {
   try {
     const response = await getSigninErrors(req.body);
     if (Object.keys(response).length === 0) {
-      response.token = jwt.sign( {user: req.body.login}, jwtSecret, {expiresIn: '60 days'} );
+      response.token = jwt.sign( {user: req.body.login}, config.jwtSecret, {expiresIn: '60 days'} );
     }
     res.send(response);
   } catch (e) { console.log(e) }
@@ -107,7 +102,7 @@ const activation = async (req, res) => {
   try {
     const err = await getActivationErrors(req.body);
     if (Object.keys(err).length === 0) {
-      mongoDb.users.updateOne({login: req.body.login}, { $set: { active: true } });
+      db.collection('Users').updateOne({login: req.body.login}, { $set: { active: true } });
     }
     res.send(err);
   } catch (e) { console.log(e) }

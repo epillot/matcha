@@ -13,12 +13,10 @@ const auth = {
     if (data) config.data = data;
     config.headers = {Authorization: `Bearer ${token}`};
     //console.log(config);
-    axios(config)
-    .then(response => {
+    axios(config).then(response => {
       if (response.data === 'Unauthorized') cb('invalid or expired token');
       else cb(null, response);
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
 }
 

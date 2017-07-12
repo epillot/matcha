@@ -1,38 +1,27 @@
 import express from 'express';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import path from 'path';
-import routes from './routes';
-import Database from './Database';
-import expressJwt from 'express-jwt';
+import { MongoClient } from 'mongodb';
+import config from './config/config';
+import loadApp from './loadApp';
 
-//import session from 'cookie-session';
-
+global.config = config;
+const port = process.env.PORT || 8000;
 const app = express();
-const port = 8000;
-// app.use(express.static(path.resolve('../app/build'), {
-//   dotfiles: 'ignore',
-//   index: false,
-// }));
+loadApp(app);
 
-//app.use(session({ secret: 'lalal' })),
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(expressJwt({ secret: 'JLsnn45HdSlmKsjkslskl'})
-.unless({path: ['/api/signin', '/api/signup', '/api/activation']}));
-app.use((err, req, res, next) => {
-  if (err.name === 'UnauthorizedError') {
-    res.send('Unauthorized');
-  }
-});
+MongoClient.connect(config.mongoConfig).then(db => {
 
-routes(app);
+  console.log('Connected correctly to database');
+  global.db = db;
+  app.listen(port);
+  console.log('server started on port ' + port);
 
-// app.get('*', function(req, res) {
-//   //req.session.count = req.session.count ? req.session.count + 1 : 1;
-//   res.sendFile(path.resolve('../app/build/index.html'));
-//   //console.log(req.session.count);
-// });
+  process.on('SIGINT', () => {
+    db.close(() => {
+      console.log('\nConnection to database closed');
+      process.exit(0);
+    });
+  });
 
-app.listen(port);
+}).catch(e => console.log(e));
+
+process.on('exit', () => console.log('See you soon ;)'));

@@ -20,7 +20,7 @@ class UnlogguedRoute extends Component {
       <Route {...rest} render={props => {
         //console.log(props);
         if (this.props.loggued === false) {
-          return <Component {...this.props}/>;
+          return <Component {...this.props} {...props}/>;
         } else if (this.props.loggued === true) {
           return (
             <Redirect to={{
