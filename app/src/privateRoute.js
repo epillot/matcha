@@ -24,14 +24,14 @@ class PrivateRoute extends Component {
       <Route {...rest} render={props => {
         if (this.props.loggued === true) {
           return <Component {...props}/>;
-        } else if (this.props.loggued === false) {
+        } else {
           return (
             <Redirect to={{
               pathname: '/signin',
               state: { from: props.location }
             }}/>
           );
-        } else return <div>Loading...</div>;
+        }
       }}/>
     )
   }

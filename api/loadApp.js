@@ -24,7 +24,8 @@ export default function(app) {
       res.send('Unauthorized');
     }
   })
-  .get('/api/auth', account.auth);
+  .get('/api/auth', account.auth)
+  .get('/api/myprofile', account.myprofile)
 
   // app.get('*', function(req, res) {
   //   res.sendFile(path.resolve('../app/build/index.html'));

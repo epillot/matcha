@@ -7,8 +7,9 @@ import ActivationForm from './ActivationForm';
 import PrivateRoute from './privateRoute';
 import UnlogguedRoute from './UnlogguedRoute';
 import auth from './auth';
+import MyProfile from './MyProfile';
 
-const myprivate = () => <h1>Protected</h1>;
+//const myprivate = () => <h1>Protected</h1>;
 
 class App extends Component {
 
@@ -49,7 +50,7 @@ class App extends Component {
       <div>
         <Header loggued={loggued} onLogout={this.onLogout}/>
         <Switch>
-          <PrivateRoute exact path='/' loggued={loggued} component={myprivate}/>
+          <PrivateRoute exact path='/' loggued={loggued} component={MyProfile}/>
           <UnlogguedRoute path='/signin' onLog={this.onLog} loggued={loggued} component={SigninForm}/>
           <UnlogguedRoute path='/signup' loggued={loggued} component={SignupForm}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>

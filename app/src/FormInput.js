@@ -23,6 +23,8 @@ const FormInput = props => (
       floatingLabelText={props.name}
       type={props.type}
       errorText={props.error}
+      underlineShow={props.underlineShow}
+      autoComplete="off"
     /><br />
   </div>
 );
