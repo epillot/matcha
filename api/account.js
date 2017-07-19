@@ -120,7 +120,8 @@ const myprofile = async (req, res) => {
       firstname: 1,
       lastname: 1,
       login: 1,
-      email: 1
+      email: 1,
+      pictures: 1
     });
     res.send(profile);
   } catch (e) {

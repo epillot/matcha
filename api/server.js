@@ -6,6 +6,7 @@ import loadApp from './loadApp';
 global.config = config;
 const port = process.env.PORT || 8000;
 const app = express();
+app.use('/static', express.static('uploads'));
 loadApp(app);
 
 MongoClient.connect(config.mongoConfig).then(db => {

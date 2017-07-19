@@ -10,6 +10,7 @@ export default function(app) {
   //   index: false,
   // }));
 
+
   app.use(morgan('dev'))
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
