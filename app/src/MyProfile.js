@@ -35,9 +35,13 @@ export default class extends Component {
   }
 
   componentDidMount() {
-    auth.secureRequest('get', '/api/myprofile', null, (err, { data }) => {
-      if (err) this.props.history.push('/signin');
+    const config = {
+      method: 'get',
+      url: '/api/myprofile',
+    };
+    auth.secureRequest(config, (err, { data }) => {
       setTimeout(() => {
+        if (err) return this.props.history.push('/signin');
         if (this.mounted) {
           this.setState({
             profile: data,

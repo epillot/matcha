@@ -130,4 +130,9 @@ const myprofile = async (req, res) => {
   }
 }
 
-export default { signup, signin, activation, auth, myprofile }
+const upload = async (req, res) => {
+  const { user: { login }, file } = req;
+  res.send(file.filename);
+}
+
+export default { signup, signin, activation, auth, myprofile, upload }

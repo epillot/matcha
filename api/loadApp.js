@@ -3,6 +3,15 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import expressJwt from 'express-jwt';
 import account from './account';
+import multer from 'multer';
+
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname)
+    cb(null, file.fieldname + '-' + Date.now() + ext);
+  }
+});
 
 export default function(app) {
   // app.use(express.static(path.resolve('../app/build'), {
@@ -27,7 +36,7 @@ export default function(app) {
   })
   .get('/api/auth', account.auth)
   .get('/api/myprofile', account.myprofile)
-
+  .post('/api/myprofile/uploads', multer({storage}).single('picture'), account.upload);
   // app.get('*', function(req, res) {
   //   res.sendFile(path.resolve('../app/build/index.html'));
   // });

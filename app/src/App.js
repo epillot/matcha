@@ -24,7 +24,11 @@ class App extends Component {
   }
 
   componentDidMount() {
-    auth.secureRequest('get', '/api/auth', null, err => {
+    const config = {
+      method: 'get',
+      url: '/api/auth'
+    };
+    auth.secureRequest(config, err => {
       this.setState({
         loggued: err ? false : true
       });
