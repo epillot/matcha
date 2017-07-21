@@ -2,6 +2,7 @@ import parser from './parser';
 import bcrypt from 'bcrypt';
 import mailer from './mailer';
 import jwt from 'jsonwebtoken';
+import sharp from 'sharp';
 
 const getSignupErrors = async (input) => {
   const err = parser.signup(input);
@@ -77,6 +78,7 @@ const signup = async (req, res) => {
         login: req.body.login,
         password: hash,
         email: req.body.email,
+        pictures: [],
         key: key,
         active: false
       };
@@ -130,9 +132,14 @@ const myprofile = async (req, res) => {
   }
 }
 
-const upload = async (req, res) => {
-  const { user: { login }, file } = req;
-  res.send(file.filename);
+const upload = (req, res) => {
+  const { user: { login }, file: { filename } } = req;
+  db.collection('Users').updateOne({login}, {$push: {pictures: filename}});
+  sharp(`uploads/tmp/${filename}`)
+  .resize(400, 300)
+  .toFile(`uploads/${filename}`)
+  .catch(err => console.log(err))
+  res.send(filename);
 }
 
 export default { signup, signin, activation, auth, myprofile, upload }

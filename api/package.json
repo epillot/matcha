@@ -22,7 +22,8 @@
     "nodemailer": "^4.0.1",
     "nodemon": "^1.11.0",
     "path": "^0.12.7",
-    "query-string": "^4.3.4"
+    "query-string": "^4.3.4",
+    "sharp": "^0.18.2"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

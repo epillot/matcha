@@ -6,7 +6,7 @@ import account from './account';
 import multer from 'multer';
 
 const storage = multer.diskStorage({
-  destination: 'uploads/',
+  destination: 'uploads/tmp/',
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname)
     cb(null, file.fieldname + '-' + Date.now() + ext);

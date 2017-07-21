@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
-import {GridList, GridTile} from 'material-ui/GridList';
+import { GridList } from 'material-ui/GridList';
 import UploadHandler from './UploadHandler';
+import PictureTile from './PictureTile';
+
 
 const styles = {
   root: {
@@ -23,7 +25,7 @@ export default class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pictures: props.pictures || [],
+      pictures: props.pictures,
       profilePic: 'default.jpg',
       openUpload: false,
     }
@@ -63,12 +65,9 @@ export default class extends Component {
         <UploadHandler open={openUpload} onClose={this.onClose} onUpload={this.onUpload}/>
         <div style={styles.root}>
           <GridList style={styles.gridList} cols={1}>
-            {pictures.map(pic => (
-              <GridTile key={pic}>
-                <img src={`static/${pic}`} alt=""/>
-              </GridTile>
-            ))}
+            {pictures.map(pic => <PictureTile key={pic} pic={pic} user={this.props.user}/>)}
           </GridList>
+
         </div>
       </div>
 

@@ -9,13 +9,13 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import ProfileInfo from './ProfileInfo';
 import ProfilePictures from './ProfilePictures';
 
-const ProfileTab = ({ profile: { pictures, ...rest } }) => (
+const ProfileTab = ({ profile: { pictures, firstname, lastname, login, ...rest } }) => (
   <Tabs tabItemContainerStyle={{backgroundColor: '#B0BEC5'}}>
     <Tab label='Pictures'>
-      <ProfilePictures pictures={pictures}/>
+      <ProfilePictures pictures={pictures} user={{firstname, lastname, login}}/>
     </Tab>
     <Tab label='Informations'>
-      <ProfileInfo profile={rest}/>
+      <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
     </Tab>
   </Tabs>
 );
