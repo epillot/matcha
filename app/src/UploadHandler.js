@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Dropzone from 'react-dropzone';
-import auth from './auth';
+import secureRequest from './secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 
 const style = {
@@ -46,14 +46,15 @@ export default class extends Component {
     form.append('picture', file);
     const config = {
       method: 'post',
-      url: '/api/myprofile/uploads',
+      url: '/apii/pictures/uploads',
       headers: {'Content-Type': 'multipart/form-data'},
       data: form,
     }
-    auth.secureRequest(config, (err, { data }) => {
+    secureRequest(config, (err, response) => {
       setTimeout(() => {
-        if (err) return this.props.history.push('/signin');
-        this.props.onUpload(data);
+        if (err === 'Unauthorized') return this.props.onAuthFailed();
+        else if (err) return console.log(err);
+        this.props.onUpload(response.data);
         this.handleClose();
       }, 1000);
     });
@@ -90,6 +91,7 @@ export default class extends Component {
             onDrop={this.onDrop}
           >
             <p>Try dropping some files here, or click to select files to upload.</p>
+            <p>All images will be resized to 720 * 540. Images that do not respect this ratio will be truncated.</p>
           </Dropzone>
           {loading ? <CircularProgress/> : ''}
         </div>

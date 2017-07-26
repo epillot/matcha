@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
-import auth from './auth';
+import secureRequest from './secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
-import { Card, CardHeader, CardText } from 'material-ui/Card';
 import './form.css';
-// import FontIcon from 'material-ui/FontIcon';
-// import FlatButton from 'material-ui/FlatButton';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import ProfileInfo from './ProfileInfo';
 import ProfilePictures from './ProfilePictures';
 
-const ProfileTab = ({ profile: { pictures, firstname, lastname, login, ...rest } }) => (
-  <Tabs tabItemContainerStyle={{backgroundColor: '#B0BEC5'}}>
-    <Tab label='Pictures'>
-      <ProfilePictures pictures={pictures} user={{firstname, lastname, login}}/>
-    </Tab>
-    <Tab label='Informations'>
-      <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
-    </Tab>
-  </Tabs>
-);
+// const ProfileTab = ({ profile: { pictures, firstname, lastname, login, ...rest } }) => (
+//   <Tabs tabItemContainerStyle={{backgroundColor: '#B0BEC5'}}>
+//     <Tab label='Pictures'>
+//       <ProfilePictures pictures={pictures} user={{firstname, lastname, login}}/>
+//     </Tab>
+//     <Tab label='Informations'>
+//       <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
+//     </Tab>
+//   </Tabs>
+// );
 
 export default class extends Component {
 
@@ -26,12 +23,14 @@ export default class extends Component {
     super();
     this.state = {
       profile: null,
-      //file: null,
       loading: false,
     }
     this.mounted = true;
-    // this.handlePhotoAdd = this.handlePhotoAdd.bind(this);
-    // this.handleUpload = this.handleUpload.bind(this);
+    this.onAuthFailed = this.onAuthFailed.bind(this);
+  }
+
+  onAuthFailed() {
+    this.props.onLogout();
   }
 
   componentDidMount() {
@@ -39,12 +38,13 @@ export default class extends Component {
       method: 'get',
       url: '/api/myprofile',
     };
-    auth.secureRequest(config, (err, { data }) => {
+    secureRequest(config, (err, response) => {
       setTimeout(() => {
-        if (err) return this.props.history.push('/signin');
+        if (err === 'Unauthorized') return this.onAuthFailed();
+        else if (err) return console.log(err);
         if (this.mounted) {
           this.setState({
-            profile: data,
+            profile: response.data,
           });
         }
       }, 1000);
@@ -55,56 +55,17 @@ export default class extends Component {
     this.mounted = false;
   }
 
-  // handlePhotoAdd({ target }) {
-  //   const file = target.files[0];
-  //   this.setState({file});
-  // }
-  //
-  // handleUpload() {
-  //   console.log(this.state.file);
-  // }
-
   render() {
-    // const style = {
-    //   cursor: 'pointer',
-    //   position: 'absolute',
-    //   top: 0,
-    //   bottom: 0,
-    //   right: 0,
-    //   left: 0,
-    //   width: '100%',
-    //   opacity: 0,
-    // };
+    console.log(this.props);
     const { profile } = this.state;
     if (profile) {
+      const { pictures, firstname, lastname, login, ...rest } = profile;
       return (
-        <Card>
-          <CardHeader
-            title={profile.login}
-            subtitle="Complete or update your profile"
-            avatar="static/default.jpg"
-          />
-          <CardText children={<ProfileTab profile={profile}/>}/>
-        </Card>
-        //   <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-        //   <FlatButton
-        //     label='Add a photo'
-        //     containerElement='label'
-        //     icon={<FontIcon className="material-icons" style={{fontSize: '36px'}}>add_a_photo</FontIcon>}
-        //   >
-        //     <input type="file" style={style} onChange={this.handlePhotoAdd}/>
-        //   </FlatButton>
-        //   <FlatButton label='ok' primary={true} disabled={!file} onTouchTap={this.handleUpload}/>
-        //   </div>
-        //   <CardText children={<ProfileInfo profile={profile}/>}/>
-        // </Card>
-      )
+        <div>
+          <ProfilePictures onAuthFailed={this.onAuthFailed} pictures={pictures} user={{firstname, lastname, login}}/>
+          <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
+        </div>
+      );
     } else return <CircularProgress/>;
   }
 }
-
-// export default () => (
-//   <div className='container'>
-//     <MyProfile/>
-//   </div>
-// );

@@ -6,9 +6,6 @@ import PictureCard from './PictureCard';
 
 
 const style = {
-  dialog: {
-    width: '500px'
-  },
   gridTile: {
     cursor: 'pointer',
   },
@@ -38,8 +35,7 @@ export default class extends Component {
   }
 
   render() {
-    console.log(this.props);
-    const { pic, user } = this.props;
+    const { pic, user, onAuthFailed } = this.props;
     const { open } = this.state;
     const actions = [
       <FlatButton
@@ -52,12 +48,13 @@ export default class extends Component {
       <GridTile style={style.gridTile} onClick={this.handleOpen}>
         <img style={style.imgGrid} src={`static/${pic}`} alt=""/>
         <Dialog
+          autoScrollBodyContent={true}
           actions={actions}
           modal={false}
           open={open}
           onRequestClose={this.handleClose}
-          children={<PictureCard pic={pic} user={user}/>}
         >
+          <PictureCard pic={pic} user={user} onAuthFailed={onAuthFailed}/>
         </Dialog>
       </GridTile>
     );

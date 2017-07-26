@@ -4,6 +4,7 @@ import path from 'path';
 import expressJwt from 'express-jwt';
 import account from './account';
 import multer from 'multer';
+import pictures from './pictures';
 
 const storage = multer.diskStorage({
   destination: 'uploads/tmp/',
@@ -36,7 +37,7 @@ export default function(app) {
   })
   .get('/api/auth', account.auth)
   .get('/api/myprofile', account.myprofile)
-  .post('/api/myprofile/uploads', multer({storage}).single('picture'), account.upload);
+  .post('/api/pictures/uploads', multer({storage}).single('picture'), pictures.upload);
   // app.get('*', function(req, res) {
   //   res.sendFile(path.resolve('../app/build/index.html'));
   // });

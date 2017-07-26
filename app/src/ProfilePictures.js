@@ -11,7 +11,6 @@ const styles = {
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
   },
   gridList: {
     display: 'flex',
@@ -48,8 +47,13 @@ export default class extends Component {
     this.setState({pictures});
   }
 
+  onDelete(pic) {
+
+  }
+
   render() {
     const { pictures, profilePic, openUpload } = this.state;
+    const { onAuthFailed, user } = this.props;
     return (
       <div>
         <Toolbar>
@@ -57,17 +61,16 @@ export default class extends Component {
             <ToolbarTitle text="Pictures" />
           </ToolbarGroup>
           <ToolbarGroup>
-            <IconButton tooltip="Add a picture" onTouchTap={this.handleOpen}>
-              <FontIcon className="material-icons" style={{fontSize: '36px'}}>add_a_photo</FontIcon>
+            <IconButton tooltip='Add a picture' disabled={pictures.length >= 5} onTouchTap={this.handleOpen}>
+              <FontIcon className="material-icons">add_a_photo</FontIcon>
             </IconButton>
           </ToolbarGroup>
         </Toolbar>
-        <UploadHandler open={openUpload} onClose={this.onClose} onUpload={this.onUpload}/>
+        <UploadHandler onAuthFailed={onAuthFailed} open={openUpload} onClose={this.onClose} onUpload={this.onUpload}/>
         <div style={styles.root}>
           <GridList style={styles.gridList} cols={1}>
-            {pictures.map(pic => <PictureTile key={pic} pic={pic} user={this.props.user}/>)}
+            {pictures.map(pic => <PictureTile key={pic} pic={pic} user={user} onAuthFailed={onAuthFailed}/>)}
           </GridList>
-
         </div>
       </div>
 

@@ -23,7 +23,7 @@ class PrivateRoute extends Component {
     return (
       <Route {...rest} render={props => {
         if (this.props.loggued === true) {
-          return <Component {...props}/>;
+          return <Component {...props} {...this.props}/>;
         } else {
           return (
             <Redirect to={{

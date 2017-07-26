@@ -6,10 +6,8 @@ import Header from './Header';
 import ActivationForm from './ActivationForm';
 import PrivateRoute from './privateRoute';
 import UnlogguedRoute from './UnlogguedRoute';
-import auth from './auth';
+import secureRequest from './secureRequest';
 import MyProfile from './MyProfile';
-
-//const myprivate = () => <h1>Protected</h1>;
 
 class App extends Component {
 
@@ -28,10 +26,11 @@ class App extends Component {
       method: 'get',
       url: '/api/auth'
     };
-    auth.secureRequest(config, err => {
+    secureRequest(config, err => {
       this.setState({
         loggued: err ? false : true
       });
+      if (err) console.log(err);
     });
   }
 
@@ -54,7 +53,7 @@ class App extends Component {
       <div>
         <Header loggued={loggued} onLogout={this.onLogout}/>
         <Switch>
-          <PrivateRoute exact path='/' loggued={loggued} component={MyProfile}/>
+          <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
           <UnlogguedRoute path='/signin' onLog={this.onLog} loggued={loggued} component={SigninForm}/>
           <UnlogguedRoute path='/signup' loggued={loggued} component={SignupForm}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
