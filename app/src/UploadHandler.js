@@ -8,12 +8,17 @@ import CircularProgress from 'material-ui/CircularProgress';
 const style = {
   root: {
     display: 'flex',
+    alignItems: 'center',
   },
   preview: {
     width: '200px',
     height: '200px',
     paddingRight: '10px',
-  }
+  },
+  error: {
+    margin: '5px',
+    color: 'red',
+  },
 };
 
 export default class extends Component {
@@ -23,6 +28,7 @@ export default class extends Component {
     this.state = {
       file: [],
       loading: false,
+      error: '',
     }
     this.onDrop = this.onDrop.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -34,7 +40,7 @@ export default class extends Component {
   }
 
   handleClose() {
-    this.setState({file: [], loading: false});
+    this.setState({file: [], loading: false, error: ''});
     this.props.onClose();
   }
 
@@ -46,14 +52,19 @@ export default class extends Component {
     form.append('picture', file);
     const config = {
       method: 'post',
-      url: '/apii/pictures/uploads',
+      url: '/api/pictures/uploads',
       headers: {'Content-Type': 'multipart/form-data'},
       data: form,
     }
     secureRequest(config, (err, response) => {
       setTimeout(() => {
-        if (err === 'Unauthorized') return this.props.onAuthFailed();
-        else if (err) return console.log(err);
+        if (err) return this.props.onAuthFailed();
+        if (response.data === 'Max upload') {
+          return this.setState({
+            error: 'You can\'t upload more than 5 pictures.',
+            loading: false,
+          });
+        }
         this.props.onUpload(response.data);
         this.handleClose();
       }, 1000);
@@ -61,7 +72,7 @@ export default class extends Component {
   }
 
   render() {
-    const { file, loading } = this.state;
+    const { file, loading, error } = this.state;
     const actions = [
       <FlatButton
         label="Cancel"
@@ -93,6 +104,7 @@ export default class extends Component {
             <p>Try dropping some files here, or click to select files to upload.</p>
             <p>All images will be resized to 720 * 540. Images that do not respect this ratio will be truncated.</p>
           </Dropzone>
+          <p style={style.error}>{error}</p>
           {loading ? <CircularProgress/> : ''}
         </div>
       </Dialog>

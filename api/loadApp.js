@@ -37,7 +37,9 @@ export default function(app) {
   })
   .get('/api/auth', account.auth)
   .get('/api/myprofile', account.myprofile)
-  .post('/api/pictures/uploads', multer({storage}).single('picture'), pictures.upload);
+  .post('/api/pictures/uploads', pictures.check, multer({storage}).single('picture'), pictures.save)
+  .delete('/api/pictures/:pic', pictures.deletePic)
+  .put('/api/pictures/:pic', pictures.setProfilePic);
   // app.get('*', function(req, res) {
   //   res.sendFile(path.resolve('../app/build/index.html'));
   // });

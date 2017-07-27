@@ -30,7 +30,6 @@ class App extends Component {
       this.setState({
         loggued: err ? false : true
       });
-      if (err) console.log(err);
     });
   }
 

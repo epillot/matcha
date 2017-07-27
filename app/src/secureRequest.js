@@ -7,7 +7,7 @@ export default function(config, cb) {
   axios(config).then(response => {
     if (response.data === 'Unauthorized') cb('Unauthorized');
     else cb(null, response);
-  }).catch(err => cb(err));
+  }).catch(err => console.log(err));
 }
 
 // export default function(config) {

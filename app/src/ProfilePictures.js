@@ -5,10 +5,14 @@ import IconButton from 'material-ui/IconButton';
 import { GridList } from 'material-ui/GridList';
 import UploadHandler from './UploadHandler';
 import PictureTile from './PictureTile';
-
+import Paper from 'material-ui/Paper';
 
 const styles = {
   root: {
+    margin: '30px',
+    maxWidth: '1500px',
+  },
+  gridRoot: {
     display: 'flex',
     flexWrap: 'wrap',
   },
@@ -25,12 +29,12 @@ export default class extends Component {
     super(props);
     this.state = {
       pictures: props.pictures,
-      profilePic: 'default.jpg',
       openUpload: false,
     }
     this.handleOpen = this.handleOpen.bind(this);
     this.onClose = this.onClose.bind(this);
     this.onUpload = this.onUpload.bind(this);
+    this.onDelete = this.onDelete.bind(this);
   }
 
   handleOpen() {
@@ -48,17 +52,22 @@ export default class extends Component {
   }
 
   onDelete(pic) {
-
+    const { pictures } = this.state;
+    const { profilePic, onDeleteProfilePic } = this.props;
+    pictures.splice(pictures.indexOf(pic), 1);
+    this.setState({pictures});
+    if (pic === profilePic) onDeleteProfilePic();
   }
 
   render() {
-    const { pictures, profilePic, openUpload } = this.state;
-    const { onAuthFailed, user } = this.props;
+    const { pictures, openUpload } = this.state;
+    const { onAuthFailed, user, setProfilePic, profilePic } = this.props;
+    const pp = profilePic || 'default.jpg';
     return (
-      <div>
+      <Paper style={styles.root} zDepth={2}>
         <Toolbar>
           <ToolbarGroup>
-            <ToolbarTitle text="Pictures" />
+            <ToolbarTitle text="All pictures" />
           </ToolbarGroup>
           <ToolbarGroup>
             <IconButton tooltip='Add a picture' disabled={pictures.length >= 5} onTouchTap={this.handleOpen}>
@@ -67,13 +76,22 @@ export default class extends Component {
           </ToolbarGroup>
         </Toolbar>
         <UploadHandler onAuthFailed={onAuthFailed} open={openUpload} onClose={this.onClose} onUpload={this.onUpload}/>
-        <div style={styles.root}>
-          <GridList style={styles.gridList} cols={1}>
-            {pictures.map(pic => <PictureTile key={pic} pic={pic} user={user} onAuthFailed={onAuthFailed}/>)}
+        <div style={styles.gridRoot}>
+          <GridList style={styles.gridList} cellHeight='auto' padding={8} cols={1}>
+            {pictures.map(pic =>
+              <PictureTile
+                profilePic={pp}
+                key={pic}
+                pic={pic}
+                user={user}
+                onDelete={this.onDelete}
+                onAuthFailed={onAuthFailed}
+                setProfilePic={setProfilePic}
+              />
+            )}
           </GridList>
         </div>
-      </div>
-
+      </Paper>
     );
   }
 }

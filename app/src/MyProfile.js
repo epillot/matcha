@@ -2,20 +2,25 @@ import React, { Component } from 'react';
 import secureRequest from './secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 import './form.css';
-import {Tabs, Tab} from 'material-ui/Tabs';
 import ProfileInfo from './ProfileInfo';
 import ProfilePictures from './ProfilePictures';
+import Paper from 'material-ui/Paper';
 
-// const ProfileTab = ({ profile: { pictures, firstname, lastname, login, ...rest } }) => (
-//   <Tabs tabItemContainerStyle={{backgroundColor: '#B0BEC5'}}>
-//     <Tab label='Pictures'>
-//       <ProfilePictures pictures={pictures} user={{firstname, lastname, login}}/>
-//     </Tab>
-//     <Tab label='Informations'>
-//       <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
-//     </Tab>
-//   </Tabs>
-// );
+const styles = {
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  profilePicContainer: {
+    width: '300px',
+    height: '225px',
+    margin: '15px 0 0 30px'
+  },
+  profilePic: {
+    width: '100%',
+    height: '100%',
+  }
+}
 
 export default class extends Component {
 
@@ -26,11 +31,8 @@ export default class extends Component {
       loading: false,
     }
     this.mounted = true;
-    this.onAuthFailed = this.onAuthFailed.bind(this);
-  }
-
-  onAuthFailed() {
-    this.props.onLogout();
+    this.setProfilePic = this.setProfilePic.bind(this);
+    this.onDeleteProfilePic = this.onDeleteProfilePic.bind(this);
   }
 
   componentDidMount() {
@@ -55,14 +57,36 @@ export default class extends Component {
     this.mounted = false;
   }
 
+  setProfilePic(pic) {
+    const { profile } = this.state;
+    profile.profilePic = pic;
+    this.setState({profile});
+  }
+
+  onDeleteProfilePic() {
+    const { profile } = this.state;
+    profile.profilePic = null;
+    this.setState({profile});
+  }
+
   render() {
-    console.log(this.props);
     const { profile } = this.state;
     if (profile) {
-      const { pictures, firstname, lastname, login, ...rest } = profile;
+      const { pictures, profilePic, firstname, lastname, login, ...rest } = profile;
+      const pp = profilePic || 'default.jpg';
       return (
-        <div>
-          <ProfilePictures onAuthFailed={this.onAuthFailed} pictures={pictures} user={{firstname, lastname, login}}/>
+        <div style={styles.root}>
+          <Paper style={styles.profilePicContainer} zDepth={1}>
+            <img style={styles.profilePic} src={`static/${pp}`} alt=''/>
+          </Paper>
+          <ProfilePictures
+            onAuthFailed={this.props.onLogout}
+            profilePic={pp}
+            pictures={pictures}
+            user={{firstname, lastname, login}}
+            setProfilePic={this.setProfilePic}
+            onDeleteProfilePic={this.onDeleteProfilePic}
+          />
           <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
         </div>
       );

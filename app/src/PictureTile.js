@@ -10,8 +10,8 @@ const style = {
     cursor: 'pointer',
   },
   imgGrid: {
-    width: '200px',
-    height: '150px',
+    width: '266px',
+    height: '200px',
   },
 }
 
@@ -24,6 +24,8 @@ export default class extends Component {
     }
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.onDelete = this.onDelete.bind(this);
+    this.setProfilePic = this.setProfilePic.bind(this);
   }
 
   handleOpen() {
@@ -34,8 +36,18 @@ export default class extends Component {
     this.setState({open: false});
   }
 
+  onDelete(pic) {
+    this.handleClose();
+    this.props.onDelete(pic);
+  }
+
+  setProfilePic(pic) {
+    this.handleClose();
+    this.props.setProfilePic(pic)
+  }
+
   render() {
-    const { pic, user, onAuthFailed } = this.props;
+    const { pic, profilePic, user, onAuthFailed } = this.props;
     const { open } = this.state;
     const actions = [
       <FlatButton
@@ -54,7 +66,14 @@ export default class extends Component {
           open={open}
           onRequestClose={this.handleClose}
         >
-          <PictureCard pic={pic} user={user} onAuthFailed={onAuthFailed}/>
+          <PictureCard
+            pic={pic}
+            profilePic={profilePic}
+            user={user}
+            setProfilePic={this.setProfilePic}
+            onDelete={this.onDelete}
+            onAuthFailed={onAuthFailed}
+          />
         </Dialog>
       </GridTile>
     );
