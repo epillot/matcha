@@ -68,12 +68,19 @@ const keyField = (key) => {
   }
 }
 
+const sexField = (sex) => {
+  if (sex !== 1 && sex !== 2) {
+    return {sexValue: 'This field is required'};
+  }
+}
+
 //Performs all verifications for inputs signup form, return an object containing each error
 const signup = (input) => {
   return (
     Object.assign({},
       nameField(input.firstname, 'firstname'),
       nameField(input.lastname, 'lastname'),
+      sexField(input.sexValue),
       loginField('signup', input.login),
       passwordFields('signup', input.password, input.confirmPassword),
       emailField(input.email))

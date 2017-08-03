@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Switch } from 'react-router-dom';
-import SignupForm from './SignupForm';
-import SigninForm from './SigninForm';
+import Home from './Home';
 import Header from './Header';
 import ActivationForm from './ActivationForm';
 import PrivateRoute from './privateRoute';
@@ -12,7 +11,6 @@ import MyProfile from './MyProfile';
 class App extends Component {
 
   constructor() {
-    console.log('in app constructor');
     super();
     this.state = {
       loggued: false
@@ -34,27 +32,21 @@ class App extends Component {
   }
 
   onLog() {
-    this.setState({
-      loggued: true
-    });
+    this.setState({loggued: true});
   }
 
   onLogout() {
-    this.setState({
-      loggued: false
-    });
+    this.setState({loggued: false});
   }
 
   render() {
-    //console.log('App is rendering...');
     const { loggued } = this.state;
     return (
       <div>
-        <Header loggued={loggued} onLogout={this.onLogout}/>
+        <Header loggued={loggued} onLogout={this.onLogout} onLog={this.onLog}/>
         <Switch>
           <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
-          <UnlogguedRoute path='/signin' onLog={this.onLog} loggued={loggued} component={SigninForm}/>
-          <UnlogguedRoute path='/signup' loggued={loggued} component={SignupForm}/>
+          <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
         </Switch>
       </div>

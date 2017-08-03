@@ -20,7 +20,7 @@ const FormInput = props => (
     <TextField
       value={props.value}
       name={props.name}
-      floatingLabelText={props.name}
+      floatingLabelText={props.label || props.name}
       type={props.type}
       errorText={props.error}
       underlineShow={props.underlineShow}

@@ -74,6 +74,8 @@ const signup = async (req, res) => {
       const user = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
+        sex: req.body.sexValue === 1 ? 'M' : 'W',
+        birthday: req.body.birthday,
         login: req.body.login,
         password: hash,
         email: req.body.email,

@@ -2,46 +2,75 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
-//import auth from './auth';
+import Popover from 'material-ui/Popover';
+import Signin from './Signin';
 
 class Header extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      label: this.props.history.location.pathname !== '/signup' ? 'signup' : 'signin'
+      label: 'signin',
+      open: false,
+      loading: false,
     };
     this.handleRightTouchTap = this.handleRightTouchTap.bind(this);
+    this.handleRequestClose = this.handleRequestClose.bind(this);
+    this.onLog = this.onLog.bind(this);
+    this.setLoading = this.setLoading.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    //console.log('la');
     if (nextProps.loggued === true) this.setState({label: 'logout'});
-    else {
+    else this.setState({label: 'signin'});
+  }
+
+  handleRightTouchTap(e) {
+    e.preventDefault();
+    if (this.state.label === 'logout') {
+      localStorage.removeItem('c_user');
+      this.props.onLogout();
+    } else {
       this.setState({
-        label: this.props.history.location.pathname !== '/signup' ? 'signup' : 'signin'
+        open: true,
+        anchorEl: e.currentTarget,
       });
     }
   }
 
-  handleRightTouchTap() {
-    //console.log('ici');
-    if (this.state.label === 'logout') {
-      localStorage.removeItem('c_user');
-      this.props.onLogout();
-    } else this.props.history.push('/' + this.state.label);
+  setLoading(loading) {
+    this.setState({loading})
+  }
+
+  handleRequestClose() {
+    if (!this.state.loading) this.setState({open: false});
+  }
+
+  onLog() {
+    this.handleRequestClose();
+    this.props.onLog();
   }
 
   render() {
-    //console.log('Header is rendering...');
-    //console.log(this.props.loggued);
-    //console.log(this.state.label);
+    // console.log(this.props.location);
+    // const { pathname, search } = this.props.location;
+    // let fromActivation = false;
+    // if (pathname === '/Home' && search === '?signin') fromActivation = true;
+    const { label, open, anchorEl } = this.state;
     return (
-      <AppBar
-        title="Matcha"
-        iconElementRight={<FlatButton label={this.state.label}/>}
-        onRightIconButtonTouchTap={this.handleRightTouchTap}
-      />
+      <div>
+        <AppBar
+          title="Matcha"
+          iconElementRight={<FlatButton label={label}/>}
+          onRightIconButtonTouchTap={this.handleRightTouchTap}
+        />
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onRequestClose={this.handleRequestClose}
+          children={<Signin onLog={this.onLog} setLoading={this.setLoading}/>}
+        />
+      </div>
     );
   }
 }

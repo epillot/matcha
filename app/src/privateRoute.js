@@ -4,22 +4,8 @@ import { Route, Redirect } from 'react-router-dom';
 
 class PrivateRoute extends Component {
 
-  // state = {
-  //   loggued: null
-  // }
-  //
-  // componentDidMount() {
-  //   console.log('componentDidMount ' + this.props.component.name);
-  //   auth.secureRequest('get', '/api/auth', null, err => {
-  //     this.setState({
-  //       loggued: err ? false : true
-  //     })
-  //   });
-  // }
-
   render() {
     const { component: Component, ...rest } = this.props;
-    //console.log(Component.name + ' is rendering...');
     return (
       <Route {...rest} render={props => {
         if (this.props.loggued === true) {
@@ -27,7 +13,7 @@ class PrivateRoute extends Component {
         } else {
           return (
             <Redirect to={{
-              pathname: '/signin',
+              pathname: '/Home',
               state: { from: props.location }
             }}/>
           );
