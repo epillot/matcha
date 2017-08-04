@@ -13,7 +13,7 @@ class PrivateRoute extends Component {
         } else {
           return (
             <Redirect to={{
-              pathname: '/Home',
+              pathname: '/home',
               state: { from: props.location }
             }}/>
           );

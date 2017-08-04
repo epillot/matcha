@@ -53,7 +53,7 @@ class ActivationForm extends Component {
       const { data } = await axios.post('/api/activation', input);
       setTimeout(() => {
         if (Object.keys(data).length === 0) {
-          this.props.history.push('/home?open=true');
+          this.props.history.push('/home?signin');
         } else if (this.mounted) {
           this.setState({
             errors: data,

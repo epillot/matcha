@@ -2,24 +2,16 @@ import React, { Component } from 'react';
 import secureRequest from './secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 import './form.css';
-import ProfileInfo from './ProfileInfo';
+//import ProfileInfo from './ProfileInfo';
 import ProfilePictures from './ProfilePictures';
-import Paper from 'material-ui/Paper';
+import ProfileCard from './ProfileCard';
 
 const styles = {
   root: {
     display: 'flex',
     flexDirection: 'column',
+    padding: '10px'
   },
-  profilePicContainer: {
-    width: '300px',
-    height: '225px',
-    margin: '15px 0 0 30px'
-  },
-  profilePic: {
-    width: '100%',
-    height: '100%',
-  }
 }
 
 export default class extends Component {
@@ -42,7 +34,7 @@ export default class extends Component {
     };
     secureRequest(config, (err, response) => {
       setTimeout(() => {
-        if (err === 'Unauthorized') return this.onAuthFailed();
+        if (err === 'Unauthorized') return this.props.onLogout();
         else if (err) return console.log(err);
         if (this.mounted) {
           this.setState({
@@ -76,9 +68,7 @@ export default class extends Component {
       const pp = profilePic || 'default.jpg';
       return (
         <div style={styles.root}>
-          <Paper style={styles.profilePicContainer} zDepth={1}>
-            <img style={styles.profilePic} src={`static/${pp}`} alt=''/>
-          </Paper>
+          <ProfileCard profile={{pp, firstname, lastname, login, ...rest}}/>
           <ProfilePictures
             onAuthFailed={this.props.onLogout}
             profilePic={pp}
@@ -87,7 +77,6 @@ export default class extends Component {
             setProfilePic={this.setProfilePic}
             onDeleteProfilePic={this.onDeleteProfilePic}
           />
-          <ProfileInfo profile={{firstname, lastname, login, ...rest}}/>
         </div>
       );
     } else return <CircularProgress/>;

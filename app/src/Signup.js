@@ -155,7 +155,7 @@ export default class extends Component {
             value={this.state.email}
             error={this.state.errors.email}
           ></FormInput>
-          <RaisedButton type='submit' label='Signup' primary={true}></RaisedButton>
+          <RaisedButton type='submit' label='Signup' primary={true} disabled={this.state.loading}></RaisedButton>
         </form>
         {this.state.loading ? <LinearProgress/> : ''}
       </Paper>

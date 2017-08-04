@@ -89,7 +89,7 @@ export default class extends Component {
             value={this.state.password}
             error={this.state.errors.password}
           ></FormInput>
-          <RaisedButton type='submit' label='Signin' primary={true}></RaisedButton>
+          <RaisedButton type='submit' label='Signin' primary={true} disabled={this.state.loading}></RaisedButton>
         </form>
         {this.state.loading ? <LinearProgress/> : ''}
       </div>

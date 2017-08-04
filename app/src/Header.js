@@ -52,21 +52,19 @@ class Header extends Component {
   }
 
   render() {
-    // console.log(this.props.location);
-    // const { pathname, search } = this.props.location;
-    // let fromActivation = false;
-    // if (pathname === '/Home' && search === '?signin') fromActivation = true;
+    const { pathname, search } = this.props.location;
+    const fromActivation = pathname.toLowerCase() === '/home' && search === '?signin';
     const { label, open, anchorEl } = this.state;
     return (
       <div>
         <AppBar
           title="Matcha"
-          iconElementRight={<FlatButton label={label}/>}
+          iconElementRight={<FlatButton id='signin' label={label}/>}
           onRightIconButtonTouchTap={this.handleRightTouchTap}
         />
         <Popover
-          open={open}
-          anchorEl={anchorEl}
+          open={open || fromActivation}
+          anchorEl={anchorEl || document.getElementById('signin')}
           onRequestClose={this.handleRequestClose}
           children={<Signin onLog={this.onLog} setLoading={this.setLoading}/>}
         />
