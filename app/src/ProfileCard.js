@@ -2,21 +2,21 @@ import React, { Component } from 'react';
 import Paper from 'material-ui/Paper'
 import {List, ListItem} from 'material-ui/List';
 import FontIcon from 'material-ui/FontIcon';
+import IconButton from 'material-ui/IconButton';
 
 const styles = {
   root: {
-    width: 'auto',
+    width: '300px',
     maxWidth: '100%',
-    margin: '0 auto',
   },
   profilePicContainer: {
     width: '300px',
-    heigth: '225px',
+    height: '225px',
   },
   profilePic: {
     width: '100%',
     height: '100%',
-  }
+  },
 }
 
 export default class extends Component {
@@ -27,15 +27,19 @@ export default class extends Component {
     return (
       <Paper style={styles.root}>
         <div style={styles.profilePicContainer}>
-          <img style={styles.profilePic} src={`static/${pp}`}/>
+          <img style={styles.profilePic} src={`/static/${pp}`}/>
         </div>
         <List>
-        <ListItem
-          primaryText={`${firstname} ${lastname}`}
-          secondaryText={`Alias ${login}`}
-          rightIconButton={<FontIcon className="material-icons">mode_edit</FontIcon>}
-          disabled={true}
-        />
+          <ListItem
+            primaryText={`${firstname} ${lastname}`}
+            secondaryText={`Alias ${login}`}
+            rightIconButton={
+              <IconButton>
+                <FontIcon className="material-icons">mode_edit</FontIcon>
+              </IconButton>
+            }
+            disabled={true}
+          />
           <ListItem
             primaryText={`Age: ${age}`}
             disabled={true}

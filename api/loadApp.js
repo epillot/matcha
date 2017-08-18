@@ -3,8 +3,10 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import expressJwt from 'express-jwt';
 import account from './account';
+import profile from './profile';
 import multer from 'multer';
 import pictures from './pictures';
+import tags from './tags';
 
 const storage = multer.diskStorage({
   destination: 'uploads/tmp/',
@@ -36,7 +38,8 @@ export default function(app) {
     }
   })
   .get('/api/auth', account.auth)
-  .get('/api/myprofile', account.myprofile)
+  .get('/api/profile/:login', profile.get)
+  .get('/api/alltags', tags.getAll)
   .post('/api/pictures/uploads', pictures.check, multer({storage}).single('picture'), pictures.save)
   .delete('/api/pictures/:pic', pictures.deletePic)
   .put('/api/pictures/:pic', pictures.setProfilePic);

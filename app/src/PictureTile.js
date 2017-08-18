@@ -58,7 +58,7 @@ export default class extends Component {
     ];
     return (
       <GridTile style={style.gridTile} onClick={this.handleOpen}>
-        <img style={style.imgGrid} src={`static/${pic}`} alt=""/>
+        <img style={style.imgGrid} src={`/static/${pic}`} alt=""/>
         <Dialog
           autoScrollBodyContent={true}
           actions={actions}

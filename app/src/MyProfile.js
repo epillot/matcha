@@ -1,16 +1,27 @@
 import React, { Component } from 'react';
 import secureRequest from './secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
-import './form.css';
-//import ProfileInfo from './ProfileInfo';
+import ProfileBio from './ProfileBio';
 import ProfilePictures from './ProfilePictures';
 import ProfileCard from './ProfileCard';
+import Interset from './Interest';
+import Paper from 'material-ui/Paper';
+
 
 const styles = {
   root: {
     display: 'flex',
     flexDirection: 'column',
     padding: '10px'
+  },
+  profileInfo: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center'
+  },
+  container: {
+    width: '430px',
+    position: 'relative',
   },
 }
 
@@ -28,9 +39,10 @@ export default class extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props.location);
     const config = {
       method: 'get',
-      url: '/api/myprofile',
+      url: '/api/' + this.props.location.pathname,
     };
     secureRequest(config, (err, response) => {
       setTimeout(() => {
@@ -64,11 +76,17 @@ export default class extends Component {
   render() {
     const { profile } = this.state;
     if (profile) {
-      const { pictures, profilePic, firstname, lastname, login, ...rest } = profile;
+      const { pictures, profilePic, firstname, lastname, login, bio, tags, ...rest } = profile;
       const pp = profilePic || 'default.jpg';
       return (
         <div style={styles.root}>
-          <ProfileCard profile={{pp, firstname, lastname, login, ...rest}}/>
+          <div style={styles.profileInfo}>
+            <ProfileCard profile={{pp, firstname, lastname, login, ...rest}}/>
+            <div style={styles.container}>
+              <ProfileBio bio={bio}/>
+              <Interset onAuthFailed={this.props.onLo} tags={tags}/>
+            </div>
+          </div>
           <ProfilePictures
             onAuthFailed={this.props.onLogout}
             profilePic={pp}

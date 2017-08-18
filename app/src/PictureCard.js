@@ -37,7 +37,7 @@ export default class extends Component {
     const { pic, setProfilePic, onAuthFailed } = this.props;
     const config = {
       method: 'put',
-      url: `/api/pictures/${pic}`,
+      url: `/static/pictures/${pic}`,
     };
     secureRequest(config, err => {
       setTimeout(() => {
@@ -55,7 +55,7 @@ export default class extends Component {
         <CardHeader
           title={`${firstname} ${lastname}`}
           subtitle={`alias ${login}`}
-          avatar={`static/${profilePic}`}
+          avatar={`/static/${profilePic}`}
         />
         <CardMedia>
           <img src={`static/${pic}`} alt="" />

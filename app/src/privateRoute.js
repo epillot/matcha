@@ -8,7 +8,7 @@ class PrivateRoute extends Component {
     const { component: Component, ...rest } = this.props;
     return (
       <Route {...rest} render={props => {
-        if (this.props.loggued === true) {
+        if (this.props.loggued !== false) {
           return <Component {...props} {...this.props}/>;
         } else {
           return (

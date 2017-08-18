@@ -19,20 +19,20 @@ class App extends Component {
     this.onLogout = this.onLogout.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     const config = {
       method: 'get',
       url: '/api/auth'
     };
-    secureRequest(config, err => {
+    secureRequest(config, (err, response) => {
       this.setState({
-        loggued: err ? false : true
+        loggued: err ? false : response.data
       });
     });
   }
 
-  onLog() {
-    this.setState({loggued: true});
+  onLog(user) {
+    this.setState({loggued: user});
   }
 
   onLogout() {
@@ -45,7 +45,7 @@ class App extends Component {
       <div>
         <Header loggued={loggued} onLogout={this.onLogout} onLog={this.onLog}/>
         <Switch>
-          <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
+          <PrivateRoute path='/profile/:user' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
         </Switch>

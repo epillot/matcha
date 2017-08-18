@@ -66,7 +66,8 @@ export default class extends Component {
           }
         } else {
           localStorage.setItem('c_user', data.token);
-          this.props.onLog();
+          this.props.onLog(data.user);
+          this.props.history.push(`/profile/${data.user}`);
         }
       }, 2000);
     } catch (e) { console.log(e) }

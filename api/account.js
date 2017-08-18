@@ -81,6 +81,7 @@ const signup = async (req, res) => {
         password: hash,
         email: req.body.email,
         pictures: [],
+        tags: [],
         key: key,
         active: false
       };
@@ -97,6 +98,7 @@ const signin = async (req, res) => {
     const response = await getSigninErrors(req.body);
     if (Object.keys(response).length === 0) {
       response.token = jwt.sign( {login: req.body.login}, config.jwtSecret, {expiresIn: '60 days'} );
+      response.user = req.body.login;
     }
     res.send(response);
   } catch (e) { console.log(e) }
@@ -113,29 +115,7 @@ const activation = async (req, res) => {
 }
 
 const auth = (req, res) => {
-  res.sendStatus(200);
+  res.send(req.user.login);
 }
 
-const myprofile = async (req, res) => {
-  const { login } = req.user;
-  try {
-    const profile = await db.collection('Users').findOne({login}, {
-      _id: 0,
-      firstname: 1,
-      lastname: 1,
-      sex: 1,
-      birthday: 1,
-      lookingFor: 1,
-      login: 1,
-      email: 1,
-      pictures: 1,
-      profilePic: 1,
-    });
-    res.send(profile);
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
-  }
-}
-
-export default { signup, signin, activation, auth, myprofile }
+export default { signup, signin, activation, auth }

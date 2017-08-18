@@ -21,7 +21,7 @@ class Header extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.loggued === true) this.setState({label: 'logout'});
+    if (nextProps.loggued) this.setState({label: 'logout'});
     else this.setState({label: 'signin'});
   }
 
@@ -66,8 +66,12 @@ class Header extends Component {
           open={open || fromActivation}
           anchorEl={anchorEl || document.getElementById('signin')}
           onRequestClose={this.handleRequestClose}
-          children={<Signin onLog={this.onLog} setLoading={this.setLoading}/>}
-        />
+        >
+          <Signin
+            onLog={this.onLog}
+            setLoading={this.setLoading}
+            history={this.props.history}/>
+        </Popover>
       </div>
     );
   }

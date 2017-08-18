@@ -21,14 +21,14 @@ class UnlogguedRoute extends Component {
         //console.log(props);
         if (this.props.loggued === false) {
           return <Component {...this.props} {...props}/>;
-        } else if (this.props.loggued === true) {
+        } else {
           return (
             <Redirect to={{
-              pathname: '/',
+              pathname: '/profile/' + this.props.loggued,
               state: { from: props.location }
             }}/>
           );
-        } else return <div>Loading...</div>;
+        }
       }}/>
     )
   }
