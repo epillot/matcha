@@ -82,6 +82,7 @@ const signup = async (req, res) => {
         email: req.body.email,
         pictures: [],
         tags: [],
+        bio: '',
         key: key,
         active: false
       };

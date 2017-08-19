@@ -52,7 +52,7 @@ export default class extends Component {
     form.append('picture', file);
     const config = {
       method: 'post',
-      url: '/api/pictures/uploads',
+      url: '/api/pictures',
       headers: {'Content-Type': 'multipart/form-data'},
       data: form,
     }

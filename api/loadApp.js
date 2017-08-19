@@ -37,12 +37,20 @@ export default function(app) {
       res.send('Unauthorized');
     }
   })
+  .use((req, res, next) => {
+    const { login } = req.user;
+    const user = db.collection('Users').findOne({login});
+    if (!user) res.send('Unauthorized');
+    next();
+  })
   .get('/api/auth', account.auth)
   .get('/api/profile/:login', profile.get)
-  .get('/api/alltags', tags.getAll)
-  .post('/api/pictures/uploads', pictures.check, multer({storage}).single('picture'), pictures.save)
-  .delete('/api/pictures/:pic', pictures.deletePic)
-  .put('/api/pictures/:pic', pictures.setProfilePic);
+  .patch('/api/profile/:login', profile.patch)
+  .get('/api/alltags', tags.get)
+  .patch('/api/allTags', tags.patch)
+  .post('/api/pictures', pictures.check, multer({storage}).single('picture'), pictures.post)
+  .delete('/api/pictures/:pic', pictures.delete)
+  //.put('/api/pictures/:pic', pictures.setProfilePic);
   // app.get('*', function(req, res) {
   //   res.sendFile(path.resolve('../app/build/index.html'));
   // });

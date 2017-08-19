@@ -36,8 +36,12 @@ export default class extends Component {
     this.setState({loading: true});
     const { pic, setProfilePic, onAuthFailed } = this.props;
     const config = {
-      method: 'put',
-      url: `/static/pictures/${pic}`,
+      method: 'patch',
+      url: '/api' + this.props.location.pathname,
+      data: {
+        action: 'setProfilePic',
+        data: pic,
+      },
     };
     secureRequest(config, err => {
       setTimeout(() => {
@@ -58,7 +62,7 @@ export default class extends Component {
           avatar={`/static/${profilePic}`}
         />
         <CardMedia>
-          <img src={`static/${pic}`} alt="" />
+          <img src={`/static/${pic}`} alt="" />
         </CardMedia>
         <CardActions>
           <FlatButton label="delete" onTouchTap={this.handleDelete} disabled={loading}/>

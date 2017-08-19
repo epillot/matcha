@@ -46,9 +46,9 @@ class Header extends Component {
     if (!this.state.loading) this.setState({open: false});
   }
 
-  onLog() {
+  onLog(user) {
     this.handleRequestClose();
-    this.props.onLog();
+    this.props.onLog(user);
   }
 
   render() {

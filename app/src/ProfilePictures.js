@@ -61,7 +61,7 @@ export default class extends Component {
 
   render() {
     const { pictures, openUpload } = this.state;
-    const { onAuthFailed, user, setProfilePic, profilePic } = this.props;
+    const { onAuthFailed, user, setProfilePic, profilePic, location } = this.props;
     const pp = profilePic || 'default.jpg';
     return (
       <Paper style={styles.root} zDepth={2}>
@@ -87,6 +87,7 @@ export default class extends Component {
                 onDelete={this.onDelete}
                 onAuthFailed={onAuthFailed}
                 setProfilePic={setProfilePic}
+                location={location}
               />
             )}
           </GridList>

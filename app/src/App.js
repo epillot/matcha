@@ -13,7 +13,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      loggued: false
+      loggued: !!localStorage.getItem('c_user'),
     };
     this.onLog = this.onLog.bind(this);
     this.onLogout = this.onLogout.bind(this);
@@ -32,6 +32,7 @@ class App extends Component {
   }
 
   onLog(user) {
+    console.log(user);
     this.setState({loggued: user});
   }
 

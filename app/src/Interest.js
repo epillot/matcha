@@ -38,17 +38,45 @@ export default class extends Component {
       loading: false,
     }
     this.onAdd = this.onAdd.bind(this);
-    this.onTagHandlerOpen = this.onTagHandlerOpen.bind(this)
+    this.onDelete = this.onDelete.bind(this);
+    this.onTagHandlerOpen = this.onTagHandlerOpen.bind(this);
+    this.addTagToDb = this.addTagToDb.bind(this);
   }
 
   onAdd(tag) {
-    // const { tags } = this.state;
-    // tags.push(tag);
-    // this.setState({tags, open: false});
-    // const config = {
-    //   method: 'put',
-    //   url:
-    // }
+    const { tags } = this.state;
+    tags.push(tag);
+    this.setState({tags, open: false});
+  }
+
+  addTagToDb(tag) {
+    const config = {
+      method: 'patch',
+      url: '/api/alltags',
+      data: {tag},
+    }
+    secureRequest(config, err => {
+      if (err === 'Unauthorized') return this.props.onAuthFailed();
+      else if (err) return console.log(err);
+    })
+  }
+
+  onDelete(tag) {
+    const config = {
+      method: 'patch',
+      url: '/api' + this.props.location.pathname,
+      data: {
+        action: 'delTag',
+        data: tag,
+      },
+    };
+    secureRequest(config, err => {
+      if (err === 'Unauthorized') return this.props.onAuthFailed();
+      else if (err) return console.log(err);
+      const { tags } = this.state;
+      tags.splice(tags.indexOf(tag), 1);
+      this.setState({tags});
+    });
   }
 
   onTagHandlerOpen() {
@@ -89,6 +117,8 @@ export default class extends Component {
             open={open}
             onClose={() => this.setState({open: false})}
             onAdd={this.onAdd}
+            location={this.props.location}
+            addTagToDb={this.addTagToDb}
           />
         </div>
         <CardText>
@@ -97,7 +127,7 @@ export default class extends Component {
               <Chip
                 key={tag.key}
                 style={styles.chip}
-                onRequestDelete={() => {}}
+                onRequestDelete={() => this.onDelete(tag.key)}
               >
                 {'#' + tag.tag}
               </Chip>

@@ -47,7 +47,7 @@ export default class extends Component {
   }
 
   render() {
-    const { pic, profilePic, user, onAuthFailed } = this.props;
+    const { pic, profilePic, user, onAuthFailed, location } = this.props;
     const { open } = this.state;
     const actions = [
       <FlatButton
@@ -67,6 +67,7 @@ export default class extends Component {
           onRequestClose={this.handleClose}
         >
           <PictureCard
+            location={location}
             pic={pic}
             profilePic={profilePic}
             user={user}

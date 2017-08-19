@@ -32,6 +32,7 @@ export default class extends Component {
     this.state = {
       profile: null,
       loading: false,
+      error: '',
     }
     this.mounted = true;
     this.setProfilePic = this.setProfilePic.bind(this);
@@ -48,6 +49,9 @@ export default class extends Component {
       setTimeout(() => {
         if (err === 'Unauthorized') return this.props.onLogout();
         else if (err) return console.log(err);
+        if (response.data.error) {
+          return this.setState({profile: false, error: response.data.error})
+        }
         if (this.mounted) {
           this.setState({
             profile: response.data,
@@ -75,7 +79,8 @@ export default class extends Component {
 
   render() {
     const { profile } = this.state;
-    if (profile) {
+    if (profile === null) return <CircularProgress/>;
+    else if (profile !== false) {
       const { pictures, profilePic, firstname, lastname, login, bio, tags, ...rest } = profile;
       const pp = profilePic || 'default.jpg';
       return (
@@ -84,10 +89,11 @@ export default class extends Component {
             <ProfileCard profile={{pp, firstname, lastname, login, ...rest}}/>
             <div style={styles.container}>
               <ProfileBio bio={bio}/>
-              <Interset onAuthFailed={this.props.onLo} tags={tags}/>
+              <Interset onAuthFailed={this.props.onLoout} tags={tags} location={this.props.location}/>
             </div>
           </div>
           <ProfilePictures
+            location={this.props.location}
             onAuthFailed={this.props.onLogout}
             profilePic={pp}
             pictures={pictures}
@@ -97,6 +103,6 @@ export default class extends Component {
           />
         </div>
       );
-    } else return <CircularProgress/>;
+    } else return <p>{this.state.error}</p>;
   }
 }
