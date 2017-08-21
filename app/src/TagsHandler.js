@@ -47,7 +47,7 @@ export default class extends Component {
         const { error } = response.data;
         if (error) return this.setState({error, loading: false});
         if (this.props.allTags.indexOf(tag) === -1) this.props.addTagToDb(tag);
-        this.setState({loading: false});
+        this.setState({error: '', tag: '', loading: false});
         this.props.onAdd(tag);
       }, 1000);
     });

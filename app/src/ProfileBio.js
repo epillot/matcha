@@ -28,6 +28,11 @@ export default class extends Component {
       open: false,
       bio: props.bio,
     }
+    this.onEdit = this.onEdit.bind(this);
+  }
+
+  onEdit(bio) {
+    this.setState({bio, open: false});
   }
 
   render() {
@@ -37,17 +42,25 @@ export default class extends Component {
       <Card style={styles.root}>
         <Subheader>Biography</Subheader>
         <div style={styles.edit}>
-          <IconButton onTouchTap={() => this.setState({open: true})}>
+          <IconButton
+            onTouchTap={() => this.setState({open: true})}
+            tooltip='Edit your biography'
+          >
             <FontIcon className="material-icons">mode_edit</FontIcon>
           </IconButton>
           <BioHandler
             open={open}
             bio={bio}
             onClose={() => this.setState({open: false})}
+            onEdit={this.onEdit}
+            location={this.props.location}
+            onAuthFailed={this.props.onAuthFailed}
           />
         </div>
         <CardText style={styles.text}>
-        {bioToDisplay}
+        {bioToDisplay.split('\n').map((line, i) =>
+          <div key={i}>{line}</div>
+        )}
         </CardText>
       </Card>
     );

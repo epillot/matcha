@@ -22,45 +22,30 @@ export default {
     .toFile(`uploads/${filename}`)
     .then(() => {
       fs.unlink(`uploads/tmp/${filename}`, err => {
-        if (err) {
-          console.log(err);
-          res.sendStatus(500);
-        }
+        if (err) console.log(err);
         try {
           db.collection('Users').updateOne({login}, {$push: {pictures: filename}});
           res.status(201).send(filename);
-        } catch (e) {
-          console.log(e);
-          res.sendStatus(500);
-        }
+        } catch (e) { console.log(e); res.sendStatus(500) }
       });
-    })
-    .catch(err => {
-      console.log(err);
-      res.sendStatus(500);
-    });
+    }).catch(err => { console.log(err); res.sendStatus(500) });
   },
 
-  delete: function(req, res) {
+  delete: async function(req, res) {
     const { params: { pic }, user: { login } } = req;
-    fs.unlink(`uploads/${pic}`, async err => {
-      if (err) {
-        console.log(err);
-        res.sendStatus(500);
+    try {
+      const { pictures, profilePic } = await db.collection('Users').findOne({login});
+      if (pictures.indexOf(pic) === -1) {
+        return res.status(401).send({error: 'Not allowed to delete this picture'});
       }
-      try {
-        const { pictures, profilePic } = await db.collection('Users').findOne({login});
-        if (pictures.indexOf(pic) !== -1) {
-          const update = {$pull: {pictures: pic}};
-          if (pic === profilePic) update.$set = {profilePic: null};
-          db.collection('Users').updateOne({login}, update);
-          res.end();
-        }
-      } catch (e) {
-        console.log(e);
-        res.sendStatus(500);
-      }
-    });
+      fs.unlink(`uploads/${pic}`, err => {
+        if (err) console.log(err);
+      });
+      const update = {$pull: {pictures: pic}};
+      if (pic === profilePic) update.$set = {profilePic: null};
+      db.collection('Users').updateOne({login}, update);
+      res.sendStatus(202);
+    } catch (e) { console.log(e); res.sendStatus(500) }
   },
 
 };

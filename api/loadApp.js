@@ -7,6 +7,7 @@ import profile from './profile';
 import multer from 'multer';
 import pictures from './pictures';
 import tags from './tags';
+import auth from './auth';
 
 const storage = multer.diskStorage({
   destination: 'uploads/tmp/',
@@ -27,11 +28,11 @@ export default function(app) {
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
 
-  .post('/api/signup', account.signup)
+  .post('/api/signup', auth.signup)
   .post('/api/activation', account.activation)
   .post('/api/signin', account.signin)
 
-  .use(expressJwt({ secret: config.jwtSecret}))
+  .use(expressJwt({secret: config.jwtSecret}))
   .use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
       res.send('Unauthorized');

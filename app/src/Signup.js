@@ -8,7 +8,7 @@ import DatePicker from 'material-ui/DatePicker';
 import MenuItem from 'material-ui/MenuItem';
 import Subheader from 'material-ui/Subheader';
 import LinearProgress from 'material-ui/LinearProgress';
-import parser from './parser';
+import { signupParser } from './parser2';
 
 const styles = {
   form: {
@@ -79,18 +79,17 @@ export default class extends Component {
       confirmPassword: this.state.confirmPassword,
       email: this.state.email.trim()
     };
-    const errors = parser.signup(input);
+    const errors = signupParser(input);
     if (Object.keys(errors).length !== 0) return this.setState({errors});
     this.setState({loading: true});
     try {
-      const { data } = await axios.post('/api/signup', input);
+      const { data, status } = await axios.post('/api/signup', input);
       setTimeout(() => {
-        if (Object.keys(data).length === 0) {
-          this.props.history.push('/activation');
-        } else if (this.mounted) {
+        if (status === 201) this.props.history.push('/activation');
+         else if (this.mounted) {
           this.setState({
             errors: data,
-            loading: false
+            loading: false,
           });
         }
       }, 2000);
@@ -107,13 +106,13 @@ export default class extends Component {
             type='text'
             value={this.state.firstname}
             error={this.state.errors.firstname}
-          ></FormInput>
+          />
           <FormInput
             name='lastname'
             type='text'
             value={this.state.lastname}
             error={this.state.errors.lastname}
-          ></FormInput>
+          />
           <SelectField
             floatingLabelText="sex"
             value={this.state.sexValue}
@@ -134,27 +133,27 @@ export default class extends Component {
             type='text'
             value={this.state.login}
             error={this.state.errors.login}
-          ></FormInput>
+          />
           <FormInput
             name='password'
             type='password'
             value={this.state.password}
             error={this.state.errors.password}
-          ></FormInput>
+          />
           <FormInput
             name='confirmPassword'
             type='password'
             label='confirm your password'
             value={this.state.confirmPassword}
             error={this.state.errors.confirmPassword}
-          ></FormInput>
+          />
           <FormInput
             name='email'
             type='email'
             label='email adress'
             value={this.state.email}
             error={this.state.errors.email}
-          ></FormInput>
+          />
           <RaisedButton type='submit' label='Signup' primary={true} disabled={this.state.loading}></RaisedButton>
         </form>
         {this.state.loading ? <LinearProgress/> : ''}

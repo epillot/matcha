@@ -3,6 +3,7 @@ import Paper from 'material-ui/Paper'
 import {List, ListItem} from 'material-ui/List';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
+import InfoHandler from './InfoHandler';
 
 const styles = {
   root: {
@@ -20,8 +21,19 @@ const styles = {
 }
 
 export default class extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false,
+      profile: props.profile,
+    };
+  }
+
   render() {
-    const { pp, firstname, lastname, login, sex, birthday, lookingFor } = this.props.profile;
+    const { open, profile } = this.state;
+    const { pp } = this.props.profile;
+    const { firstname, lastname, login, birthday, lookingFor } = profile;
     const age = new Date().getFullYear() - new Date(birthday).getFullYear();
     const interestedBy = lookingFor === 'Both' ? 'Men and Women' : lookingFor === 'M' ? 'Men' : 'Women'
     return (
@@ -34,8 +46,15 @@ export default class extends Component {
             primaryText={`${firstname} ${lastname}`}
             secondaryText={`Alias ${login}`}
             rightIconButton={
-              <IconButton>
+              <IconButton
+                onTouchTap={() => this.setState({open: true})}
+              >
                 <FontIcon className="material-icons">mode_edit</FontIcon>
+                <InfoHandler
+                  open={open}
+                  onClose={() => this.setState({open: false})}
+                  profile={profile}
+                />
               </IconButton>
             }
             disabled={true}

@@ -11,7 +11,6 @@ const getSignupErrors = async (input) => {
   let user = await db.collection('Users').findOne({login});
   if (user) {
     err.login = 'This login is not availaible, please choose an other';
-    return err;
   }
   user = await db.collection('Users').findOne({email});
   if (user) {

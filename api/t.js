@@ -16,7 +16,6 @@
 // let { a, b, ...rest } = {a:1, b:2, c:3, d:4};
 // let f = r;
 
-let a = {};
-
-if (a) console.log('salut')
-else console.log('lolo');
+let a = 1;
+(a = 2) ? console.log('salut') : null;
+console.log(a);
