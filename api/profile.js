@@ -1,12 +1,13 @@
+import parser from './parser';
+
 const validFields = [
   'firstname',
   'lastname',
-  'sex',
+  'sexValue',
   'birthday',
   'lookingFor',
   'login',
   'email',
-  'profilePic',
   'bio',
 ];
 
@@ -39,6 +40,7 @@ export default {
 
   patch: async function(req, res) {
     const { params: { login }, user: { login: currentUser }, body: { action, data } } = req;
+    console.log(currentUser);
     if (login !== currentUser) {
       return res.status(401).send({error: 'Not allowed to update this profile'});
     }
@@ -67,34 +69,53 @@ export default {
           break;
 
         case 'setProfilePic':
+          if (profile.pictures.indexOf(data) === -1) {
+            return res.status(401).send('Picture not found on your profile');
+          }
           users.updateOne({login}, {$set: {profilePic: data}});
           res.end();
           break;
 
-        case 'editBio':
-          const bio = data.replace(/[\n ]+/g, ' ');
-          if (bio.length > 400) {
-            return res.send({error: 'Text too long'});
+        case 'editInfo':
+          const update = {};
+          const errors = {};
+          console.log('data', data);
+          let unavailable;
+          data.forEach(edit => {
+            let { field, value } = edit;
+            let error;
+            if (field === 'bio') value = value.replace(/[\n ]+/g, ' ');
+            if (validFields.indexOf(field) === -1) {
+              throw 'Invalid request';
+            }
+            if (error = parser[field](value)) errors[field] = error;
+            else update[field] = value;
+          });
+          if (Object.keys(errors).length === 0) {
+            if (update.login) {
+              unavailable = await users.findOne({login: update.login})
+              if (unavailable) errors.login = 'This login is not available';
+            }
+            if (update.email) {
+              unavailable = await users.findOne({email: update.email})
+              if (unavailable) errors.email = 'This email is already use';
+            }
           }
-          users.updateOne({login}, {$set: {bio}});
-          res.end();
+          console.log('update', update);
+          console.log('errors', errors);
+          if (Object.keys(errors).length === 0) users.updateOne({login}, {$set: update});
+          res.send(errors);
           break;
 
-        case 'editInfo':
-          data.forEach(edit => {
-            switch (edit.field) {
-              case firstname:
-
-                break;
-              default:
-
-            }
-          })
-
         default:
+          res.status(401).send('invalid action requested');
 
       }
-    } catch (e) { console.log(e); res.sendStatus(500) }
+    } catch (e) {
+      if (e === 'Invalid request') return res.status(401).send(e);
+      console.log(e);
+      res.sendStatus(500);
+    }
   },
 
 };

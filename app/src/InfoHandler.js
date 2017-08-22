@@ -36,7 +36,7 @@ export default class extends Component {
 
 
   render() {
-    const { profile, open } = this.props;
+    const { profile, open, location, onAuthFailed } = this.props;
     const actions = [
       <FlatButton
         label="Cancel"
@@ -60,6 +60,9 @@ export default class extends Component {
                 lastname={profile.lastname}
                 login={profile.login}
                 email={profile.email}
+                location={location}
+                onAuthFailed={onAuthFailed}
+                onEdit={data => this.props.onEdit(data)}
               />
             </div>
           </Tab>
@@ -69,12 +72,17 @@ export default class extends Component {
                 sex={profile.sex}
                 birthday={profile.birthday}
                 lookingFor={profile.lookingFor}
+                location={location}
+                onAuthFailed={onAuthFailed}
               />
             </div>
           </Tab>
           <Tab label='Password'>
             <div style={styles.container}>
-              <EditPassword/>
+              <EditPassword
+                location={location}
+                onAuthFailed={onAuthFailed}
+              />
             </div>
           </Tab>
         </Tabs>

@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
-import parser from './parser';
+import { activationParser } from './parser';
 import RaisedButton from 'material-ui/RaisedButton';
 import FormInput from './FormInput';
-import './form.css';
 
 class ActivationForm extends Component {
 
@@ -41,13 +40,13 @@ class ActivationForm extends Component {
 
   async activationHandler(e) {
     e.preventDefault();
-    if (this.state.loading) return console.log('Don\'t spam plz');
-    const errors = parser.activation(this.state);
-    if (Object.keys(errors).length !== 0) return this.setState({errors});
+    if (this.state.loading) return;
     const input = {
-      login: this.state.login,
+      login: this.state.login.trim(),
       key: this.state.key
     }
+    const errors = activationParser(input);
+    if (Object.keys(errors).length !== 0) return this.setState({errors});
     this.setState({loading: true});
     try {
       const { data } = await axios.post('/api/activation', input);

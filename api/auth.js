@@ -1,4 +1,4 @@
-import parser, { signupParser } from './parser2';
+import { signupParser, signinParser, activationParser } from './parser';
 import bcrypt from 'bcrypt';
 import mailer from './mailer';
 import jwt from 'jsonwebtoken';
@@ -47,7 +47,45 @@ export default {
       mailer.sendMail(user.email, 'Confirm your inscription to Matcha', mail['txt'], mail['html']);
       db.collection('Users').insertOne(user);
       res.sendStatus(201);
+
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
+
+  signin: async function(req, res) {
+    try {
+      const errors = signinParser(req.body);
+      if (Object.keys(errors).length !== 0) return res.send(errors);
+      const { login, password } = req.body;
+      const user = await db.collection('Users').findOne({login});
+      if (!user) return res.send({login: 'Login not found'});
+      const auth = await bcrypt.compare(password, user.password);
+      if (!auth) return res.send({password: 'Invalid password'});
+      if (!user.active) return res.send({login: 'Your account is not active'});
+      const response = {
+        token: jwt.sign({id: user._id}, config.jwtSecret, {expiresIn: '60 days'}),
+        user: login,
+      };
+      res.send(response);
+
+    } catch (e) { console.log(e); res.sendStatus(500) }
+  },
+
+  activation: async function(req, res) {
+    try {
+      const errors = activationParser(req.body);
+      if (Object.keys(errors).length !== 0) return res.send(errors);
+      const { login, key } = req.body;
+      const user = await db.collection('Users').findOne({login});
+      if (!user) return res.send({login: 'Login not found'});
+      if (user.active) return res.send({login: 'Your account is already active'});
+      if (key !== user.key) return res.send({key: 'Invalid key'});
+      db.collection('Users').updateOne({login}, {$set: {active: true}});
+      res.send({});
+    } catch (e) { console.log(e); res.sendStatus(500) }
+  },
+
+  get: function(req, res) {
+    res.send(req.user.login);
+  }
 
 };

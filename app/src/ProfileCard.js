@@ -28,6 +28,15 @@ export default class extends Component {
       open: false,
       profile: props.profile,
     };
+    this.onEdit = this.onEdit.bind(this);
+  }
+
+  onEdit(data) {
+    const { profile } = this.state;
+    data.forEach(({ field, value }) => {
+      profile[field] = value;
+    });
+    this.setState({profile, open: false});
   }
 
   render() {
@@ -54,6 +63,9 @@ export default class extends Component {
                   open={open}
                   onClose={() => this.setState({open: false})}
                   profile={profile}
+                  location={this.props.location}
+                  onAuthFailed={this.props.onAuthFailed}
+                  onEdit={this.onEdit}
                 />
               </IconButton>
             }

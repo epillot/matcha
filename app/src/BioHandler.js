@@ -23,8 +23,10 @@ export default class extends Component {
       method: 'patch',
       url: '/api' + this.props.location.pathname,
       data: {
-        action: 'editBio',
-        data: bio,
+        action: 'editInfo',
+        data: [
+          {field: 'bio', value: bio},
+        ],
       },
     };
     secureRequest(config, (err, response) => {

@@ -86,7 +86,11 @@ export default class extends Component {
       return (
         <div style={styles.root}>
           <div style={styles.profileInfo}>
-            <ProfileCard profile={{pp, firstname, lastname, login, ...rest}}/>
+            <ProfileCard
+              profile={{pp, firstname, lastname, login, ...rest}}
+              location={this.props.location}
+              onAuthFailed={this.props.onLogout}
+            />
             <div style={styles.container}>
               <ProfileBio bio={bio} onAuthFailed={this.props.onLogout} location={this.props.location}/>
               <Interset onAuthFailed={this.props.onLogout} tags={tags} location={this.props.location}/>

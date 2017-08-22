@@ -8,7 +8,7 @@ import DatePicker from 'material-ui/DatePicker';
 import MenuItem from 'material-ui/MenuItem';
 import Subheader from 'material-ui/Subheader';
 import LinearProgress from 'material-ui/LinearProgress';
-import { signupParser } from './parser2';
+import { signupParser } from './parser';
 
 const styles = {
   form: {

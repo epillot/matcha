@@ -4,7 +4,7 @@ import FormInput from './FormInput';
 import RaisedButton from 'material-ui/RaisedButton';
 import LinearProgress from 'material-ui/LinearProgress';
 import Subheader from 'material-ui/Subheader';
-import parser from './parser';
+import { signinParser } from './parser';
 
 const styles = {
   form: {
@@ -49,7 +49,7 @@ export default class extends Component {
       login: this.state.login.trim(),
       password: this.state.password
     }
-    const errors = parser.signin(input);
+    const errors = signinParser(input);
     if (Object.keys(errors).length !== 0) return this.setState({errors});
     this.setState({loading: true});
     this.props.setLoading(true);
@@ -65,7 +65,6 @@ export default class extends Component {
             });
           }
         } else {
-          console.log(data);
           localStorage.setItem('c_user', data.token);
           this.props.onLog(data.user);
         }
