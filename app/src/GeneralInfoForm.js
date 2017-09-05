@@ -3,6 +3,15 @@ import FormInput from './FormInput';
 import RaisedButton from 'material-ui/RaisedButton';
 import parser from './parser';
 import secureRequest from './secureRequest';
+import FontIcon from 'material-ui/FontIcon';
+
+const styles = {
+  success: {
+    marginLeft: '10px',
+    color: '#4CAF50'
+
+  },
+}
 
 export default class extends Component {
 
@@ -14,9 +23,15 @@ export default class extends Component {
       lastname: props.lastname,
       login: props.login,
       email: props.email,
+      success: false,
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
   }
 
   handleSelect({ target: { name } }) {
@@ -48,16 +63,20 @@ export default class extends Component {
         data,
       },
     }
-    secureRequest(config, (err, response) =>{
+    secureRequest(config, (err, response) => {
       if (err) return this.props.onAuthFailed();
       const errors = response.data;
       if (Object.keys(errors).length !== 0) return this.setState({errors});
       this.props.onEdit(data);
+      this.setState({success: true});
+      setTimeout(() => {
+        if (this.mounted) this.setState({success: false});
+      }, 2500);
     });
   }
 
   render() {
-    const { errors, firstname, lastname, login, email } = this.state;
+    const { errors, firstname, lastname, login, email, success } = this.state;
     return (
       <form
         onChange={({ target: { name, value } }) => this.setState({[name]: value})}
@@ -88,7 +107,7 @@ export default class extends Component {
         <FormInput
           name='email'
           label='Email adress'
-          type='email'
+          type='text'
           value={email.trim()}
           error={errors.email}
         />
@@ -103,6 +122,7 @@ export default class extends Component {
             email.trim() === this.props.email
           }
         />
+        {success ? <FontIcon style={styles.success} className="material-icons">done</FontIcon> : ''}
       </form>
     );
   }

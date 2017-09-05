@@ -68,12 +68,12 @@ export default class extends Component {
 
   async signupHandler(e) {
     e.preventDefault();
-    if (this.state.loading) return console.log('Don\'t spam plz');
+    if (this.state.loading) return;
     const input = {
       firstname: this.state.firstname.trim(),
       lastname: this.state.lastname.trim(),
       sexValue: this.state.sexValue,
-      birthday: this.state.birthday,
+      birthday: this.state.birthday.toString(),
       login: this.state.login.trim(),
       password: this.state.password,
       confirmPassword: this.state.confirmPassword,

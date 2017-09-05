@@ -68,7 +68,7 @@ export default class extends Component {
           localStorage.setItem('c_user', data.token);
           this.props.onLog(data.user);
         }
-      }, 2000);
+      }, 500);
     } catch (e) { console.log(e) }
   }
 

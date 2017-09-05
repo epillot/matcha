@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import secureRequest from './secureRequest';
-import TextField from 'material-ui/TextField';
-import Subheader from 'material-ui/Subheader';
-import Paper from 'material-ui/Paper';
 import GeneralInfoForm from './GeneralInfoForm';
 import EditPassword from './EditPassword';
 import OtherInfoForm from './OtherInfoForm';
@@ -23,18 +19,6 @@ const styles = {
 
 export default class extends Component {
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     profile: props.profile,
-  //   }
-  // }
-
-  handleSubmit() {
-  }
-
-
-
   render() {
     const { profile, open, location, onAuthFailed } = this.props;
     const actions = [
@@ -51,6 +35,7 @@ export default class extends Component {
         open={open}
         actions={actions}
         modal={true}
+        autoScrollBodyContent={true}
       >
         <Tabs style={styles.tabs}>
           <Tab label='General'>
@@ -69,11 +54,12 @@ export default class extends Component {
           <Tab label='Other'>
             <div style={styles.container}>
               <OtherInfoForm
-                sex={profile.sex}
+                sexValue={profile.sexValue}
                 birthday={profile.birthday}
                 lookingFor={profile.lookingFor}
                 location={location}
                 onAuthFailed={onAuthFailed}
+                onEdit={data => this.props.onEdit(data)}
               />
             </div>
           </Tab>
@@ -82,6 +68,7 @@ export default class extends Component {
               <EditPassword
                 location={location}
                 onAuthFailed={onAuthFailed}
+                onEdit={data => this.props.onEdit(data)}
               />
             </div>
           </Tab>

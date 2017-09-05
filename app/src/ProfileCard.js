@@ -36,19 +36,20 @@ export default class extends Component {
     data.forEach(({ field, value }) => {
       profile[field] = value;
     });
-    this.setState({profile, open: false});
+    this.setState({profile});
   }
 
   render() {
     const { open, profile } = this.state;
     const { pp } = this.props.profile;
-    const { firstname, lastname, login, birthday, lookingFor } = profile;
+    const { firstname, lastname, login, sexValue, birthday, lookingFor } = profile;
     const age = new Date().getFullYear() - new Date(birthday).getFullYear();
-    const interestedBy = lookingFor === 'Both' ? 'Men and Women' : lookingFor === 'M' ? 'Men' : 'Women'
+    const interestedBy = lookingFor === 3 ? 'men and women' : lookingFor === 2 ? 'men' : 'women'
+    const sex = sexValue === 1 ? 'Man' : 'Woman';
     return (
       <Paper style={styles.root}>
         <div style={styles.profilePicContainer}>
-          <img style={styles.profilePic} src={`/static/${pp}`}/>
+          <img style={styles.profilePic} src={`/static/${pp}`} alt=''/>
         </div>
         <List>
           <ListItem
@@ -57,6 +58,8 @@ export default class extends Component {
             rightIconButton={
               <IconButton
                 onTouchTap={() => this.setState({open: true})}
+                tooltip='Edit your Informations'
+                tooltipPosition='bottom-left'
               >
                 <FontIcon className="material-icons">mode_edit</FontIcon>
                 <InfoHandler
@@ -72,11 +75,11 @@ export default class extends Component {
             disabled={true}
           />
           <ListItem
-            primaryText={`Age: ${age}`}
+            primaryText={`${sex}, ${age}`}
             disabled={true}
           />
           <ListItem
-            primaryText={`Interested by: ${interestedBy}`}
+            primaryText={`Interested by ${interestedBy}`}
             disabled={true}
           />
         </List>

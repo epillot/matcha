@@ -83,8 +83,8 @@ export default class extends Component {
             errorText={error}
             filter={AutoComplete.caseInsensitiveFilter}
             onUpdateInput={tag => this.setState({tag, error: ''})}
-            dataSource={this.props.allTags}
-            menuProps={{maxHeight: 300}}
+            dataSource={this.props.allTags.sort()}
+            menuProps={{maxHeight: 250}}
           />
           : <CircularProgress/> }
         {loading ? <CircularProgress/> : ''}

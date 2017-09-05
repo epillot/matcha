@@ -4,73 +4,101 @@ import AppBar from 'material-ui/AppBar';
 import FlatButton from 'material-ui/FlatButton';
 import Popover from 'material-ui/Popover';
 import Signin from './Signin';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 class Header extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      label: 'signin',
       open: false,
       loading: false,
+      openMenu: false,
     };
-    this.handleRightTouchTap = this.handleRightTouchTap.bind(this);
-    this.handleRequestClose = this.handleRequestClose.bind(this);
+    this.CloseLeft = this.CloseLeft.bind(this);
     this.onLog = this.onLog.bind(this);
     this.setLoading = this.setLoading.bind(this);
+    this.navigate = this.navigate.bind(this);
+    this.renderRightIcon = this.renderRightIcon.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.loggued) this.setState({label: 'logout'});
-    else this.setState({label: 'signin'});
-  }
 
-  handleRightTouchTap(e) {
-    e.preventDefault();
-    if (this.state.label === 'logout') {
-      localStorage.removeItem('c_user');
-      this.props.onLogout();
-    } else {
-      this.setState({
-        open: true,
-        anchorEl: e.currentTarget,
-      });
-    }
+  renderRightIcon() {
+    return (
+      !this.props.loggued ?
+      <FlatButton
+        label='signin'
+      /> :
+      <IconButton><MoreVertIcon /></IconButton>
+    );
   }
 
   setLoading(loading) {
     this.setState({loading})
   }
 
-  handleRequestClose() {
+  CloseLeft() {
     if (!this.state.loading) this.setState({open: false});
   }
 
   onLog(user) {
-    this.handleRequestClose();
-    this.props.onLog(user);
+    this.setState({open: false});
+    setTimeout(() => {this.props.onLog(user)}, 1000);
+  }
+
+  navigate(e, item, i) {
+    const { history } = this.props;
+    this.setState({open: false});
+    switch (i) {
+      case 0:
+        history.push('/');
+        break;
+
+      case 1:
+        history.push('/profile/' + this.props.loggued);
+        break;
+
+      case 2:
+        setTimeout(() => {
+          localStorage.removeItem('c_user');
+          this.props.onLogout();
+        }, 1000);
+        break;
+
+      default: break;
+    }
   }
 
   render() {
-    const { pathname, search } = this.props.location;
-    const fromActivation = pathname.toLowerCase() === '/home' && search === '?signin';
-    const { label, open, anchorEl } = this.state;
+    const { loggued } = this.props;
+    const { anchor, open } = this.state;
     return (
       <div>
         <AppBar
           title="Matcha"
-          iconElementRight={<FlatButton id='signin' label={label}/>}
-          onRightIconButtonTouchTap={this.handleRightTouchTap}
+          iconElementLeft={<div></div>}
+          iconElementRight={this.renderRightIcon()}
+          onRightIconButtonTouchTap={e => {this.setState({open: true, anchor: e.currentTarget})}}
         />
         <Popover
-          open={open || fromActivation}
-          anchorEl={anchorEl || document.getElementById('signin')}
-          onRequestClose={this.handleRequestClose}
+          open={open}
+          anchorEl={anchor}
+          onRequestClose={this.CloseLeft}
         >
+          {loggued ?
+          <Menu onItemTouchTap={this.navigate}>
+            <MenuItem name='menu1' primaryText="Suggestion" />
+            <MenuItem id='menu2' primaryText="Profile" />
+            <MenuItem id='menu3' primaryText="Logout" />
+          </Menu> :
           <Signin
             onLog={this.onLog}
             setLoading={this.setLoading}
-            history={this.props.history}/>
+            history={this.props.history}
+          />}
         </Popover>
       </div>
     );

@@ -8,12 +8,14 @@ import UnlogguedRoute from './UnlogguedRoute';
 import secureRequest from './secureRequest';
 import MyProfile from './MyProfile';
 
+const salut = () => <div>salut</div>;
+
 class App extends Component {
 
   constructor() {
     super();
     this.state = {
-      loggued: !!localStorage.getItem('c_user'),
+      loggued: null,
     };
     this.onLog = this.onLog.bind(this);
     this.onLogout = this.onLogout.bind(this);
@@ -32,7 +34,6 @@ class App extends Component {
   }
 
   onLog(user) {
-    console.log(user);
     this.setState({loggued: user});
   }
 
@@ -44,8 +45,13 @@ class App extends Component {
     const { loggued } = this.state;
     return (
       <div>
-        <Header loggued={loggued} onLogout={this.onLogout} onLog={this.onLog}/>
+        <Header
+          loggued={loggued}
+          onLogout={this.onLogout}
+          onLog={this.onLog}
+        />
         <Switch>
+          <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={salut}/>
           <PrivateRoute path='/profile/:user' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>

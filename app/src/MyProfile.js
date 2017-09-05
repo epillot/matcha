@@ -5,8 +5,6 @@ import ProfileBio from './ProfileBio';
 import ProfilePictures from './ProfilePictures';
 import ProfileCard from './ProfileCard';
 import Interset from './Interest';
-import Paper from 'material-ui/Paper';
-
 
 const styles = {
   root: {
@@ -35,29 +33,36 @@ export default class extends Component {
       error: '',
     }
     this.mounted = true;
+    this.getProfile = this.getProfile.bind(this);
     this.setProfilePic = this.setProfilePic.bind(this);
     this.onDeleteProfilePic = this.onDeleteProfilePic.bind(this);
   }
 
   componentDidMount() {
-    console.log(this.props.location);
+    this.getProfile(this.props.location.pathname);
+  }
+
+  componentWillReceiveProps(props) {
+    if (props.location.pathname !== this.props.location.pathname) {
+      this.setState({profile: null});
+      this.getProfile(props.location.pathname);
+    }
+  }
+
+  getProfile(profilePath) {
     const config = {
       method: 'get',
-      url: '/api/' + this.props.location.pathname,
+      url: '/api/' + profilePath,
     };
     secureRequest(config, (err, response) => {
       setTimeout(() => {
-        if (err === 'Unauthorized') return this.props.onLogout();
-        else if (err) return console.log(err);
-        if (response.data.error) {
-          return this.setState({profile: false, error: response.data.error})
-        }
+        if (err) return this.props.onLogout();
+        const { data: { error, profile } } = response;
         if (this.mounted) {
-          this.setState({
-            profile: response.data,
-          });
+          if (error) this.setState({profile: false, error})
+          else this.setState({profile});
         }
-      }, 1000);
+      }, 500);
     });
   }
 

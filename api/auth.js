@@ -31,9 +31,9 @@ export default {
       user = {
         firstname,
         lastname,
-        sex: sexValue === 1 ? 'M' : 'W',
+        sexValue,
         birthday,
-        lookingFor: 'Both',
+        lookingFor: 3,
         login,
         password: hash,
         email,
@@ -63,7 +63,7 @@ export default {
       if (!user.active) return res.send({login: 'Your account is not active'});
       const response = {
         token: jwt.sign({id: user._id}, config.jwtSecret, {expiresIn: '60 days'}),
-        user: login,
+        user: user._id,
       };
       res.send(response);
 
@@ -85,7 +85,7 @@ export default {
   },
 
   get: function(req, res) {
-    res.send(req.user.login);
+    res.send(req.user.id);
   }
 
 };

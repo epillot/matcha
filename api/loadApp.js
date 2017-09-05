@@ -42,13 +42,12 @@ export default function(app) {
     const _id = ObjectId(req.user.id);
     const user = await db.collection('Users').findOne({_id});
     if (!user) return res.send('Unauthorized');
-    req.user.login = user.login;
     next();
   })
 
   .get('/api/auth', auth.get)
-  .get('/api/profile/:login', profile.get)
-  .patch('/api/profile/:login', profile.patch)
+  .get('/api/profile/:id', profile.get)
+  .patch('/api/profile/:id', profile.patch)
   .get('/api/alltags', tags.get)
   .patch('/api/allTags', tags.patch)
   .post('/api/pictures', pictures.check, multer({storage}).single('picture'), pictures.post)

@@ -4,6 +4,8 @@ import FlatButton from 'material-ui/FlatButton';
 import secureRequest from './secureRequest';
 import TextField from 'material-ui/TextField';
 
+
+
 export default class extends Component {
 
   constructor(props) {
@@ -13,6 +15,12 @@ export default class extends Component {
       error: '',
     }
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+  }
+
+  handleClose() {
+    this.setState({bio: this.props.bio});
+    this.props.onClose();
   }
 
   handleSubmit() {
@@ -43,13 +51,13 @@ export default class extends Component {
       <FlatButton
         label="Submit"
         primary={true}
-        disabled={bio.length > 400 || bio === this.props.bio}
+        disabled={bio.length > 400 || bio.trim() === this.props.bio}
         onTouchTap={this.handleSubmit}
       />,
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={this.props.onClose}
+        onTouchTap={this.handleClose}
         disabled={false}
       />
     ];
