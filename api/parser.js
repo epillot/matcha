@@ -2,16 +2,16 @@ const parser = {
 
   firstname: function(value) {
     if (typeof value !== 'string') return 'Invalid value';
-    if (!value.match(/^[a-zA-Z]{2,32}$/)) {
-      return 'Name must contain between 2 and 32 characters and only letters';
+    if (!value.match(/^[a-zA-Z-éè ]{2,32}$/)) {
+      return 'Name must contain between 2 and 32 characters and only letters, space or \'-\'';
     }
     return null;
   },
 
   lastname: function(value) {
     if (typeof value !== 'string') return 'Invalid value';
-    if (!value.match(/^[a-zA-Z]{2,32}$/)) {
-      return 'Name must contain between 2 and 32 characters and only letters';
+    if (!value.match(/^[a-zA-Z-éè ]{2,32}$/)) {
+      return 'Name must contain between 2 and 32 characters and only letters, space or \'-\'';
     }
     return null;
   },

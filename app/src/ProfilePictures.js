@@ -61,8 +61,7 @@ export default class extends Component {
 
   render() {
     const { pictures, openUpload } = this.state;
-    const { onAuthFailed, user, setProfilePic, profilePic, location } = this.props;
-    const pp = profilePic || 'default.jpg';
+    const { onAuthFailed, user, setProfilePic, profilePic, location, editable } = this.props;
     return (
       <Paper style={styles.root} zDepth={2}>
         <Toolbar>
@@ -70,17 +69,20 @@ export default class extends Component {
             <ToolbarTitle text="All pictures" />
           </ToolbarGroup>
           <ToolbarGroup>
-            <IconButton tooltip='Add a picture' disabled={pictures.length >= 5} onTouchTap={this.handleOpen}>
-              <FontIcon className="material-icons">add_a_photo</FontIcon>
-            </IconButton>
+            {editable ?
+              <div>
+                <IconButton tooltip='Add a picture' disabled={pictures.length >= 5} onTouchTap={this.handleOpen}>
+                  <FontIcon className="material-icons">add_a_photo</FontIcon>
+                </IconButton>
+                <UploadHandler onAuthFailed={onAuthFailed} open={openUpload} onClose={this.onClose} onUpload={this.onUpload}/>
+              </div> : ''}
           </ToolbarGroup>
         </Toolbar>
-        <UploadHandler onAuthFailed={onAuthFailed} open={openUpload} onClose={this.onClose} onUpload={this.onUpload}/>
         <div style={styles.gridRoot}>
           <GridList style={styles.gridList} cellHeight='auto' padding={8} cols={1}>
             {pictures.map(pic =>
               <PictureTile
-                profilePic={pp}
+                profilePic={profilePic}
                 key={pic}
                 pic={pic}
                 user={user}
@@ -88,6 +90,7 @@ export default class extends Component {
                 onAuthFailed={onAuthFailed}
                 setProfilePic={setProfilePic}
                 location={location}
+                editable={editable}
               />
             )}
           </GridList>

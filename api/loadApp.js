@@ -7,6 +7,7 @@ import multer from 'multer';
 import pictures from './pictures';
 import tags from './tags';
 import auth from './auth';
+import suggestion from './suggestion';
 import { ObjectId } from 'mongodb';
 
 const storage = multer.diskStorage({
@@ -52,6 +53,7 @@ export default function(app) {
   .patch('/api/allTags', tags.patch)
   .post('/api/pictures', pictures.check, multer({storage}).single('picture'), pictures.post)
   .delete('/api/pictures/:pic', pictures.delete)
+  .get('/api/suggestion', suggestion.get)
   //.put('/api/pictures/:pic', pictures.setProfilePic);
   // app.get('*', function(req, res) {
   //   res.sendFile(path.resolve('../app/build/index.html'));

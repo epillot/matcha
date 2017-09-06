@@ -35,26 +35,30 @@ export default class extends Component {
   }
 
   render() {
+    const { editable } = this.props;
     const { bio, open } = this.state;
     const bioToDisplay = bio || 'No biography added yet.'
     return (
       <Card style={styles.root}>
         <Subheader>Biography</Subheader>
         <div style={styles.edit}>
-          <IconButton
-            onTouchTap={() => this.setState({open: true})}
-            tooltip='Edit your biography'
-          >
-            <FontIcon className="material-icons">mode_edit</FontIcon>
-          </IconButton>
-          <BioHandler
-            open={open}
-            bio={bio}
-            onClose={() => this.setState({open: false})}
-            onEdit={this.onEdit}
-            location={this.props.location}
-            onAuthFailed={this.props.onAuthFailed}
-          />
+          {editable ?
+            <div>
+              <IconButton
+                onTouchTap={() => this.setState({open: true})}
+                tooltip='Edit your biography'
+              >
+                <FontIcon className="material-icons">mode_edit</FontIcon>
+              </IconButton>
+              <BioHandler
+                open={open}
+                bio={bio}
+                onClose={() => this.setState({open: false})}
+                onEdit={this.onEdit}
+                location={this.props.location}
+                onAuthFailed={this.props.onAuthFailed}
+              />
+            </div> : ''}
         </div>
         <CardText style={styles.text}>
         {bioToDisplay.split('\n').map((line, i) =>

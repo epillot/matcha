@@ -16,9 +16,8 @@ class Header extends Component {
     this.state = {
       open: false,
       loading: false,
-      openMenu: false,
     };
-    this.CloseLeft = this.CloseLeft.bind(this);
+    this.CloseRight = this.CloseRight.bind(this);
     this.onLog = this.onLog.bind(this);
     this.setLoading = this.setLoading.bind(this);
     this.navigate = this.navigate.bind(this);
@@ -40,7 +39,7 @@ class Header extends Component {
     this.setState({loading})
   }
 
-  CloseLeft() {
+  CloseRight() {
     if (!this.state.loading) this.setState({open: false});
   }
 
@@ -86,13 +85,13 @@ class Header extends Component {
         <Popover
           open={open}
           anchorEl={anchor}
-          onRequestClose={this.CloseLeft}
+          onRequestClose={this.CloseRight}
         >
           {loggued ?
           <Menu onItemTouchTap={this.navigate}>
             <MenuItem name='menu1' primaryText="Suggestion" />
-            <MenuItem id='menu2' primaryText="Profile" />
-            <MenuItem id='menu3' primaryText="Logout" />
+            <MenuItem name='menu2' primaryText="Profile" />
+            <MenuItem name='menu3' primaryText="Logout" />
           </Menu> :
           <Signin
             onLog={this.onLog}

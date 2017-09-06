@@ -96,6 +96,7 @@ export default class extends Component {
 
   render() {
     const { tags, open, allTags, loading } = this.state;
+    const { editable } = this.props;
     const tagsDisplay = tags.map(tag => {
       return {tag: tag, key: tag};
     });
@@ -103,23 +104,26 @@ export default class extends Component {
       <Card style={styles.root}>
         <Subheader>Interest</Subheader>
         <div style={styles.edit}>
-          <IconButton
-            onTouchTap={this.onTagHandlerOpen}
-            tooltip='Add interest (max 6)'
-            disabled={tags.length > 5}
-          >
-            <FontIcon className="material-icons">add</FontIcon>
-          </IconButton>
-          <TagsHandler
-            loading={loading}
-            allTags={allTags}
-            tags={tags}
-            open={open}
-            onClose={() => this.setState({open: false})}
-            onAdd={this.onAdd}
-            location={this.props.location}
-            addTagToDb={this.addTagToDb}
-          />
+          {editable ?
+            <div>
+              <IconButton
+                onTouchTap={this.onTagHandlerOpen}
+                tooltip='Add interest (max 6)'
+                disabled={tags.length > 5}
+              >
+                <FontIcon className="material-icons">add</FontIcon>
+              </IconButton>
+              <TagsHandler
+                loading={loading}
+                allTags={allTags}
+                tags={tags}
+                open={open}
+                onClose={() => this.setState({open: false})}
+                onAdd={this.onAdd}
+                location={this.props.location}
+                addTagToDb={this.addTagToDb}
+              />
+            </div> : ''}
         </div>
         <CardText>
           <div style={styles.wrapper}>
@@ -127,7 +131,7 @@ export default class extends Component {
               <Chip
                 key={tag.key}
                 style={styles.chip}
-                onRequestDelete={() => this.onDelete(tag.key)}
+                onRequestDelete={editable ? () => this.onDelete(tag.key) : null}
               >
                 {'#' + tag.tag}
               </Chip>

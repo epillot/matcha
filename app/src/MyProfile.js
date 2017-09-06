@@ -84,27 +84,40 @@ export default class extends Component {
 
   render() {
     const { profile } = this.state;
+    const editable = this.props.loggued === this.props.match.params.id;
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
       const { pictures, profilePic, firstname, lastname, login, bio, tags, ...rest } = profile;
-      const pp = profilePic || 'default.jpg';
+      //const pp = profilePic || 'default.jpg';
       return (
         <div style={styles.root}>
           <div style={styles.profileInfo}>
             <ProfileCard
-              profile={{pp, firstname, lastname, login, ...rest}}
+              profile={{profilePic, firstname, lastname, login, ...rest}}
               location={this.props.location}
               onAuthFailed={this.props.onLogout}
+              editable={editable}
             />
             <div style={styles.container}>
-              <ProfileBio bio={bio} onAuthFailed={this.props.onLogout} location={this.props.location}/>
-              <Interset onAuthFailed={this.props.onLogout} tags={tags} location={this.props.location}/>
+              <ProfileBio
+                bio={bio}
+                onAuthFailed={this.props.onLogout}
+                location={this.props.location}
+                editable={editable}
+              />
+              <Interset
+                onAuthFailed={this.props.onLogout}
+                tags={tags}
+                location={this.props.location}
+                editable={editable}
+              />
             </div>
           </div>
           <ProfilePictures
+            editable={editable}
             location={this.props.location}
             onAuthFailed={this.props.onLogout}
-            profilePic={pp}
+            profilePic={profilePic}
             pictures={pictures}
             user={{firstname, lastname, login}}
             setProfilePic={this.setProfilePic}

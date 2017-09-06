@@ -47,7 +47,7 @@ export default class extends Component {
   }
 
   render() {
-    const { pic, profilePic, user, onAuthFailed, location } = this.props;
+    const { pic, profilePic, user, onAuthFailed, location, editable } = this.props;
     const { open } = this.state;
     const actions = [
       <FlatButton
@@ -74,6 +74,7 @@ export default class extends Component {
             setProfilePic={this.setProfilePic}
             onDelete={this.onDelete}
             onAuthFailed={onAuthFailed}
+            editable={editable}
           />
         </Dialog>
       </GridTile>

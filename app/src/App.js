@@ -7,8 +7,7 @@ import PrivateRoute from './privateRoute';
 import UnlogguedRoute from './UnlogguedRoute';
 import secureRequest from './secureRequest';
 import MyProfile from './MyProfile';
-
-const salut = () => <div>salut</div>;
+import Suggestion from './Suggestion';
 
 class App extends Component {
 
@@ -51,8 +50,8 @@ class App extends Component {
           onLog={this.onLog}
         />
         <Switch>
-          <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={salut}/>
-          <PrivateRoute path='/profile/:user' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
+          <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
+          <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
         </Switch>

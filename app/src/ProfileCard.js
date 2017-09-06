@@ -41,13 +41,16 @@ export default class extends Component {
 
   render() {
     const { open, profile } = this.state;
-    const { pp } = this.props.profile;
+    const pp = this.props.profile.profilePic || 'default.jpg';
+    const { editable } = this.props;
+    if (this.props.clickable) styles.root.cursor = 'pointer';
+    else delete styles.root.cursor;
     const { firstname, lastname, login, sexValue, birthday, lookingFor } = profile;
     const age = new Date().getFullYear() - new Date(birthday).getFullYear();
-    const interestedBy = lookingFor === 3 ? 'men and women' : lookingFor === 2 ? 'men' : 'women'
+    const interestedBy = lookingFor === 3 ? 'men and women' : lookingFor === 2 ? 'women' : 'men'
     const sex = sexValue === 1 ? 'Man' : 'Woman';
     return (
-      <Paper style={styles.root}>
+      <Paper style={styles.root} onClick={this.props.onClick}>
         <div style={styles.profilePicContainer}>
           <img style={styles.profilePic} src={`/static/${pp}`} alt=''/>
         </div>
@@ -56,6 +59,7 @@ export default class extends Component {
             primaryText={`${firstname} ${lastname}`}
             secondaryText={`Alias ${login}`}
             rightIconButton={
+              editable ?
               <IconButton
                 onTouchTap={() => this.setState({open: true})}
                 tooltip='Edit your Informations'
@@ -70,7 +74,7 @@ export default class extends Component {
                   onAuthFailed={this.props.onAuthFailed}
                   onEdit={this.onEdit}
                 />
-              </IconButton>
+              </IconButton> : null
             }
             disabled={true}
           />

@@ -102,8 +102,8 @@ export default class extends Component {
           onChange={this.handleLookChange}
           errorText={errors.lookingFor}
         >
-          <MenuItem value={1} primaryText="Women" />
-          <MenuItem value={2} primaryText="Men" />
+          <MenuItem value={1} primaryText="Men" />
+          <MenuItem value={2} primaryText="Women" />
           <MenuItem value={3} primaryText="Both" />
         </SelectField>
         <br/>
