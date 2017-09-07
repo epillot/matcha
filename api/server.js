@@ -2,10 +2,13 @@ import express from 'express';
 import { MongoClient } from 'mongodb';
 import config from './config/config';
 import loadApp from './loadApp';
+import path from 'path';
+//import cors from 'cors'
 
 global.config = config;
 const port = process.env.PORT || 8000;
 const app = express();
+//app.use(cors());
 app.use('/static', express.static('uploads'));
 loadApp(app);
 

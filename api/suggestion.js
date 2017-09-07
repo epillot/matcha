@@ -14,6 +14,7 @@ export default {
       lookingFor: 1,
       login: 1,
       profilePic: 1,
+      loc: 1,
     };
     try {
       const { lookingFor, sexValue } = await users.findOne({_id});

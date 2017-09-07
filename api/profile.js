@@ -25,6 +25,7 @@ const profileToSend = {
   profilePic: 1,
   tags: 1,
   bio: 1,
+  loc: 1,
 };
 
 export default {

@@ -52,7 +52,7 @@ export default class extends Component {
   getProfile(profilePath) {
     const config = {
       method: 'get',
-      url: '/api/' + profilePath,
+      url: '/api' + profilePath,
     };
     secureRequest(config, (err, response) => {
       setTimeout(() => {

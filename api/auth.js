@@ -2,6 +2,8 @@ import { signupParser, signinParser, activationParser } from './parser';
 import bcrypt from 'bcrypt';
 import mailer from './mailer';
 import jwt from 'jsonwebtoken';
+import ipInfo from 'ipinfo';
+import axios from 'axios';
 
 const activationKey = function() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -11,6 +13,24 @@ const activationKey = function() {
   }
   return key;
 };
+
+const getLocation = function() {
+  return new Promise((resolve, reject) => {
+    ipInfo((err, cloc) =>{
+      if (err) reject(err);
+      resolve(cloc.loc);
+    });
+  });
+};
+
+const getAdress = function(latlng) {
+  const url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latlng + '&key=AIzaSyDE0o19-BhBWjMrmbPHrHVTTttfWHFeRyI';
+  return new Promise((resolve, reject) => {
+    axios.get(url).then(({ data }) => {
+      resolve(data.results[1].formatted_address);
+    }).catch(err => reject(err));
+  });
+}
 
 export default {
 
@@ -28,6 +48,9 @@ export default {
       }
       const hash = await bcrypt.hash(password, 10);
       const key = activationKey();
+      const latlng = await getLocation();
+      const adress = await getAdress(latlng);
+      const loc = {latlng, adress};
       user = {
         firstname,
         lastname,
@@ -40,6 +63,7 @@ export default {
         pictures: [],
         tags: [],
         bio: '',
+        loc,
         key,
         active: false
       };

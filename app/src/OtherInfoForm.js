@@ -5,6 +5,7 @@ import DatePicker from 'material-ui/DatePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import secureRequest from './secureRequest';
+import TextField from 'material-ui/TextField';
 
 const maxDate = new Date();
 maxDate.setFullYear(maxDate.getFullYear() - 18);
@@ -106,6 +107,10 @@ export default class extends Component {
           <MenuItem value={2} primaryText="Women" />
           <MenuItem value={3} primaryText="Both" />
         </SelectField>
+        <TextField
+          floatingLabelText='location'
+
+        />
         <br/>
         <RaisedButton
           type='submit'

@@ -1,6 +1,5 @@
 import morgan from 'morgan';
 import bodyParser from 'body-parser';
-import path from 'path';
 import expressJwt from 'express-jwt';
 import profile from './profile';
 import multer from 'multer';
@@ -9,6 +8,7 @@ import tags from './tags';
 import auth from './auth';
 import suggestion from './suggestion';
 import { ObjectId } from 'mongodb';
+import ipInfo from 'ipinfo';
 
 const storage = multer.diskStorage({
   destination: 'uploads/tmp/',
@@ -19,15 +19,21 @@ const storage = multer.diskStorage({
 });
 
 export default function(app) {
-  // app.use(express.static(path.resolve('../app/build'), {
-  //   dotfiles: 'ignore',
-  //   index: false,
-  // }));
-
 
   app.use(morgan('dev'))
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
+  // .use((req, res, next) => {
+  //   var ip = req.headers['x-forwarded-for'] ||
+  //    req.connection.remoteAddress ||
+  //    req.socket.remoteAddress ||
+  //    req.connection.socket.remoteAddress;
+  //   console.log(ip);
+  //   ipInfo(ip, (err, res) => {
+  //     console.log(res || err);
+  //     next()
+  //   })
+  // })
 
   .post('/api/signup', auth.signup)
   .post('/api/activation', auth.activation)
@@ -55,7 +61,4 @@ export default function(app) {
   .delete('/api/pictures/:pic', pictures.delete)
   .get('/api/suggestion', suggestion.get)
   //.put('/api/pictures/:pic', pictures.setProfilePic);
-  // app.get('*', function(req, res) {
-  //   res.sendFile(path.resolve('../app/build/index.html'));
-  // });
 };
