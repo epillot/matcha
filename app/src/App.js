@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Switch } from 'react-router-dom';
 import Home from './Home';
-import Header from './Header';
+import Header from './Header2';
 import ActivationForm from './ActivationForm';
 import PrivateRoute from './privateRoute';
 import UnlogguedRoute from './UnlogguedRoute';
@@ -26,9 +26,12 @@ class App extends Component {
       url: '/api/auth'
     };
     secureRequest(config, (err, response) => {
-      this.setState({
-        loggued: err ? false : response.data
-      });
+      let loggued = false;
+      if (!err) {
+        loggued = response.data;
+        //global.socket.emit('logged');
+      }
+      this.setState({loggued});
     });
   }
 
@@ -37,6 +40,7 @@ class App extends Component {
   }
 
   onLogout() {
+    global.socket.emit('logout');
     this.setState({loggued: false});
   }
 

@@ -6,7 +6,11 @@ export default function(config, cb) {
   config.headers = Object.assign(config.headers || {}, {Authorization: `Bearer ${token}`});
   axios(config).then(response => {
     if (response.data === 'Unauthorized') cb('Unauthorized');
-    else cb(null, response);
+    else {
+      const id = response.headers['x-requested-by'];
+      global.socket.emit('request', {id});
+      cb(null, response);
+    }
   }).catch(err => console.log(err));
 }
 

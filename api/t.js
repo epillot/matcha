@@ -1,12 +1,16 @@
-import axios from '../app/node_modules/axios'
+import { MongoClient } from 'mongodb';
+import config from './config/config';
 
-const key = 'AIzaSyDE0o19-BhBWjMrmbPHrHVTTttfWHFeRyI';
-const url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=48.8833,2.2667&key=' + key;
 
-axios.get(url)
-.then(({ data }) => {
-  data.results.forEach(result => {
-    console.log(result);
-  })
-})
-.catch(err => console.log(err))
+MongoClient.connect(config.mongoConfig).then(db => {
+  global.db = db;
+  return db.collection('Users').update({}, {$set: {ts: Date.now()}}, {multi: true});
+}).then(res => {
+  console.log('success', res);
+  db.close();
+  process.exit(0);
+}).catch(e => {
+  db.close()
+  console.log(e);
+  process.exit(1);
+});

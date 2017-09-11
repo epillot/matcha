@@ -47,7 +47,7 @@ export default class extends Component {
   }
 
   render() {
-    const { pic, profilePic, user, onAuthFailed, location, editable } = this.props;
+    const { pic, profilePic, onAuthFailed, location, editable } = this.props;
     const { open } = this.state;
     const actions = [
       <FlatButton
@@ -70,7 +70,6 @@ export default class extends Component {
             location={location}
             pic={pic}
             profilePic={profilePic}
-            user={user}
             setProfilePic={this.setProfilePic}
             onDelete={this.onDelete}
             onAuthFailed={onAuthFailed}

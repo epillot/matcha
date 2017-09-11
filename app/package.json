@@ -11,7 +11,8 @@
     "react-dom": "^15.5.4",
     "react-dropzone": "^3.13.3",
     "react-router-dom": "^4.1.1",
-    "react-tap-event-plugin": "^2.0.1"
+    "react-tap-event-plugin": "^2.0.1",
+    "socket.io-client": "^2.0.3"
   },
   "devDependencies": {
     "react-scripts": "1.0.7"

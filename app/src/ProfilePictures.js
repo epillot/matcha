@@ -61,7 +61,7 @@ export default class extends Component {
 
   render() {
     const { pictures, openUpload } = this.state;
-    const { onAuthFailed, user, setProfilePic, profilePic, location, editable } = this.props;
+    const { onAuthFailed, setProfilePic, profilePic, location, editable } = this.props;
     return (
       <Paper style={styles.root} zDepth={2}>
         <Toolbar>
@@ -85,7 +85,6 @@ export default class extends Component {
                 profilePic={profilePic}
                 key={pic}
                 pic={pic}
-                user={user}
                 onDelete={this.onDelete}
                 onAuthFailed={onAuthFailed}
                 setProfilePic={setProfilePic}

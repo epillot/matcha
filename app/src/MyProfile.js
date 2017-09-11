@@ -5,12 +5,18 @@ import ProfileBio from './ProfileBio';
 import ProfilePictures from './ProfilePictures';
 import ProfileCard from './ProfileCard';
 import Interset from './Interest';
+import ChangeLog from './ChangeLog';
 
 const styles = {
   root: {
     display: 'flex',
     flexDirection: 'column',
     padding: '10px'
+  },
+  interact: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   profileInfo: {
     display: 'flex',
@@ -40,6 +46,15 @@ export default class extends Component {
 
   componentDidMount() {
     this.getProfile(this.props.location.pathname);
+    const { loggued, match: { params: { id } } } = this.props;
+    if (loggued !== id) {
+      const data = {
+        from: loggued,
+        to: id,
+      };
+      global.socket.emit('visit', data);
+    }
+
   }
 
   componentWillReceiveProps(props) {
@@ -87,13 +102,20 @@ export default class extends Component {
     const editable = this.props.loggued === this.props.match.params.id;
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
-      const { pictures, profilePic, firstname, lastname, login, bio, tags, ...rest } = profile;
+      const { pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
       //const pp = profilePic || 'default.jpg';
       return (
         <div style={styles.root}>
+          <div style={styles.interact}>
+            <ChangeLog
+              ts={ts}
+              logged={logged}
+              id={profile._id}
+            />
+          </div>
           <div style={styles.profileInfo}>
             <ProfileCard
-              profile={{profilePic, firstname, lastname, login, ...rest}}
+              profile={{profilePic, ...rest}}
               location={this.props.location}
               onAuthFailed={this.props.onLogout}
               editable={editable}
@@ -119,7 +141,6 @@ export default class extends Component {
             onAuthFailed={this.props.onLogout}
             profilePic={profilePic}
             pictures={pictures}
-            user={{firstname, lastname, login}}
             setProfilePic={this.setProfilePic}
             onDeleteProfilePic={this.onDeleteProfilePic}
           />

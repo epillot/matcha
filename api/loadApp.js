@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import expressJwt from 'express-jwt';
 import profile from './profile';
 import multer from 'multer';
+import path from 'path';
 import pictures from './pictures';
 import tags from './tags';
 import auth from './auth';
@@ -46,10 +47,18 @@ export default function(app) {
     }
   })
   .use(async (req, res, next) => {
-    const _id = ObjectId(req.user.id);
+    const { id } = req.user;
+    const _id = ObjectId(id);
     const user = await db.collection('Users').findOne({_id});
     if (!user) return res.send('Unauthorized');
+    res.set('x-requested-by', id);
     next();
+    // if (USERS.indexOf(id) === -1) {
+    //   USERS.push(id);
+    //   IO.sockets.emit('logged', {id});
+    //   console.log(USERS);
+    // }
+    // next();
   })
 
   .get('/api/auth', auth.get)

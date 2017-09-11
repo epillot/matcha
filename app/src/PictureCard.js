@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Card, CardActions, CardHeader, CardMedia } from 'material-ui/Card';
+import {Card, CardActions, CardMedia } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import secureRequest from './secureRequest';
 import LinearProgress from 'material-ui/LinearProgress';
@@ -52,24 +52,26 @@ export default class extends Component {
   }
 
   render() {
-    const { editable, pic, profilePic, user: { firstname, lastname, login } } = this.props;
+    const { editable, pic, profilePic } = this.props;
     const { loading } = this.state;
-    const pp = profilePic || 'default.jpg';
     return (
       <Card>
-        <CardHeader
-          title={`${firstname} ${lastname}`}
-          subtitle={`alias ${login}`}
-          avatar={`/static/${pp}`}
-        />
         <CardMedia>
           <img src={`/static/${pic}`} alt="" />
         </CardMedia>
         <CardActions>
           {editable ?
             <div>
-              <FlatButton label="delete" onTouchTap={this.handleDelete} disabled={loading}/>
-              <FlatButton label="set as profile picture" onTouchTap={this.setProfilePic} disabled={loading || pic === profilePic}/>
+              <FlatButton
+                label="delete"
+                onTouchTap={this.handleDelete}
+                disabled={loading}
+              />
+              <FlatButton
+                label="set as profile picture"
+                onTouchTap={this.setProfilePic}
+                disabled={loading || pic === profilePic}
+              />
             </div> : ''}
         </CardActions>
         {loading ? <LinearProgress/> : ''}

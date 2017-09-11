@@ -14,7 +14,7 @@ const validFields = [
 ];
 
 const profileToSend = {
-  _id: 0,
+  _id: 1,
   firstname: 1,
   lastname: 1,
   sexValue: 1,
@@ -26,6 +26,7 @@ const profileToSend = {
   tags: 1,
   bio: 1,
   loc: 1,
+  ts: 1,
 };
 
 export default {
@@ -39,6 +40,7 @@ export default {
     try {
       const profile = await db.collection('Users').findOne({_id}, profileToSend);
       if (!profile) return res.send({error: 'No profile found'});
+      if (ioServer.isLogged(id)) profile.logged = true;
       res.send({profile});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },

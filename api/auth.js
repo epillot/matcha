@@ -64,6 +64,7 @@ export default {
         tags: [],
         bio: '',
         loc,
+        ts: Date.now(),
         key,
         active: false
       };

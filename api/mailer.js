@@ -25,7 +25,7 @@ const sendMail = (to, subject, msgTxt, msgHtml) => {
   };
 
   transporter.sendMail(mail, (error, info) => {
-    if (error) console.log('An error occured ', error);
+    if (error) console.log('An error occured during when sending mail');
     else console.log('Mail sent: ', info.response);
   });
 }

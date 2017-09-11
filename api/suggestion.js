@@ -15,6 +15,7 @@ export default {
       login: 1,
       profilePic: 1,
       loc: 1,
+      ts: 1,
     };
     try {
       const { lookingFor, sexValue } = await users.findOne({_id});
@@ -25,6 +26,11 @@ export default {
       if (lookingFor !== 3) filter.sexValue = lookingFor;
       filter.lookingFor = {$in: [sexValue, 3]};
       const matchs = await users.find(filter, ToSend).toArray();
+      matchs.forEach(match => {
+        if (ioServer.isLogged(match._id)) {
+          match.logged = true;
+        }
+      });
       res.send(matchs)
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
