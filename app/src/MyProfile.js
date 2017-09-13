@@ -107,7 +107,6 @@ export default class extends Component {
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
       const { pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
-      //const pp = profilePic || 'default.jpg';
       return (
         <div style={styles.root}>
           <div style={styles.interact}>

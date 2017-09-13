@@ -1,7 +1,6 @@
 import React from 'react';
 import Notif from 'material-ui/svg-icons/social/notifications';
 import NotifNone from 'material-ui/svg-icons/social/notifications-none';
-import ProfileIcon from 'material-ui/svg-icons/social/person';
 import Badge from 'material-ui/Badge';
 import IconButton from 'material-ui/IconButton';
 
@@ -22,10 +21,11 @@ const styles = {
 }
 
 export default function(props) {
+
   if (!props.count) {
     return (
       <IconButton
-        onTouchTap={e => props.onTouchTap(e)}
+        onTouchTap={props.onTouchTap}
         iconStyle={styles.icon}
         style={styles.small}
       >
@@ -39,14 +39,15 @@ export default function(props) {
         badgeContent={props.count}
         secondary={true}
       >
-      <IconButton
-        onTouchTap={e => props.onTouchTap(e)}
-        iconStyle={styles.icon}
-        style={styles.small}
-      >
-        <Notif/>
-      </IconButton>
+        <IconButton
+          onTouchTap={props.onTouchTap}
+          iconStyle={styles.icon}
+          style={styles.small}
+        >
+          <Notif/>
+        </IconButton>
       </Badge>
-    )
+    );
   }
+
 }

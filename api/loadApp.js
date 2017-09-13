@@ -64,7 +64,9 @@ export default function(app) {
 
   .get('/api/auth', auth.get)
   .get('/api/notifications', notifications.get)
-  .get('/api/notifications/count', notifications.getCount)
+  .patch('/api/notifications', notifications.setAsRead)
+  .get('/api/notifications/unread', notifications.getUnread)
+  .delete('/api/notifications/:id', notifications.delete)
   .get('/api/profile/:id', profile.get)
   .patch('/api/profile/:id', profile.patch)
   .get('/api/alltags', tags.get)

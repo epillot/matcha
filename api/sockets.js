@@ -75,6 +75,7 @@ class sockets extends io {
       if (!pTo) return;
       socket.join('log' + to);
       const notif = {
+        to: idTo,
         from: {
           id: idFrom,
           login: pFrom.login,
@@ -84,7 +85,7 @@ class sockets extends io {
         read: false,
         ts,
       }
-      users.updateOne({_id: idTo}, {$push: {notif}});
+      db.collection('notifs').insertOne(notif);
       const target = this.getUserById(to);
       if (target) {
         this.to(target.socketId).emit('notif');

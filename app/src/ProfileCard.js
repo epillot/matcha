@@ -45,7 +45,7 @@ export default class extends Component {
     if (this.props.clickable) styles.root.cursor = 'pointer';
     else delete styles.root.cursor;
     const { firstname, lastname, login, sexValue, birthday, lookingFor, loc: { adress } } = profile;
-    const pp = profile.profilePic || 'default.jpg';
+    const pp = this.props.profile.profilePic || 'default.jpg';
     const age = new Date().getFullYear() - new Date(birthday).getFullYear();
     const interestedBy = lookingFor === 3 ? 'men and women' : lookingFor === 2 ? 'women' : 'men'
     const sex = sexValue === 1 ? 'Man' : 'Woman';

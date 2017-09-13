@@ -36,23 +36,37 @@ export default class extends Component {
       count: 0,
       notif: [],
       open: false,
+      newNotif: false,
       loading: false,
     }
     this.mounted = true;
     this.logout = this.logout.bind(this);
     this.getNotif = this.getNotif.bind(this);
     this.closeNotif = this.closeNotif.bind(this);
+    this.delNotif = this.delNotif.bind(this);
+    this.setAsRead = this.setAsRead.bind(this);
   }
 
   componentDidMount() {
+    global.socket.on('notif', () => {
+      this.setState(state => {
+        state.count++;
+        state.newNotif = true;
+        return state;
+      });
+    });
     const config = {
       method: 'get',
-      url: '/api/notifications/count'
+      url: '/api/notifications'
     };
     secureRequest(config, (err, response) => {
       if (err) return this.props.onLogout();
-      const { count } = response.data;
-      this.setState({count});
+      const { notif } = response.data;
+      let count = 0;
+      notif.forEach(n => {
+        if (!n.read) count++;
+      });
+      this.setState({notif, count});
     });
   }
 
@@ -67,29 +81,64 @@ export default class extends Component {
     }, 500);
   }
 
-  getNotif(e) {
-    this.setState({open: true, anchor: e.currentTarget});
-    if (this.state.count) {
+  getNotif(elem) {
+    this.setState({open: true, anchor: document.getElementById('notif'), count: 0});
+    if (this.state.newNotif) {
       this.setState({loading: true})
       const config = {
         method: 'get',
-        url: '/api/notifications',
+        url: '/api/notifications/unread',
       };
       secureRequest(config, (err, response) => {
         setTimeout(() => {
           if (err) return this.props.onLogout();
-          const { notif } = response.data;
-          notif.sort((n1, n2) => {
-            return n2.ts - n1.ts
+          const { notifUnread } = response.data;
+          const { notif } = this.state;
+          notifUnread.forEach(n => {
+            notif.push(n);
           });
-          this.setState({notif, loading: false});
+          this.setState({notif, loading: false, newNotif: false});
+          this.setAsRead();
         }, 500);
       });
-    }
+    } else this.setAsRead();
+  }
+
+  setAsRead(cb) {
+    const config = {
+      method: 'patch',
+      url: '/api/notifications'
+    };
+    secureRequest(config, err => {
+      if (err) return this.props.onLogout();
+      if (cb) cb();
+    });
+  }
+
+  delNotif(id) {
+    const config = {
+      method: 'delete',
+      url: '/api/notifications/' + id,
+    };
+    secureRequest(config, (err, response) => {
+      if (err) return this.props.onLogout();
+      const { notif } = this.state;
+      for (var i = 0; i < notif.length; i++) {
+        if (notif[i]._id === id) break;
+      }
+      if (i < notif.length) {
+        notif.splice(i, 1);
+        this.setState({notif});
+      }
+    });
   }
 
   closeNotif() {
-    if (!this.state.loading) this.setState({open: false});
+    if (!this.state.loading) {
+      const { notif } = this.state;
+      notif.forEach(n => n.read = true);
+      this.setState({notif, open: false});
+    }
   }
 
   render() {
@@ -98,16 +147,21 @@ export default class extends Component {
     const profilePath = '/profile/' + user;
     return (
       <div style={styles.icons}>
-        <NotifIcon
-          count={count}
-          onTouchTap={this.getNotif}
-        />
+        <div id='notif'>
+          <NotifIcon
+            count={count}
+            onTouchTap={this.getNotif}
+            onLogout={this.props.onLogout}
+          />
+        </div>
         <NotifDisplayer
           open={open}
           notifs={notif}
           anchor={anchor}
           loading={loading}
           closeNotif={this.closeNotif}
+          delNotif={this.delNotif}
+          getNotif={this.getNotif}
         />
         <IconButton
           iconStyle={styles.icon}

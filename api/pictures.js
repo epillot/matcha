@@ -41,9 +41,6 @@ export default {
       if (pictures.indexOf(pic) === -1) {
         return res.status(401).send({error: 'Not allowed to delete this picture'});
       }
-      fs.unlink(`uploads/${pic}`, err => {
-        if (err) console.log(err);
-      });
       const update = {$pull: {pictures: pic}};
       if (pic === profilePic) update.$set = {profilePic: null};
       db.collection('Users').updateOne({_id}, update);
