@@ -53,6 +53,7 @@ class Header extends Component {
     return (
       <div>
         <AppBar
+          style={{position: 'fixed', top: '0'}}
           title="Matcha"
           iconElementLeft={<IconButton><GroupIcon/></IconButton>}
           showMenuIconButton={!!loggued}

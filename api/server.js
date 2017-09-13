@@ -35,6 +35,10 @@ ioServer.on('connection', socket => {
     ioServer.handleVisit(from, to, socket);
   });
 
+  socket.on('leavelog', ({ id }) => {
+    socket.leave('log' + id);
+  })
+
 })
 
 MongoClient.connect(config.mongoConfig).then(db => {

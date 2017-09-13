@@ -50,23 +50,18 @@ class sockets extends io {
       const ts = Date.now();
       this.del(socket.id);
       db.collection('Users').updateOne({_id}, {$set: {ts}});
-      socket.leave('users', () => {
-        socket.to('users').emit('changelog', {id: user.id, status: false, ts});
-      })
-      console.log('users after disconnect', this.users);
+      socket.to('log' + user.id).emit('changelog', {id: user.id, status: false, ts});
     }
   }
 
   connect(id, socket) {
     if (!this.isLogged(id)) {
       this.add(id, socket.id);
-      socket.join('users', () => {
-        socket.to('users').emit('changelog', {id, status: true});
-      });
+      socket.to('log' + id).emit('changelog', {id, status: true});
     }
   }
 
-  async handleVisit(from, to) {
+  async handleVisit(from, to, socket) {
     try {
       var idFrom = ObjectId(from);
       var idTo = ObjectId(to);
@@ -78,15 +73,21 @@ class sockets extends io {
       if (!pFrom) return;
       const pTo = await users.findOne({_id: idTo});
       if (!pTo) return;
+      socket.join('log' + to);
       const notif = {
-        from,
+        from: {
+          id: idFrom,
+          login: pFrom.login,
+          pp: pFrom.profilePic,
+        },
         object: 'visit',
+        read: false,
         ts,
       }
       users.updateOne({_id: idTo}, {$push: {notif}});
       const target = this.getUserById(to);
       if (target) {
-        this.to(target.socketId).emit('notif', notif);
+        this.to(target.socketId).emit('notif');
       }
 
     } catch (e) { console.log(e) }

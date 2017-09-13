@@ -9,6 +9,12 @@ import secureRequest from './secureRequest';
 import MyProfile from './MyProfile';
 import Suggestion from './Suggestion';
 
+const styles = {
+  container: {
+    marginTop: '70px',
+  }
+}
+
 class App extends Component {
 
   constructor() {
@@ -53,12 +59,14 @@ class App extends Component {
           onLogout={this.onLogout}
           onLog={this.onLog}
         />
+        <div style={styles.container}>
         <Switch>
           <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
           <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
         </Switch>
+        </div>
       </div>
     );
   }

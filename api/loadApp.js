@@ -8,6 +8,7 @@ import pictures from './pictures';
 import tags from './tags';
 import auth from './auth';
 import suggestion from './suggestion';
+import notifications from './notifications';
 import { ObjectId } from 'mongodb';
 import ipInfo from 'ipinfo';
 
@@ -62,6 +63,8 @@ export default function(app) {
   })
 
   .get('/api/auth', auth.get)
+  .get('/api/notifications', notifications.get)
+  .get('/api/notifications/count', notifications.getCount)
   .get('/api/profile/:id', profile.get)
   .patch('/api/profile/:id', profile.patch)
   .get('/api/alltags', tags.get)

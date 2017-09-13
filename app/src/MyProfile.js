@@ -45,37 +45,37 @@ export default class extends Component {
   }
 
   componentDidMount() {
-    this.getProfile(this.props.location.pathname);
-    const { loggued, match: { params: { id } } } = this.props;
-    if (loggued !== id) {
-      const data = {
-        from: loggued,
-        to: id,
-      };
-      global.socket.emit('visit', data);
-    }
-
+    this.getProfile(this.props.match.params.id);
   }
 
   componentWillReceiveProps(props) {
-    if (props.location.pathname !== this.props.location.pathname) {
+    if (props.match.params.id !== this.props.match.params.id) {
       this.setState({profile: null});
-      this.getProfile(props.location.pathname);
+      this.getProfile(props.match.params.id);
     }
   }
 
-  getProfile(profilePath) {
+  getProfile(id) {
     const config = {
       method: 'get',
-      url: '/api' + profilePath,
+      url: '/api/profile/' + id,
     };
     secureRequest(config, (err, response) => {
       setTimeout(() => {
         if (err) return this.props.onLogout();
         const { data: { error, profile } } = response;
         if (this.mounted) {
-          if (error) this.setState({profile: false, error})
-          else this.setState({profile});
+          if (error) this.setState({profile: false, error});
+          else {
+            this.setState({profile});
+            if (id !== this.props.loggued) {
+              const data = {
+                from: this.props.loggued,
+                to: id,
+              };
+              global.socket.emit('visit', data);
+            }
+          }
         }
       }, 500);
     });
@@ -83,6 +83,10 @@ export default class extends Component {
 
   componentWillUnmount() {
     this.mounted = false;
+    const { loggued, match: { params: { id } } } = this.props;
+    if (this.state.profile && loggued === id) {
+      global.socket.emit('leavelog', {id});
+    }
   }
 
   setProfilePic(pic) {
