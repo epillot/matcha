@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
 import ReloadIcon from 'material-ui/svg-icons/notification/sync';
 import Subheader from 'material-ui/Subheader';
+import secureRequest from './secureRequest';
 
 const styles = {
   popover: {
@@ -22,9 +23,11 @@ const styles = {
   },
   read: {
     backgroundColor: '#FFFFFF',
+    marginBottom: '5px',
   },
   unread: {
     backgroundColor: '#E0E0E0',
+    marginBottom: '5px',
   },
   loading: {
     display: 'flex',
@@ -37,9 +40,13 @@ export default class extends Component {
 
   constructor() {
     super();
+    this.state = {
+      loading: false,
+    }
     this.renderNotif = this.renderNotif.bind(this);
     this.getMessage = this.getMessage.bind(this);
     this.getTime = this.getTime.bind(this);
+    this.delNotif = this.delNotif.bind(this);
   }
 
   getMessage(notif) {
@@ -47,6 +54,20 @@ export default class extends Component {
       case 'visit': return `${notif.from.login} visited your profile.`
       default: return '';
     }
+  }
+
+  delNotif(id) {
+    if (this.state.loading) return;
+    this.setState({loading: true});
+    const config = {
+      method: 'delete',
+      url: '/api/notifications/' + id,
+    };
+    secureRequest(config, (err, response) => {
+      if (err) return this.props.onLogout();
+      this.props.delNotif(id);
+      this.setState({loading: false});
+    });
   }
 
 
@@ -66,18 +87,21 @@ export default class extends Component {
       notifs.map(notif => (
         <div key={notif._id}>
           <ListItem
+            disabled={this.state.loading}
             style={notif.read ? styles.read : styles.unread}
             leftAvatar={<Avatar src={`/static/${notif.from.pp}`}/>}
             primaryText={this.getMessage(notif)}
             secondaryText={this.getTime(Date.now() - notif.ts)}
+            onTouchTap={() => this.props.history.push('/profile/' + notif.from.id)}
             rightIconButton={
               <IconButton
-                onTouchTap={() => this.props.delNotif(notif._id)}
+                disabled={this.state.loading}
+                onTouchTap={() => this.delNotif(notif._id)}
               >
                 <ClearIcon/>
               </IconButton>}
           />
-          <Divider/>
+          <Divider />
         </div>
       ))
     )
@@ -96,6 +120,7 @@ export default class extends Component {
           <Subheader>Notifications</Subheader>
           <IconButton
             onTouchTap={this.props.getNotif}
+            disabled={loading}
           >
             <ReloadIcon/>
           </IconButton>

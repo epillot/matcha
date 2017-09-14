@@ -81,6 +81,13 @@ export default class extends Component {
     }, 500);
   }
 
+  notifExist(notifs, id) {
+    for (let i = 0; i < notifs.length; i++) {
+      if (notifs[i]._id === id) return true;
+    }
+    return false;
+  }
+
   getNotif(elem) {
     this.setState({open: true, anchor: document.getElementById('notif'), count: 0});
     if (this.state.newNotif) {
@@ -93,15 +100,20 @@ export default class extends Component {
         setTimeout(() => {
           if (err) return this.props.onLogout();
           const { notifUnread } = response.data;
-          const { notif } = this.state;
-          notifUnread.forEach(n => {
-            notif.push(n);
+          this.setState(state => {
+            notifUnread.forEach(n => {
+              if (!this.notifExist(state.notif, n._id)) {
+                state.notif.push(n)
+              }
+            });
+            state.loading = false;
+            state.newNotif = false;
+            return state;
           });
-          this.setState({notif, loading: false, newNotif: false});
           this.setAsRead();
         }, 500);
       });
-    } else this.setAsRead();
+    } else if (this.state.count) this.setAsRead();
   }
 
   setAsRead(cb) {
@@ -116,21 +128,14 @@ export default class extends Component {
   }
 
   delNotif(id) {
-    const config = {
-      method: 'delete',
-      url: '/api/notifications/' + id,
-    };
-    secureRequest(config, (err, response) => {
-      if (err) return this.props.onLogout();
-      const { notif } = this.state;
-      for (var i = 0; i < notif.length; i++) {
-        if (notif[i]._id === id) break;
-      }
-      if (i < notif.length) {
-        notif.splice(i, 1);
-        this.setState({notif});
-      }
-    });
+    const { notif } = this.state;
+    for (var i = 0; i < notif.length; i++) {
+      if (notif[i]._id === id) break;
+    }
+    if (i < notif.length) {
+      notif.splice(i, 1);
+      this.setState({notif});
+    }
   }
 
   closeNotif() {
@@ -162,11 +167,13 @@ export default class extends Component {
           closeNotif={this.closeNotif}
           delNotif={this.delNotif}
           getNotif={this.getNotif}
+          history={history}
         />
         <IconButton
           iconStyle={styles.icon}
           style={styles.small}
           onTouchTap={() => history.push(profilePath)}
+          tooltip='My profile'
         >
           <ProfileIcon/>
         </IconButton>
@@ -174,6 +181,7 @@ export default class extends Component {
           iconStyle={styles.logout}
           style={styles.small}
           onTouchTap={this.logout}
+          tooltip='logout'
         >
           <LogoutIcon/>
         </IconButton>

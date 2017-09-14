@@ -28,6 +28,7 @@ export default function(props) {
         onTouchTap={props.onTouchTap}
         iconStyle={styles.icon}
         style={styles.small}
+        tooltip='Notifications'
       >
         <NotifNone/>
       </IconButton>
@@ -43,6 +44,7 @@ export default function(props) {
           onTouchTap={props.onTouchTap}
           iconStyle={styles.icon}
           style={styles.small}
+          tooltip='Notifications'
         >
           <Notif/>
         </IconButton>

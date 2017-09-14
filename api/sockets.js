@@ -61,37 +61,12 @@ class sockets extends io {
     }
   }
 
-  async handleVisit(from, to, socket) {
-    try {
-      var idFrom = ObjectId(from);
-      var idTo = ObjectId(to);
-    } catch (e) { return }
-    try {
-      const ts = Date.now();
-      const users = db.collection('Users')
-      const pFrom = await users.findOne({_id: idFrom});
-      if (!pFrom) return;
-      const pTo = await users.findOne({_id: idTo});
-      if (!pTo) return;
-      socket.join('log' + to);
-      const notif = {
-        to: idTo,
-        from: {
-          id: idFrom,
-          login: pFrom.login,
-          pp: pFrom.profilePic,
-        },
-        object: 'visit',
-        read: false,
-        ts,
-      }
-      db.collection('notifs').insertOne(notif);
-      const target = this.getUserById(to);
-      if (target) {
-        this.to(target.socketId).emit('notif');
-      }
-
-    } catch (e) { console.log(e) }
+  handleVisit(id, socket) {
+    socket.join('log' + id);
+    const target = this.getUserById(id);
+    if (target) {
+      this.to(target.socketId).emit('notif');
+    }
   }
 
 }

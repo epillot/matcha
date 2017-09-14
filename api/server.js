@@ -31,8 +31,8 @@ ioServer.on('connection', socket => {
     ioServer.connect(id, socket);
   });
 
-  socket.on('visit', ({ from, to }) => {
-    ioServer.handleVisit(from, to, socket);
+  socket.on('visit', ({ id }) => {
+    ioServer.handleVisit(id, socket);
   });
 
   socket.on('leavelog', ({ id }) => {

@@ -6,6 +6,7 @@ import ProfilePictures from './ProfilePictures';
 import ProfileCard from './ProfileCard';
 import Interset from './Interest';
 import ChangeLog from './ChangeLog';
+import Interaction from './Intercation'
 
 const styles = {
   root: {
@@ -69,11 +70,18 @@ export default class extends Component {
           else {
             this.setState({profile});
             if (id !== this.props.loggued) {
-              const data = {
-                from: this.props.loggued,
-                to: id,
-              };
-              global.socket.emit('visit', data);
+              const config = {
+                method: 'post',
+                url: '/api/notifications',
+                data: {
+                  to: id,
+                  object: 'visit',
+                },
+              }
+              secureRequest(config, err => {
+                if (err) return this.props.onLogout();
+                global.socket.emit('visit', {id});
+              });
             }
           }
         }
@@ -113,6 +121,9 @@ export default class extends Component {
             <ChangeLog
               ts={ts}
               logged={logged}
+              id={profile._id}
+            />
+            <Interaction
               id={profile._id}
             />
           </div>
