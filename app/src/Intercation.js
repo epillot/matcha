@@ -56,10 +56,7 @@ export default class extends Component {
     };
     try {
       const { data: { status } } = await secureRequest(config);
-      this.setState(state => {
-        state[action] = !state[action];
-        return state;
-      });
+      this.setState(state => ({[action]: !state[action]}));
       if (action === 'like') {
         config = {
           method: 'post',

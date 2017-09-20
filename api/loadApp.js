@@ -76,8 +76,9 @@ export default function(app) {
   .patch('/api/allTags', tags.patch)
   .post('/api/pictures', pictures.check, multer({storage}).single('picture'), pictures.post)
   .delete('/api/pictures/:pic', pictures.delete)
-  .get('/api/chat/contacts', chat.getContacts)
   .post('/api/interaction', interactionHandler)
+  .get('/api/chat/contacts', chat.getContacts)
+  .get('/api/chat/messages/:id', chat.getConv)
   .get('/api/suggestion', suggestion.get)
   //.put('/api/pictures/:pic', pictures.setProfilePic);
 };

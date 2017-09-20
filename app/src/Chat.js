@@ -4,6 +4,7 @@ import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import Contact from './Contact';
 import Messages from './Messages';
+import secureRequest from './secureRequest';
 
 const styles = {
   root: {
@@ -15,8 +16,11 @@ const styles = {
     display: 'flex',
     width: '80%',
     height: '100%',
-    minWidth: '600px',
-    minHeight: '400px',
+    minWidth: '800px',
+    minHeight: '500px',
+    maxWidth: '1200px',
+    maxHeight: '750px',
+
     border: '3px solid #E0E0E0',
   },
   contact: {
@@ -33,28 +37,69 @@ export default class extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      conv: this.getConvParam(props),
+      contacts: null,
+      conv: null,
     }
-    this.getConvParam = this.getConvParam.bind(this);
+    this.mounted = true;
+    this.setStateIfMounted = this.setStateIfMounted.bind(this);
   }
 
-  getConvParam(props) {
-    const query = props.location.search.substring(1).split('=');
-    if (query[0] !== 'conv') return null;
-    return query[1] || null;
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  setStateIfMounted(state) {
+    if (this.mounted) this.setState(state);
+  }
+
+  componentDidMount() {
+    let config = {
+      method: 'get',
+      url: '/api/chat/contacts',
+    };
+    secureRequest(config, (err, response) => {
+      setTimeout(() => {
+        if (err) return this.props.onLogout();
+        const { contacts } = response.data;
+        this.setStateIfMounted({contacts});
+      }, 2000);
+    });
+
+    const query = this.props.location.search.substring(1);
+    //console.log(query);
+    if (query) {
+      config = {
+        method: 'get',
+        url: '/api/chat/messages/' + query,
+      };
+      secureRequest(config, (err, response) => {
+        if (err) return this.props.onLogout();
+        const { conv, error } = response.data;
+        if (error) this.setStateIfMounted({conv: false});
+        else this.setStateIfMounted({conv});
+      })
+    } else this.setStateIfMounted({conv: false});
   }
 
   render() {
-    console.log(this.state.conv);
+    const { contacts, conv } = this.state;
     return (
       <div style={styles.root}>
       <Paper style={styles.container}>
         <div style={styles.contact}>
           <Subheader>Contacts</Subheader>
           <Divider/>
-          <Contact/>
+          <Contact
+            contacts={contacts}
+            history={this.props.history}
+            onAuthFailed={this.props.onLogout}
+          />
         </div>
-        <Messages/>
+        <Messages
+          conv={conv}
+          onAuthFailed={this.props.onLogout}
+          location={this.props.location}
+        />
       </Paper>
       </div>
     );
