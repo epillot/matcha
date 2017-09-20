@@ -65,6 +65,9 @@ export default {
         bio: '',
         loc,
         ts: Date.now(),
+        like: [],
+        block: [],
+        report: [],
         key,
         active: false
       };

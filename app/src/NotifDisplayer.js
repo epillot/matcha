@@ -41,7 +41,7 @@ export default class extends Component {
   constructor() {
     super();
     this.state = {
-      loading: false,
+      loading: {},
     }
     this.renderNotif = this.renderNotif.bind(this);
     this.getMessage = this.getMessage.bind(this);
@@ -52,13 +52,16 @@ export default class extends Component {
   getMessage(notif) {
     switch (notif.object) {
       case 'visit': return `${notif.from.login} visited your profile.`
+      case 'like': return `${notif.from.login} like you.`
+      case 'unlike': return `${notif.from.login} unlike you.`
+      case 'match': return `You have a new match with ${notif.from.login} !`
       default: return '';
     }
   }
 
   delNotif(id) {
-    if (this.state.loading) return;
-    this.setState({loading: true});
+    if (this.state.loading[id]) return;
+    this.setState({loading: {[id]: true}});
     const config = {
       method: 'delete',
       url: '/api/notifications/' + id,
@@ -66,7 +69,7 @@ export default class extends Component {
     secureRequest(config, (err, response) => {
       if (err) return this.props.onLogout();
       this.props.delNotif(id);
-      this.setState({loading: false});
+      this.setState({loading: {[id]: false}});
     });
   }
 
@@ -87,7 +90,7 @@ export default class extends Component {
       notifs.map(notif => (
         <div key={notif._id}>
           <ListItem
-            disabled={this.state.loading}
+            disabled={!!this.state.loading[notif._id]}
             style={notif.read ? styles.read : styles.unread}
             leftAvatar={<Avatar src={`/static/${notif.from.pp}`}/>}
             primaryText={this.getMessage(notif)}
@@ -95,7 +98,7 @@ export default class extends Component {
             onTouchTap={() => this.props.history.push('/profile/' + notif.from.id)}
             rightIconButton={
               <IconButton
-                disabled={this.state.loading}
+                disabled={this.state.loading[notif._id]}
                 onTouchTap={() => this.delNotif(notif._id)}
               >
                 <ClearIcon/>

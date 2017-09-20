@@ -62,30 +62,28 @@ export default class extends Component {
       url: '/api/profile/' + id,
     };
     secureRequest(config, (err, response) => {
-      setTimeout(() => {
-        if (err) return this.props.onLogout();
-        const { data: { error, profile } } = response;
-        if (this.mounted) {
-          if (error) this.setState({profile: false, error});
-          else {
-            this.setState({profile});
-            if (id !== this.props.loggued) {
-              const config = {
-                method: 'post',
-                url: '/api/notifications',
-                data: {
-                  to: id,
-                  object: 'visit',
-                },
-              }
-              secureRequest(config, err => {
-                if (err) return this.props.onLogout();
-                global.socket.emit('visit', {id});
-              });
+      if (err) return this.props.onLogout();
+      const { data: { error, profile } } = response;
+      if (this.mounted) {
+        if (error) this.setState({profile: false, error});
+        else {
+          this.setState({profile});
+          if (id !== this.props.loggued) {
+            const config = {
+              method: 'post',
+              url: '/api/notifications',
+              data: {
+                to: id,
+                object: 'visit',
+              },
             }
+            secureRequest(config, err => {
+              if (err) return this.props.onLogout();
+              global.socket.emit('visit', {id});
+            });
           }
         }
-      }, 500);
+      }
     });
   }
 
@@ -114,7 +112,8 @@ export default class extends Component {
     const editable = this.props.loggued === this.props.match.params.id;
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
-      const { pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
+      const { liked, blocked, reported, pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
+      console.log(blocked);
       return (
         <div style={styles.root}>
           <div style={styles.interact}>
@@ -125,6 +124,10 @@ export default class extends Component {
             />
             <Interaction
               id={profile._id}
+              liked={liked}
+              blocked={blocked}
+              reported={reported}
+              onAuthFailed={this.props.onLogout}
             />
           </div>
           <div style={styles.profileInfo}>

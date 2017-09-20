@@ -37,7 +37,11 @@ ioServer.on('connection', socket => {
 
   socket.on('leavelog', ({ id }) => {
     socket.leave('log' + id);
-  })
+  });
+
+  socket.on('notif', ({ id }) => {
+    ioServer.sendNotif(id, socket);
+  });
 
 })
 

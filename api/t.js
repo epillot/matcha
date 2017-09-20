@@ -4,9 +4,16 @@ import config from './config/config';
 
 MongoClient.connect(config.mongoConfig).then(db => {
   global.db = db;
-  return db.collection('Users').update({}, {$set: {ts: Date.now()}}, {multi: true});
+  return db.collection('Users').update({}, {
+    $set: {
+      like: {
+        to: [],
+        from: [],
+      }
+    }
+  }, {multi: true});
 }).then(res => {
-  console.log('success', res);
+  console.log('success');
   db.close();
   process.exit(0);
 }).catch(e => {
@@ -14,3 +21,7 @@ MongoClient.connect(config.mongoConfig).then(db => {
   console.log(e);
   process.exit(1);
 });
+
+// MongoClient.connect(config.mongoConfig).then(db => {
+//   db.
+// });

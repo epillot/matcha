@@ -23,7 +23,7 @@ export default {
   post: async function(req, res) {
     if (!req.body) return res.status(400).send('Empty request');
     const { body: { to, object }, user: { id } } = req;
-    if (['visit', 'like', 'message', 'unlike', 'alsolike'].indexOf(object) === -1) {
+    if (['visit', 'like', 'message', 'unlike', 'match'].indexOf(object) === -1) {
       return res.status(400).send('Invalid notification object');
     }
     let idTo;
@@ -35,6 +35,7 @@ export default {
       if (!profileTo) {
         return res.status(400).send('trying to send notification to a non-existent user');
       }
+      if (profileTo.block.indexOf(id) !== -1) return res.end();
       const idFrom = ObjectId(id);
       const profileFrom = await db.collection('Users').findOne({_id: idFrom});
       const notif = {
@@ -44,7 +45,7 @@ export default {
           login: profileFrom.login,
           pp: profileFrom.profilePic,
         },
-        object: 'visit',
+        object,
         read: false,
         ts: Date.now(),
       };

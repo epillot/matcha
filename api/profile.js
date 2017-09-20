@@ -32,28 +32,46 @@ const profileToSend = {
 export default {
 
   get: async function(req, res) {
-    const { params: { id }, user: { id: idCurrentUser } } = req;
+    const {
+      params: { id: idTarget },
+      user: {
+        id: idCurrentUser,
+        profile: currentUser,
+      },
+    } = req;
     let _id;
-    if (id === idCurrentUser) profileToSend.email = 1;
-    try { _id = ObjectId(id) }
+    if (idTarget === idCurrentUser) profileToSend.email = 1;
+    try { _id = ObjectId(idTarget) }
     catch (e) { return res.send({error: 'No profile found'}) }
     try {
-      const profile = await db.collection('Users').findOne({_id}, profileToSend);
-      if (!profile) return res.send({error: 'No profile found'});
-      if (ioServer.isLogged(id)) profile.logged = true;
-      res.send({profile});
+      const toSend = await db.collection('Users').findOne({_id}, profileToSend);
+      if (!toSend) return res.send({error: 'No profile found'});
+      if (currentUser.like.to.indexOf(idTarget) !== -1) {
+        toSend.liked = true;
+      } else toSend.liked = false;
+      if (currentUser.block.indexOf(idTarget) !== -1) {
+        toSend.blocked = true;
+      } else toSend.blocked = false;
+      if (currentUser.report.indexOf(idTarget) !== -1) {
+        toSend.reported = true;
+      } else toSend.reported = false;
+      if (ioServer.isLogged(idTarget)) toSend.logged = true;
+      res.send({profile: toSend});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
 
   patch: async function(req, res) {
-    const { params: { id }, user: { id: idCurrentUser }, body: { action, data } } = req;
+    const {
+      params: { id },
+      user: { id: idCurrentUser, profile },
+      body: { action, data },
+    } = req;
     if (id !== idCurrentUser) {
       return res.status(401).send({error: 'Not allowed to update this profile'});
     }
     try {
       const users = db.collection('Users');
       const _id = ObjectId(id);
-      const profile = await users.findOne({_id});
       let errors = {};
       switch (action) {
 
@@ -121,8 +139,6 @@ export default {
               if (unavailable) errors.email = 'This email is already use';
             }
           }
-          console.log('update', update);
-          console.log('errors', errors);
           if (Object.keys(errors).length === 0) users.updateOne({_id}, {$set: update});
           res.send(errors);
           break;

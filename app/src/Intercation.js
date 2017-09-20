@@ -34,19 +34,19 @@ const styles = {
 
 export default class extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      like: false,
-      block: false,
-      report: false,
+      like: props.liked,
+      block: props.blocked,
+      report: props.reported,
     };
     this.interact = this.interact.bind(this);
   }
 
-  interact(action) {
+  async interact(action) {
     const { loggued, id } = this.props;
-    const config = {
+    let config = {
       method: 'post',
       url: '/api/interaction',
       data: {
@@ -54,25 +54,28 @@ export default class extends Component {
         action,
       },
     };
-    secureRequest(config, (err, response) => {
-      if (err) return this.props.onLogout();
+    try {
+      const { data: { status } } = await secureRequest(config);
       this.setState(state => {
         state[action] = !state[action];
         return state;
       });
-      // if (action === 'like') {
-      //   const config = {
-      //     method: 'post',
-      //     url: '/api/notifications',
-      //     data: {
-      //       to: id,
-      //       object: 'like',
-      //     },
-      //   };
-      //   secureRequest(config)
-      //   global.socket.emit('like', {id});
-      // }
-    });
+      if (action === 'like') {
+        config = {
+          method: 'post',
+          url: '/api/notifications',
+          data: {
+            to: id,
+            object: status,
+          },
+        };
+        await secureRequest(config);
+        global.socket.emit('notif', {id});
+      }
+    } catch(e) {
+      if (e === 'Unauthorized') this.props.onAuthFailed();
+      else console.log(e);
+    }
   }
 
   render() {

@@ -9,8 +9,10 @@ import tags from './tags';
 import auth from './auth';
 import suggestion from './suggestion';
 import notifications from './notifications';
+import interactionHandler from './interaction';
 import { ObjectId } from 'mongodb';
 import ipInfo from 'ipinfo';
+import chat from './chat';
 
 const storage = multer.diskStorage({
   destination: 'uploads/tmp/',
@@ -21,7 +23,6 @@ const storage = multer.diskStorage({
 });
 
 export default function(app) {
-
   app.use(morgan('dev'))
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
@@ -52,6 +53,7 @@ export default function(app) {
     const _id = ObjectId(id);
     const user = await db.collection('Users').findOne({_id});
     if (!user) return res.send('Unauthorized');
+    req.user.profile = user;
     res.set('x-requested-by', id);
     next();
     // if (USERS.indexOf(id) === -1) {
@@ -74,6 +76,8 @@ export default function(app) {
   .patch('/api/allTags', tags.patch)
   .post('/api/pictures', pictures.check, multer({storage}).single('picture'), pictures.post)
   .delete('/api/pictures/:pic', pictures.delete)
+  .get('/api/chat/contacts', chat.getContacts)
+  .post('/api/interaction', interactionHandler)
   .get('/api/suggestion', suggestion.get)
   //.put('/api/pictures/:pic', pictures.setProfilePic);
 };

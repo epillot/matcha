@@ -8,6 +8,7 @@ import UnlogguedRoute from './UnlogguedRoute';
 import secureRequest from './secureRequest';
 import MyProfile from './MyProfile';
 import Suggestion from './Suggestion';
+import Chat from './Chat';
 
 const styles = {
   container: {
@@ -63,6 +64,7 @@ class App extends Component {
         <Switch>
           <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
           <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
+          <PrivateRoute path='/message' loggued={loggued} onLogout={this.onLogout} component={Chat}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
         </Switch>

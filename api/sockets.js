@@ -61,9 +61,16 @@ class sockets extends io {
     }
   }
 
-  handleVisit(id, socket) {
-    socket.join('log' + id);
-    const target = this.getUserById(id);
+  handleVisit(targetId, socket) {
+    socket.join('log' + targetId);
+    this.sendNotif(targetId, socket);
+  }
+
+  async sendNotif(targetId, socket) {
+    const { id: senderId } = this.getUserBySocketId(socket.id);
+    const profile = await db.collection('Users').findOne({_id: ObjectId(targetId)});
+    if (!profile || profile.block.indexOf(senderId) !== -1) return;
+    const target = this.getUserById(targetId);
     if (target) {
       this.to(target.socketId).emit('notif');
     }
