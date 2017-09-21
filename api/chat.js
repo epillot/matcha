@@ -1,4 +1,5 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId } from 'mongodb';
+import parser from './parser';
 
 export default {
 
@@ -46,5 +47,33 @@ export default {
       res.send({conv});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
+
+  postMsg: async function(req, res) {
+    if (!req.body) return res.status(400).send('Empty request');
+    const {
+      user: { profile: sender, id: idSender },
+      body: { idTarget, message },
+    } = req;
+    let _id;
+    try {
+      _id = ObjectId(idTarget)
+    } catch (e) { return res.status(400).send('Invalid target id') }
+    const target = await db.collection('Users').findOne({_id});
+    if (!target) return res.status(400).send('non existent target');
+    if (sender.like.to.indexOf(idTarget) === -1 || sender.like.from.indexOf(idTarget) === -1) {
+      return res.status(401).send('You don\'t have a match with the target');
+    }
+    const error = parser.message(message);
+    if (error) return res.send({error});
+    const ts = Date.now();
+    const chatmsg = {
+      idSender,
+      idTarget,
+      ts,
+      content: message,
+    };
+    db.collection('chat').insertOne(chatmsg);
+    res.status(201).send({chatmsg});
+  }
 
 }

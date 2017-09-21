@@ -43,6 +43,10 @@ ioServer.on('connection', socket => {
     ioServer.sendNotif(id, socket);
   });
 
+  socket.on('join chat', ({ ids }) => {
+    ids.forEach(id => socket.join('log' + id));
+  });
+
 })
 
 MongoClient.connect(config.mongoConfig).then(db => {

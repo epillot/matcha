@@ -79,6 +79,7 @@ export default function(app) {
   .post('/api/interaction', interactionHandler)
   .get('/api/chat/contacts', chat.getContacts)
   .get('/api/chat/messages/:id', chat.getConv)
+  .post('/api/chat/message', chat.postMsg)
   .get('/api/suggestion', suggestion.get)
   //.put('/api/pictures/:pic', pictures.setProfilePic);
 };

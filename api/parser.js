@@ -72,6 +72,13 @@ const parser = {
     return null;
   },
 
+  message: function(value) {
+    if (typeof value !== 'string') return 'Invalid value';
+    if (value === '') return 'Empty message';
+    if (value.length > 400) return 'Text too long';
+    return null;
+  }
+
 };
 
 export function signupParser(input) {

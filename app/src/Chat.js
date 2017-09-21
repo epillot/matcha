@@ -42,6 +42,9 @@ export default class extends Component {
     }
     this.mounted = true;
     this.setStateIfMounted = this.setStateIfMounted.bind(this);
+    this.getContacts = this.getContacts.bind(this);
+    this.getConv = this.getConv.bind(this);
+    this.onSend = this.onSend.bind(this);
   }
 
   componentWillUnmount() {
@@ -52,37 +55,94 @@ export default class extends Component {
     if (this.mounted) this.setState(state);
   }
 
-  componentDidMount() {
-    let config = {
+  componentWillReceiveProps(props) {
+    const actualQuery = this.props.location.search.substring(1);
+    const newQuery = props.location.search.substring(1);
+    if (actualQuery !== newQuery) {
+      this.setStateIfMounted({conv: null});
+      this.getConv(newQuery);
+    }
+  }
+
+  async getContacts() {
+    const config = {
       method: 'get',
       url: '/api/chat/contacts',
     };
-    secureRequest(config, (err, response) => {
-      setTimeout(() => {
-        if (err) return this.props.onLogout();
-        const { contacts } = response.data;
-        this.setStateIfMounted({contacts});
-      }, 2000);
-    });
+    try {
+      const { data: { contacts } } = await secureRequest(config);
+      this.setStateIfMounted({contacts});
+    } catch(e) {
+      if (e === 'Unauthorized') this.props.onAuthFailed();
+      else console.log(e);
+    }
+  }
 
-    const query = this.props.location.search.substring(1);
-    //console.log(query);
+  async getConv(query) {
+    const { contacts } = this.state;
+    let validQuery = false;
     if (query) {
-      config = {
+      contacts.forEach(contact => {
+        if (contact._id === query) validQuery = true;
+      });
+    }
+    if (validQuery) {
+      const config = {
         method: 'get',
         url: '/api/chat/messages/' + query,
       };
-      secureRequest(config, (err, response) => {
-        if (err) return this.props.onLogout();
-        const { conv, error } = response.data;
+      try {
+        const { data: { conv, error } } = await secureRequest(config);
         if (error) this.setStateIfMounted({conv: false});
         else this.setStateIfMounted({conv});
-      })
+      } catch(e) {
+        if (e === 'Unauthorized') this.props.onAuthFailed();
+        else console.log(e);
+      }
     } else this.setStateIfMounted({conv: false});
+  }
+
+  componentDidMount() {
+    const query = this.props.location.search.substring(1);
+    this.getContacts().then(() => {
+      const ids = [];
+      this.state.contacts.forEach(contact => {
+        ids.push(contact._id);
+      });
+      global.socket.emit('join chat', {ids});
+      this.getConv(query)
+    });
+    global.socket.on('changelog', ({ id, status, ts }) => {
+      this.setStateIfMounted(state => {
+        const contactsUp = state.contacts.slice();
+        contactsUp.forEach(contact => {
+          if (contact._id === id) {
+            contact.logged = status;
+            contact.ts = ts;
+          }
+        });
+        return {contacts: contactsUp}
+      })
+    })
+  }
+
+  onSend(chatmsg) {
+    this.setStateIfMounted(state => {
+      const conv = state.conv.slice();
+      conv.push(chatmsg);
+      return {conv}
+    })
   }
 
   render() {
     const { contacts, conv } = this.state;
+    const query = this.props.location.search.substring(1);
+    let selected = false;
+    if (conv) {
+      for (let i = 0; i < contacts.length; i++) {
+        if (contacts[i]._id === query) selected = contacts[i];
+      }
+    }
     return (
       <div style={styles.root}>
       <Paper style={styles.container}>
@@ -91,14 +151,15 @@ export default class extends Component {
           <Divider/>
           <Contact
             contacts={contacts}
+            selected={selected}
             history={this.props.history}
-            onAuthFailed={this.props.onLogout}
           />
         </div>
         <Messages
+          selected={selected}
           conv={conv}
           onAuthFailed={this.props.onLogout}
-          location={this.props.location}
+          onSend={this.onSend}
         />
       </Paper>
       </div>
