@@ -77,8 +77,10 @@ export default function(app) {
   .post('/api/pictures', pictures.check, multer({storage}).single('picture'), pictures.post)
   .delete('/api/pictures/:pic', pictures.delete)
   .post('/api/interaction', interactionHandler)
+  .get('/api/chat/asNewMsg', chat.asNewMsg)
   .get('/api/chat/contacts', chat.getContacts)
   .get('/api/chat/messages/:id', chat.getConv)
+  .patch('/api/chat/messages/:id', chat.setAsRead)
   .post('/api/chat/message', chat.postMsg)
   .get('/api/suggestion', suggestion.get)
   //.put('/api/pictures/:pic', pictures.setProfilePic);

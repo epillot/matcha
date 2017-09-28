@@ -4,26 +4,31 @@ import parser from './parser';
 export default {
 
   getContacts: async function(req, res) {
-    const { profile } = req.user;
-    const queries = [];
+    const { profile, id: idCurrentUser } = req.user;
     const fields = {
       _id: 1,
       login: 1,
       ts: 1,
       profilePic: 1,
     };
+    let filter = {_id: {$in: []}};
     try {
       profile.like.to.forEach(id => {
         if (profile.like.from.indexOf(id) !== -1) {
-          queries.push(
-            db.collection('Users').findOne({_id: ObjectId(id)}, fields),
-          );
+          filter._id.$in.push(ObjectId(id));
         }
       });
-      const contacts = await Promise.all(queries);
-      contacts.forEach(contact => {
+      const profiles = await db.collection('Users').find(filter, fields).toArray();
+      const contacts = await Promise.all(profiles.map(async contact => {
         if (ioServer.isLogged(contact._id.toString())) contact.logged = true;
-      })
+        filter = {
+          idSender: contact._id.toString(),
+          idTarget: idCurrentUser,
+          read: false,
+        };
+        contact.unreadMsgCount = await db.collection('chat').count(filter);
+        return contact;
+      }));
       res.send({contacts});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
@@ -37,10 +42,8 @@ export default {
       return res.send({error: true});
     }
     const filter = {
-      $and: [
-        {idSender: {$in: [id1, id2]}},
-        {idTarget: {$in: [id1, id2]}},
-      ],
+      idSender: {$in: [id1, id2]},
+      idTarget: {$in: [id1, id2]},
     };
     try {
       const conv = await db.collection('chat').find(filter).toArray();
@@ -61,7 +64,7 @@ export default {
     const target = await db.collection('Users').findOne({_id});
     if (!target) return res.status(400).send('non existent target');
     if (sender.like.to.indexOf(idTarget) === -1 || sender.like.from.indexOf(idTarget) === -1) {
-      return res.status(401).send('You don\'t have a match with the target');
+      return res.send({error: 'nomatch'});
     }
     const error = parser.message(message);
     if (error) return res.send({error});
@@ -76,6 +79,23 @@ export default {
     db.collection('chat').insertOne(chatmsg);
     ioServer.sendMessage(chatmsg);
     res.status(201).send({chatmsg});
+  },
+
+  setAsRead: async function(req, res) {
+    const {
+      user: { id: idTarget },
+      params: {id: idSender},
+    } = req;
+    try {
+      db.collection('chat').update({idTarget, idSender, read: false}, {$set: {read: true}}, {multi: true});
+      res.end();
+    } catch (e) { console.log(e); res.sendStatus(500) }
+  },
+
+  asNewMsg: async function(req, res) {
+    const idTarget = req.user.id;
+    const newMsg = await db.collection('chat').findOne({idTarget, read: false});
+    res.send({newMsg: !!newMsg});
   }
 
 }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import Divider from 'material-ui/Divider';
 import Contact from './Contact';
 import Messages from './Messages';
 import secureRequest from './secureRequest';
@@ -50,6 +49,8 @@ export default class extends Component {
     this.getContacts = this.getContacts.bind(this);
     this.getConv = this.getConv.bind(this);
     this.onSend = this.onSend.bind(this);
+    this.setAsRead = this.setAsRead.bind(this);
+    this.onSendFailed = this.onSendFailed.bind(this);
   }
 
   componentWillUnmount() {
@@ -77,6 +78,7 @@ export default class extends Component {
     return new Promise(async (resolve, reject) => {
       try {
         const { data: { contacts } } = await secureRequest(config);
+        console.log(contacts);
         this.setStateIfMounted({contacts}, () => resolve());
       } catch(e) { reject(e) }
     });
@@ -99,7 +101,19 @@ export default class extends Component {
         const { data: { conv, error } } = await secureRequest(config);
         if (error) this.setStateIfMounted({conv: false});
         else {
-          this.setStateIfMounted({conv});
+          this.setAsRead(query);
+          this.setStateIfMounted(state => {
+            const contacts = state.contacts.slice();
+            let allRead = true;
+            contacts.forEach(contact => {
+              if (contact._id === query) contact.unreadMsgCount = 0;
+              else if (contact.unreadMsgCount !== 0) {
+                allRead = false;
+              }
+            });
+            if (allRead) this.props.onRead();
+            return {conv, contacts}
+          });
           const container = document.getElementById('msg');
           container.scrollTop = container.scrollHeight;
         }
@@ -108,6 +122,17 @@ export default class extends Component {
         else console.log(e);
       }
     } else this.setStateIfMounted({conv: false});
+  }
+
+  setAsRead(idConv, cb) {
+    const config = {
+      method: 'patch',
+      url: '/api/chat/messages/' + idConv,
+    };
+    secureRequest(config, err => {
+      if (err) return this.props.onAuthFailed();
+      if (cb) cb();
+    });
   }
 
   componentDidMount() {
@@ -135,8 +160,17 @@ export default class extends Component {
     global.socket.on('message', ({ msg }) => {
       const selected = this.props.location.search.substring(1);
       if (selected === msg.idSender) {
-        console.log(selected);
         this.onSend(msg);
+      } else {
+        this.setStateIfMounted(state => {
+          if (state.contacts) {
+            const contacts = state.contacts.slice();
+            contacts.forEach(contact => {
+              if (msg.idSender === contact._id) contact.unreadMsgCount++;
+            });
+            return {contacts};
+          }
+        });
       }
     });
   }
@@ -149,6 +183,20 @@ export default class extends Component {
     });
     const container = document.getElementById('msg');
     if (container) container.scrollTop = container.scrollHeight;
+  }
+
+  onSendFailed(idContact) {
+    console.log(idContact);
+    this.setStateIfMounted(state => {
+      const contacts = state.contacts.slice();
+      let i;
+      for (i = 0; i < contacts.length; i++) {
+        if (contacts[i]._id === idContact) break;
+      }
+      console.log(i);
+      contacts.splice(i, 1);
+      return {contacts, conv: false}
+    });
   }
 
   render() {
@@ -177,6 +225,7 @@ export default class extends Component {
             conv={conv}
             onAuthFailed={this.props.onLogout}
             onSend={this.onSend}
+            onSendFailed={this.onSendFailed}
           />
         </div>
       </Paper>

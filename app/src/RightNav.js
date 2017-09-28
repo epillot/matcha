@@ -3,7 +3,7 @@ import IconButton from 'material-ui/IconButton';
 import NotifIcon from './NotifIcon';
 import ProfileIcon from 'material-ui/svg-icons/social/person';
 import LogoutIcon from 'material-ui/svg-icons/action/power-settings-new';
-import ChatIcon from 'material-ui/svg-icons/communication/chat';
+import ChatIcon from './ChatIcon';
 import secureRequest from './secureRequest';
 import NotifDisplayer from './NotifDisplayer';
 
@@ -50,13 +50,17 @@ export default class extends Component {
 
   componentDidMount() {
     global.socket.on('notif', () => {
-      this.setState(state => {
-        state.count++;
-        state.newNotif = true;
-        return state;
-      });
+      this.setState(state => ({
+        count: state.count + 1,
+        newNotif: true,
+      }));
     });
-    const config = {
+    global.socket.on('message', ({ msg }) => {
+      const { pathname, search } = this.props.location;
+      if (pathname === '/message' && search.substring(1) === msg.idSender) return;
+      this.props.onNewMsg();
+    });
+    let config = {
       method: 'get',
       url: '/api/notifications'
     };
@@ -149,14 +153,13 @@ export default class extends Component {
 
   render() {
     const { open, count, anchor, notif, loading } = this.state;
-    const { history, user } = this.props;
+    const { history, user, newMsg } = this.props;
     return (
       <div style={styles.icons}>
         <div id='notif'>
           <NotifIcon
             count={count}
             onTouchTap={this.getNotif}
-            onLogout={this.props.onLogout}
           />
         </div>
         <NotifDisplayer
@@ -169,14 +172,10 @@ export default class extends Component {
           getNotif={this.getNotif}
           history={history}
         />
-        <IconButton
-          iconStyle={styles.icon}
-          style={styles.small}
+        <ChatIcon
           onTouchTap={() => history.push('/message')}
-          tooltip='Chat'
-        >
-          <ChatIcon/>
-        </IconButton>
+          newMsg={newMsg}
+        />
         <IconButton
           iconStyle={styles.icon}
           style={styles.small}

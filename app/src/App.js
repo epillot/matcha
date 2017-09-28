@@ -22,13 +22,15 @@ class App extends Component {
     super();
     this.state = {
       loggued: null,
+      newMsg: false,
     };
     this.onLog = this.onLog.bind(this);
     this.onLogout = this.onLogout.bind(this);
+    this.checkNewMsg = this.checkNewMsg.bind(this);
   }
 
   componentWillMount() {
-    const config = {
+    let config = {
       method: 'get',
       url: '/api/auth'
     };
@@ -39,11 +41,25 @@ class App extends Component {
         //global.socket.emit('logged');
       }
       this.setState({loggued});
+      if (loggued) this.checkNewMsg();
+    });
+  }
+
+  checkNewMsg() {
+    const config = {
+      method: 'get',
+      url: '/api/chat/asNewMsg',
+    }
+    secureRequest(config, (err, response) => {
+      if (err) return this.onLogout();
+      const { newMsg } = response.data;
+      this.setState({newMsg});
     });
   }
 
   onLog(user) {
     this.setState({loggued: user});
+    this.checkNewMsg();
   }
 
   onLogout() {
@@ -52,19 +68,21 @@ class App extends Component {
   }
 
   render() {
-    const { loggued } = this.state;
+    const { loggued, newMsg } = this.state;
     return (
       <div>
         <Header
           loggued={loggued}
           onLogout={this.onLogout}
           onLog={this.onLog}
+          newMsg={newMsg}
+          onNewMsg={() => this.setState({newMsg: true})}
         />
         <div style={styles.container}>
         <Switch>
           <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
           <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
-          <PrivateRoute path='/message' loggued={loggued} onLogout={this.onLogout} component={Chat}/>
+          <PrivateRoute path='/message' onRead={() => this.setState({newMsg: false})} loggued={loggued} onLogout={this.onLogout} component={Chat}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
         </Switch>

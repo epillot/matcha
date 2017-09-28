@@ -112,7 +112,7 @@ export default class extends Component {
                     now.getDate() === msgTime.getDate() &&
                     now.getFullYear() === msgTime.getFullYear()
     if (isToday) return 'today ' + msgTime.toLocaleTimeString().substring(0, 5);
-    return msgTime.toLocaleString().substring(0, 10);
+    return msgTime.toLocaleString().substring(0, 9);
   }
 
   async sendMessage() {
@@ -127,7 +127,8 @@ export default class extends Component {
     };
     try {
       const { data: { error, chatmsg } } = await secureRequest(config);
-      if (error) return this.setState({error});
+      if (error === 'nomatch') return this.props.onSendFailed(idTarget);
+      else if (error) return this.setState({error});
       this.setState({message: ''})
       this.props.onSend(chatmsg);
     } catch(e) {

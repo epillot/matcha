@@ -2,16 +2,11 @@ import React from 'react';
 import CircularProgress from 'material-ui/CircularProgress';
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
-import LogIcon from 'material-ui/svg-icons/image/lens';
-import MsgIcon from './MsgIcon';
 import NoMsgIcon from 'material-ui/svg-icons/communication/chat-bubble-outline';
+import NewMsgIcon from 'material-ui/svg-icons/communication/message';
 
 
 const styles = {
-  logicon: {
-    width: '15px',
-    height: '15px',
-  },
   loading: {
     display: 'flex',
     justifyContent: 'center',
@@ -19,6 +14,11 @@ const styles = {
   selected: {
     backgroundColor: '#EEEEEE',
   },
+}
+
+function getMsgIcon(asNew) {
+  if (!asNew) return <NoMsgIcon color='#BDBDBD'/>
+  return <NewMsgIcon color='#9E9E9E'/>
 }
 
 export default function(props) {
@@ -30,7 +30,7 @@ export default function(props) {
          <div key={contact._id}>
            <ListItem
              style={contact === selected ? styles.selected : {}}
-             children={<div style={{float : 'right'}}><MsgIcon count={2320}/></div>}
+             children={<div key={contact._id} style={{float : 'right'}}>{getMsgIcon(!!contact.unreadMsgCount)}</div>}
              secondaryText={contact.logged ? 'online' : 'offline'}
              primaryText={contact.login}
              hoverColor='#F5F5F5'

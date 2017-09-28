@@ -48,7 +48,7 @@ class Header extends Component {
   }
 
   render() {
-    const { loggued, history } = this.props;
+    const { loggued, history, newMsg, location } = this.props;
     const { anchor, open } = this.state;
     return (
       <div>
@@ -77,14 +77,17 @@ class Header extends Component {
                 <Signin
                   onLog={this.onLog}
                   setLoading={this.setLoading}
-                  history={this.props.history}
+                  history={history}
                 />
               </Popover>
             </div> :
             <RightNav
               onLogout={this.props.onLogout}
-              history={this.props.history}
+              history={history}
+              location={location}
               user={loggued}
+              newMsg={newMsg}
+              onNewMsg={this.props.onNewMsg}
             />}
           </div>
         </AppBar>
