@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import Contact from './Contact';
 import Messages from './Messages';
 import secureRequest from './secureRequest';
+
 
 const styles = {
   root: {
@@ -28,7 +28,12 @@ const styles = {
     width: '30%',
     borderRight: '3px solid #E0E0E0',
     overflowY: 'auto',
+
   },
+  contactHeader: {
+    height: '10%',
+    borderBottom: '3px solid #E0E0E0',
+  }
 }
 
 export default class extends Component {
@@ -51,8 +56,8 @@ export default class extends Component {
     this.mounted = false;
   }
 
-  setStateIfMounted(state) {
-    if (this.mounted) this.setState(state);
+  setStateIfMounted(state, cb) {
+    if (this.mounted) this.setState(state, cb);
   }
 
   componentWillReceiveProps(props) {
@@ -64,18 +69,17 @@ export default class extends Component {
     }
   }
 
-  async getContacts() {
+  getContacts() {
     const config = {
       method: 'get',
       url: '/api/chat/contacts',
     };
-    try {
-      const { data: { contacts } } = await secureRequest(config);
-      this.setStateIfMounted({contacts});
-    } catch(e) {
-      if (e === 'Unauthorized') this.props.onAuthFailed();
-      else console.log(e);
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { data: { contacts } } = await secureRequest(config);
+        this.setStateIfMounted({contacts}, () => resolve());
+      } catch(e) { reject(e) }
+    });
   }
 
   async getConv(query) {
@@ -94,7 +98,11 @@ export default class extends Component {
       try {
         const { data: { conv, error } } = await secureRequest(config);
         if (error) this.setStateIfMounted({conv: false});
-        else this.setStateIfMounted({conv});
+        else {
+          this.setStateIfMounted({conv});
+          const container = document.getElementById('msg');
+          container.scrollTop = container.scrollHeight;
+        }
       } catch(e) {
         if (e === 'Unauthorized') this.props.onAuthFailed();
         else console.log(e);
@@ -123,22 +131,31 @@ export default class extends Component {
         });
         return {contacts: contactsUp}
       })
-    })
+    });
+    global.socket.on('message', ({ msg }) => {
+      const selected = this.props.location.search.substring(1);
+      if (selected === msg.idSender) {
+        console.log(selected);
+        this.onSend(msg);
+      }
+    });
   }
 
-  onSend(chatmsg) {
+  onSend(msg) {
     this.setStateIfMounted(state => {
       const conv = state.conv.slice();
-      conv.push(chatmsg);
+      conv.push(msg);
       return {conv}
-    })
+    });
+    const container = document.getElementById('msg');
+    if (container) container.scrollTop = container.scrollHeight;
   }
 
   render() {
     const { contacts, conv } = this.state;
     const query = this.props.location.search.substring(1);
     let selected = false;
-    if (conv) {
+    if (contacts && query) {
       for (let i = 0; i < contacts.length; i++) {
         if (contacts[i]._id === query) selected = contacts[i];
       }
@@ -147,20 +164,21 @@ export default class extends Component {
       <div style={styles.root}>
       <Paper style={styles.container}>
         <div style={styles.contact}>
-          <Subheader>Contacts</Subheader>
-          <Divider/>
           <Contact
+            convLoading={conv === null}
             contacts={contacts}
             selected={selected}
             history={this.props.history}
           />
         </div>
-        <Messages
-          selected={selected}
-          conv={conv}
-          onAuthFailed={this.props.onLogout}
-          onSend={this.onSend}
-        />
+        <div style={{width: '70%'}}>
+          <Messages
+            selected={selected}
+            conv={conv}
+            onAuthFailed={this.props.onLogout}
+            onSend={this.onSend}
+          />
+        </div>
       </Paper>
       </div>
     );

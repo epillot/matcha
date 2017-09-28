@@ -47,6 +47,7 @@ ioServer.on('connection', socket => {
     ids.forEach(id => socket.join('log' + id));
   });
 
+
 })
 
 MongoClient.connect(config.mongoConfig).then(db => {

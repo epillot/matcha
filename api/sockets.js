@@ -76,6 +76,13 @@ class sockets extends io {
     }
   }
 
+  sendMessage(msg) {
+    const target = this.getUserById(msg.idTarget);
+    if (target) {
+      this.to(target.socketId).emit('message', {msg});
+    }
+  }
+
 }
 
 export default function(server) {

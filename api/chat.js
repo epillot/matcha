@@ -16,7 +16,7 @@ export default {
       profile.like.to.forEach(id => {
         if (profile.like.from.indexOf(id) !== -1) {
           queries.push(
-            db.collection('Users').findOne({_id: ObjectId(id)}, fields)
+            db.collection('Users').findOne({_id: ObjectId(id)}, fields),
           );
         }
       });
@@ -71,8 +71,10 @@ export default {
       idTarget,
       ts,
       content: message,
+      read: false,
     };
     db.collection('chat').insertOne(chatmsg);
+    ioServer.sendMessage(chatmsg);
     res.status(201).send({chatmsg});
   }
 

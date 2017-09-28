@@ -3,6 +3,7 @@ import IconButton from 'material-ui/IconButton';
 import NotifIcon from './NotifIcon';
 import ProfileIcon from 'material-ui/svg-icons/social/person';
 import LogoutIcon from 'material-ui/svg-icons/action/power-settings-new';
+import ChatIcon from 'material-ui/svg-icons/communication/chat';
 import secureRequest from './secureRequest';
 import NotifDisplayer from './NotifDisplayer';
 
@@ -149,7 +150,6 @@ export default class extends Component {
   render() {
     const { open, count, anchor, notif, loading } = this.state;
     const { history, user } = this.props;
-    const profilePath = '/profile/' + user;
     return (
       <div style={styles.icons}>
         <div id='notif'>
@@ -172,7 +172,15 @@ export default class extends Component {
         <IconButton
           iconStyle={styles.icon}
           style={styles.small}
-          onTouchTap={() => history.push(profilePath)}
+          onTouchTap={() => history.push('/message')}
+          tooltip='Chat'
+        >
+          <ChatIcon/>
+        </IconButton>
+        <IconButton
+          iconStyle={styles.icon}
+          style={styles.small}
+          onTouchTap={() => history.push('/profile/' + user)}
           tooltip='My profile'
         >
           <ProfileIcon/>
