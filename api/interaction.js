@@ -1,66 +1,5 @@
 import { ObjectId } from 'mongodb';
 
-// export default {
-//
-//   like: async function(req, res) {
-//     if (!req.body) return res.status(400).send('Empty request');
-//     const {
-//       body: { target: idTarget },
-//       user: { id: idSender, profile: sender },
-//     } = req;
-//     let _idTarget
-//     try {
-//       _idTarget = {_id : ObjectId(idTarget)}
-//     } catch (e) { return res.status(400).send('Invalid target id') }
-//     try {
-//       const Users = db.collection('Users');
-//       const target = await Users.findOne(_idTarget);
-//       if (!target) return res.status(400).send('non-existent target');
-//       const _idSender = {_id: ObjectId(idSender)};
-//       let dbUpdates = [];
-//       let response = {};
-//       let action;
-//       if (sender.like.indexOf(idTarget) === -1) action = '$push'
-//       else {
-//         action = '$pull';
-//         response.status = 'unlike';
-//       }
-//       dbUpdates.push(Users.updateOne(_idSender, {[action]: {like: idTarget}}));
-//       if (target.like.indexOf(idSender) !== -1) {
-//         dbUpdates.push(
-//           Users.updateOne(_idTarget, {[action]: {match: idSender}}),
-//           Users.updateOne(_idSender, {[action]: {match: idTarget}})
-//         );
-//         if (action === '$push') response.status = 'match';
-//       } else if (action === '$push') response.status = 'like';
-//       await Promise.all(dbUpdates);
-//       res.send(response);
-//     } catch (e) { console.log(e); res.sendStatus(500) }
-//   },
-//
-//   block: async function(req, res) {
-//     if (!req.body) return res.status(400).send('Empty request');
-//     const {
-//       body: { target: idTarget, action },
-//       user: { id: idSender, profile: sender },
-//     } = req;
-//     try {
-//       _idTarget = {_id : ObjectId(idTarget)}
-//     } catch (e) { return res.status(400).send('Invalid target id') }
-//     try {
-//       const Users = db.collection('Users');
-//       const target = await Users.findOne(_idTarget);
-//       if (!target) return res.status(400).send('non-existent target');
-//       const _idSender = {_id: ObjectId(idSender)};
-//       let action;
-//       if (sender.like.indexOf(idTarget) === -1) action = '$push'
-//       else action = '$pull';
-//       Users.updateOne(_idSender, {[action]: {block: idTarget}});
-//       res.end();
-//   }
-//
-// }
-
 const handler = {
 
   like: async function(sender, target, res) {
@@ -123,6 +62,7 @@ export default async function(req, res) {
 
   target.id = idTarget;
   const sender = req.user;
+  if (sender.id === target.id) return res.status(400).send('Cannot interact with yourself');
 
   try {
     const Users = db.collection('Users');

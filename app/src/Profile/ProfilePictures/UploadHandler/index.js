@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Dropzone from 'react-dropzone';
-import secureRequest from './secureRequest';
+import secureRequest from '../../../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 
 const style = {

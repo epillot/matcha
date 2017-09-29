@@ -3,8 +3,8 @@ import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import { GridList } from 'material-ui/GridList';
-import UploadHandler from './UploadHandler';
-import PictureTile from './PictureTile';
+import UploadHandler from './UploadHandler/';
+import PictureTile from './PictureTile/';
 import Paper from 'material-ui/Paper';
 
 const styles = {
@@ -53,15 +53,15 @@ export default class extends Component {
 
   onDelete(pic) {
     const { pictures } = this.state;
-    const { profilePic, onDeleteProfilePic } = this.props;
+    const { profilePic } = this.props;
     pictures.splice(pictures.indexOf(pic), 1);
     this.setState({pictures});
-    if (pic === profilePic) onDeleteProfilePic();
+    if (pic === profilePic) this.props.updateProfilePic(null);
   }
 
   render() {
     const { pictures, openUpload } = this.state;
-    const { onAuthFailed, setProfilePic, profilePic, location, editable } = this.props;
+    const { onAuthFailed, updateProfilePic, profilePic, location, editable } = this.props;
     return (
       <Paper style={styles.root} zDepth={2}>
         <Toolbar>
@@ -87,7 +87,7 @@ export default class extends Component {
                 pic={pic}
                 onDelete={this.onDelete}
                 onAuthFailed={onAuthFailed}
-                setProfilePic={setProfilePic}
+                updateProfilePic={updateProfilePic}
                 location={location}
                 editable={editable}
               />

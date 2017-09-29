@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import parser from './parser';
+import parser from '../../../parser';
 import DatePicker from 'material-ui/DatePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import secureRequest from './secureRequest';
+import secureRequest from '../../../secureRequest';
 import TextField from 'material-ui/TextField';
 
 const maxDate = new Date();
@@ -107,6 +107,7 @@ export default class extends Component {
           <MenuItem value={2} primaryText="Women" />
           <MenuItem value={3} primaryText="Both" />
         </SelectField>
+        <br/>
         <TextField
           floatingLabelText='location'
 

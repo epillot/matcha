@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import FormInput from './FormInput';
 import RaisedButton from 'material-ui/RaisedButton';
 import LinearProgress from 'material-ui/LinearProgress';
 import Subheader from 'material-ui/Subheader';
-import { signinParser } from './parser';
+import { signinParser } from '../../parser';
+import TextField from 'material-ui/TextField';
 
 const styles = {
   form: {
@@ -77,19 +77,30 @@ export default class extends Component {
       <div>
         <Subheader>Signin with your account</Subheader>
         <form style={styles.form} onSubmit={this.signinHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
-          <FormInput
+          <TextField
             name='login'
+            floatingLabelText='Login'
             type='text'
             value={this.state.login}
-            error={this.state.errors.login}
-          ></FormInput>
-          <FormInput
+            errorText={this.state.errors.login}
+            autoComplete="off"
+          />
+          <br/>
+          <TextField
             name='password'
             type='password'
+            floatingLabelText='Password'
             value={this.state.password}
-            error={this.state.errors.password}
-          ></FormInput>
-          <RaisedButton type='submit' label='Signin' primary={true} disabled={this.state.loading}></RaisedButton>
+            errorText={this.state.errors.password}
+            autoComplete="off"
+          />
+          <br/>
+          <RaisedButton
+            type='submit'
+            label='Signin'
+            primary={true}
+            disabled={this.state.loading}
+          />
         </form>
         {this.state.loading ? <LinearProgress/> : ''}
       </div>

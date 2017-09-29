@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import secureRequest from './secureRequest';
+import secureRequest from '../../../secureRequest';
 import TextField from 'material-ui/TextField';
-
-
 
 export default class extends Component {
 

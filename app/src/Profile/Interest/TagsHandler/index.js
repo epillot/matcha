@@ -3,7 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import AutoComplete from 'material-ui/AutoComplete';
 import CircularProgress from 'material-ui/CircularProgress';
-import secureRequest from './secureRequest';
+import secureRequest from '../../../secureRequest';
 
 export default class extends Component {
 

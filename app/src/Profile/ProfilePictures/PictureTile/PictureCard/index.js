@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Card, CardActions, CardMedia } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
-import secureRequest from './secureRequest';
+import secureRequest from '../../../../secureRequest';
 import LinearProgress from 'material-ui/LinearProgress';
 
 export default class extends Component {
@@ -12,7 +12,7 @@ export default class extends Component {
       loading: false,
     }
     this.handleDelete = this.handleDelete.bind(this);
-    this.setProfilePic = this.setProfilePic.bind(this);
+    this.updateProfilePic = this.updateProfilePic.bind(this);
   }
 
   handleDelete() {
@@ -31,10 +31,10 @@ export default class extends Component {
     });
   }
 
-  setProfilePic() {
+  updateProfilePic() {
     if (this.state.loading) return;
     this.setState({loading: true});
-    const { pic, setProfilePic, onAuthFailed } = this.props;
+    const { pic } = this.props;
     const config = {
       method: 'patch',
       url: '/api' + this.props.location.pathname,
@@ -45,9 +45,9 @@ export default class extends Component {
     };
     secureRequest(config, err => {
       setTimeout(() => {
-        if (err) return onAuthFailed();
-        setProfilePic(pic);
-      }, 1000);
+        if (err) return this.props.onAuthFailed();
+        this.props.updateProfilePic(pic);
+      }, 500);
     });
   }
 
@@ -69,7 +69,7 @@ export default class extends Component {
               />
               <FlatButton
                 label="set as profile picture"
-                onTouchTap={this.setProfilePic}
+                onTouchTap={this.updateProfilePic}
                 disabled={loading || pic === profilePic}
               />
             </div> : ''}

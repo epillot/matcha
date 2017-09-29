@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import IconButton from 'material-ui/IconButton';
-import NotifIcon from './NotifIcon';
+import NotifIcon from './NotifIcon/';
 import ProfileIcon from 'material-ui/svg-icons/social/person';
 import LogoutIcon from 'material-ui/svg-icons/action/power-settings-new';
-import ChatIcon from './ChatIcon';
-import secureRequest from './secureRequest';
-import NotifDisplayer from './NotifDisplayer';
+import ChatIcon from './ChatIcon/';
+import secureRequest from '../../secureRequest';
+import NotifDisplayer from './NotifDisplayer/';
 
 const styles = {
   icons: {

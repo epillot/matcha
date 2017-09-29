@@ -6,7 +6,7 @@ import BlockIcon from 'material-ui/svg-icons/notification/do-not-disturb-on';
 import UnblockIcon from 'material-ui/svg-icons/notification/do-not-disturb-off';
 import ReportIcon from 'material-ui/svg-icons/action/visibility';
 import UnreportIcon from 'material-ui/svg-icons/action/visibility-off';
-import secureRequest from './secureRequest';
+import secureRequest from '../../secureRequest';
 
 
 const styles = {
@@ -40,11 +40,13 @@ export default class extends Component {
       like: props.liked,
       block: props.blocked,
       report: props.reported,
+      loading: {},
     };
     this.interact = this.interact.bind(this);
   }
 
   async interact(action) {
+    if (this.state.loading[action]) return;
     const { loggued, id } = this.props;
     let config = {
       method: 'post',
@@ -54,9 +56,15 @@ export default class extends Component {
         action,
       },
     };
+    this.setState({loading: {[action] : true}});
     try {
       const { data: { status } } = await secureRequest(config);
-      this.setState(state => ({[action]: !state[action]}));
+      this.setState(state => {
+        return {
+          [action]: !state[action],
+          loading: {[action]: false},
+        }
+      });
       if (action === 'like') {
         config = {
           method: 'post',
@@ -66,8 +74,7 @@ export default class extends Component {
             object: status,
           },
         };
-        await secureRequest(config);
-        global.socket.emit('notif', {id});
+        secureRequest(config);
       }
     } catch(e) {
       if (e === 'Unauthorized') this.props.onAuthFailed();
@@ -76,7 +83,7 @@ export default class extends Component {
   }
 
   render() {
-    const { like, block, report } = this.state;
+    const { like, block, report, loading } = this.state;
     return (
       <div>
         <IconButton
@@ -84,6 +91,7 @@ export default class extends Component {
           style={styles.small}
           tooltip={like ? 'Unlike this profile' : 'Like this profile'}
           onTouchTap={() => this.interact('like')}
+          disabled={!!loading.like}
         >
           {like ? <UnlikeIcon/> : <LikeIcon/>}
         </IconButton>
@@ -92,6 +100,7 @@ export default class extends Component {
           style={styles.small}
           tooltip={block ? 'Unblock this profile' : 'Block this profile'}
           onTouchTap={() => this.interact('block')}
+          disabled={!!loading.block}
         >
           {block ? <UnblockIcon/> : <BlockIcon/>}
         </IconButton>
@@ -100,6 +109,7 @@ export default class extends Component {
           style={styles.small}
           tooltip={report ? 'Cancel your report' : 'Report this profile as fake'}
           onTouchTap={() => this.interact('report')}
+          disabled={!!loading.report}
         >
           {report ? <UnreportIcon/> : <ReportIcon/>}
         </IconButton>

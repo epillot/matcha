@@ -3,7 +3,7 @@ import Subheader from 'material-ui/Subheader';
 import { Card, CardText } from 'material-ui/Card';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
-import BioHandler from './BioHandler';
+import BioHandler from './BioHandler/';
 
 const styles = {
   root: {

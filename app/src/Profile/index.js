@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import secureRequest from './secureRequest';
+import secureRequest from '../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
-import ProfileBio from './ProfileBio';
-import ProfilePictures from './ProfilePictures';
-import ProfileCard from './ProfileCard';
-import Interset from './Interest';
-import ChangeLog from './ChangeLog';
-import Interaction from './Intercation'
+import ProfileBio from './ProfileBio/';
+import ProfilePictures from './ProfilePictures/';
+import ProfileCard from '../ProfileCard/';
+import Interset from './Interest/';
+import ChangeLog from '../ChangeLog/';
+import Interaction from './Interaction/';
 
 const styles = {
   root: {
@@ -40,9 +40,13 @@ export default class extends Component {
       error: '',
     }
     this.mounted = true;
+    this.setStateIfMounted = this.setStateIfMounted.bind(this);
     this.getProfile = this.getProfile.bind(this);
-    this.setProfilePic = this.setProfilePic.bind(this);
-    this.onDeleteProfilePic = this.onDeleteProfilePic.bind(this);
+    this.updateProfilePic = this.updateProfilePic.bind(this);
+  }
+
+  setStateIfMounted(state, cb) {
+    if (this.mounted) this.setState(state, cb);
   }
 
   componentDidMount() {
@@ -51,40 +55,38 @@ export default class extends Component {
 
   componentWillReceiveProps(props) {
     if (props.match.params.id !== this.props.match.params.id) {
-      this.setState({profile: null});
+      this.setStateIfMounted({profile: null});
       this.getProfile(props.match.params.id);
     }
   }
 
-  getProfile(id) {
-    const config = {
+  async getProfile(id) {
+    let config = {
       method: 'get',
       url: '/api/profile/' + id,
     };
-    secureRequest(config, (err, response) => {
-      if (err) return this.props.onLogout();
-      const { data: { error, profile } } = response;
-      if (this.mounted) {
-        if (error) this.setState({profile: false, error});
-        else {
-          this.setState({profile});
-          if (id !== this.props.loggued) {
-            const config = {
-              method: 'post',
-              url: '/api/notifications',
-              data: {
-                to: id,
-                object: 'visit',
-              },
-            }
-            secureRequest(config, err => {
-              if (err) return this.props.onLogout();
-              global.socket.emit('visit', {id});
-            });
-          }
+    try {
+      const { data: { error, profile } } = await secureRequest(config);
+      if (error) this.setStateIfMounted({profile: false, error});
+      else {
+        global.socket.emit('visit', {id});
+        this.setStateIfMounted({profile});
+        if (id !== this.props.loggued) {
+          config = {
+            method: 'post',
+            url: '/api/notifications',
+            data: {
+              to: id,
+              object: 'visit',
+            },
+          };
+          secureRequest(config);
         }
       }
-    });
+    } catch(e) {
+      if (e === 'Unauthorized') this.props.onAuthFailed();
+      else console.log(e);
+    }
   }
 
   componentWillUnmount() {
@@ -95,17 +97,10 @@ export default class extends Component {
     }
   }
 
-  setProfilePic(pic) {
-    const { profile } = this.state;
-    profile.profilePic = pic;
-    this.setState({profile});
+  updateProfilePic(pic) {
+    this.setStateIfMounted({profile: {profilePic: pic}});
   }
 
-  onDeleteProfilePic() {
-    const { profile } = this.state;
-    profile.profilePic = null;
-    this.setState({profile});
-  }
 
   render() {
     const { profile } = this.state;
@@ -113,9 +108,9 @@ export default class extends Component {
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
       const { liked, blocked, reported, pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
-      console.log(blocked);
       return (
         <div style={styles.root}>
+          {editable ? '' :
           <div style={styles.interact}>
             <ChangeLog
               ts={ts}
@@ -129,7 +124,7 @@ export default class extends Component {
               reported={reported}
               onAuthFailed={this.props.onLogout}
             />
-          </div>
+          </div>}
           <div style={styles.profileInfo}>
             <ProfileCard
               profile={{profilePic, ...rest}}
@@ -158,8 +153,7 @@ export default class extends Component {
             onAuthFailed={this.props.onLogout}
             profilePic={profilePic}
             pictures={pictures}
-            setProfilePic={this.setProfilePic}
-            onDeleteProfilePic={this.onDeleteProfilePic}
+            updateProfilePic={this.updateProfilePic}
           />
         </div>
       );

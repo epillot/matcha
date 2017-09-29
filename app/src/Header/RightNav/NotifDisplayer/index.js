@@ -8,7 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import ClearIcon from 'material-ui/svg-icons/content/clear';
 import ReloadIcon from 'material-ui/svg-icons/notification/sync';
 import Subheader from 'material-ui/Subheader';
-import secureRequest from './secureRequest';
+import secureRequest from '../../../secureRequest';
 
 const styles = {
   popover: {

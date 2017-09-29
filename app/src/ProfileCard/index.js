@@ -3,7 +3,7 @@ import Paper from 'material-ui/Paper'
 import {List, ListItem} from 'material-ui/List';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
-import InfoHandler from './InfoHandler';
+import InfoHandler from './InfoHandler/';
 
 const styles = {
   root: {

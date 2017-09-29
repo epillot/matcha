@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import GeneralInfoForm from './GeneralInfoForm';
-import EditPassword from './EditPassword';
-import OtherInfoForm from './OtherInfoForm';
+import GeneralInfoForm from './GeneralInfoForm/';
+import EditPassword from './EditPassword/';
+import OtherInfoForm from './OtherInfoForm/';
 import {Tabs, Tab} from 'material-ui/Tabs';
 
 const styles = {

@@ -161,6 +161,7 @@ export default class extends Component {
       const selected = this.props.location.search.substring(1);
       if (selected === msg.idSender) {
         this.onSend(msg);
+        this.setAsRead(msg.idSender);
       } else {
         this.setStateIfMounted(state => {
           if (state.contacts) {

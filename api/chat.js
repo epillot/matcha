@@ -93,8 +93,19 @@ export default {
   },
 
   asNewMsg: async function(req, res) {
-    const idTarget = req.user.id;
-    const newMsg = await db.collection('chat').findOne({idTarget, read: false});
+    const { id: idTarget, profile } = req.user;
+    const matchs = [];
+    profile.like.to.forEach(id => {
+      if (profile.like.from.indexOf(id) !== -1) {
+        matchs.push(id);
+      }
+    });
+    const filter = {
+      idTarget,
+      idSender: {$in: matchs},
+      read: false,
+    };
+    const newMsg = await db.collection('chat').findOne(filter);
     res.send({newMsg: !!newMsg});
   }
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { GridTile } from 'material-ui/GridList';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import PictureCard from './PictureCard';
+import PictureCard from './PictureCard/';
 
 
 const style = {
@@ -25,7 +25,7 @@ export default class extends Component {
     this.handleOpen = this.handleOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.onDelete = this.onDelete.bind(this);
-    this.setProfilePic = this.setProfilePic.bind(this);
+    this.updateProfilePic = this.updateProfilePic.bind(this);
   }
 
   handleOpen() {
@@ -41,9 +41,9 @@ export default class extends Component {
     this.props.onDelete(pic);
   }
 
-  setProfilePic(pic) {
+  updateProfilePic(pic) {
     this.handleClose();
-    this.props.setProfilePic(pic)
+    this.props.updateProfilePic(pic)
   }
 
   render() {
@@ -70,7 +70,7 @@ export default class extends Component {
             location={location}
             pic={pic}
             profilePic={profilePic}
-            setProfilePic={this.setProfilePic}
+            updateProfilePic={this.updateProfilePic}
             onDelete={this.onDelete}
             onAuthFailed={onAuthFailed}
             editable={editable}

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import FormInput from './FormInput';
 import RaisedButton from 'material-ui/RaisedButton';
-import { editPasswordParser } from './parser';
-import secureRequest from './secureRequest';
+import { editPasswordParser } from '../../../parser';
+import secureRequest from '../../../secureRequest';
+import TextField from 'material-ui/TextField';
 
 export default class extends Component {
 
@@ -54,27 +54,33 @@ export default class extends Component {
         onSubmit={this.handleSubmit}
         onSelect={this.handleSelect}
       >
-        <FormInput
+        <TextField
           name='password'
-          label='Actual password'
+          floatingLabelText='Actual password'
           type='password'
           value={this.state.password}
-          error={this.state.errors.password}
+          errorText={this.state.errors.password}
+          autoComplete="off"
         />
-        <FormInput
+        <br/>
+        <TextField
           name='newPassword'
-          label='New password'
+          floatingLabelText='New password'
           type='password'
           value={this.state.newPassword}
-          error={this.state.errors.newPassword}
+          errorText={this.state.errors.newPassword}
+          autoComplete="off"
         />
-        <FormInput
+        <br/>
+        <TextField
           name='confirmPassword'
           type='password'
-          label='Confirm new password'
+          floatingLabelText='Confirm new password'
           value={this.state.confirmPassword}
-          error={this.state.errors.confirmPassword}
+          errorText={this.state.errors.confirmPassword}
+          autoComplete="off"
         />
+        <br/>
         <RaisedButton
           type='submit'
           label='Change password'

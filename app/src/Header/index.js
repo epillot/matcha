@@ -3,9 +3,9 @@ import { withRouter } from 'react-router-dom';
 import AppBar from 'material-ui/AppBar';
 import RaisedButton from 'material-ui/RaisedButton';
 import Popover from 'material-ui/Popover';
-import Signin from './Signin';
+import Signin from './Signin/';
 import IconButton from 'material-ui/IconButton';
-import RightNav from './RightNav';
+import RightNav from './RightNav/';
 import GroupIcon from 'material-ui/svg-icons/social/people';
 
 

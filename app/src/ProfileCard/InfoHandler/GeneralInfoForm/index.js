@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import FormInput from './FormInput';
 import RaisedButton from 'material-ui/RaisedButton';
-import parser from './parser';
-import secureRequest from './secureRequest';
+import parser from '../../../parser';
+import secureRequest from '../../../secureRequest';
 import FontIcon from 'material-ui/FontIcon';
+import TextField from 'material-ui/TextField';
 
 const styles = {
   success: {
     marginLeft: '10px',
     color: '#4CAF50'
-
   },
 }
 
@@ -83,34 +82,42 @@ export default class extends Component {
         onSubmit={this.handleSubmit}
         onSelect={this.handleSelect}
       >
-        <FormInput
+        <TextField
           name='firstname'
-          label='Firstname'
+          floatingLabelText='Firstname'
           type='text'
           value={firstname.trim()}
-          error={errors.firstname}
+          errorText={errors.firstname}
+          autoComplete="off"
         />
-        <FormInput
+        <br/>
+        <TextField
           name='lastname'
-          label='Lastname'
+          floatingLabelText='Lastname'
           type='text'
           value={lastname.trim()}
-          error={errors.lastname}
+          errorText={errors.lastname}
+          autoComplete="off"
         />
-        <FormInput
+        <br/>
+        <TextField
           name='login'
-          label='Login'
+          floatingLabelText='Login'
           type='text'
           value={login.trim()}
-          error={errors.login}
+          errorText={errors.login}
+          autoComplete="off"
         />
-        <FormInput
+        <br/>
+        <TextField
           name='email'
-          label='Email adress'
+          floatingLabelText='Email adress'
           type='text'
           value={email.trim()}
-          error={errors.email}
+          errorText={errors.email}
+          autoComplete="off"
         />
+        <br/>
         <RaisedButton
           type='submit'
           label='Save change'

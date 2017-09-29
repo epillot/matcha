@@ -61,15 +61,7 @@ class sockets extends io {
     }
   }
 
-  handleVisit(targetId, socket) {
-    socket.join('log' + targetId);
-    this.sendNotif(targetId, socket);
-  }
-
-  async sendNotif(targetId, socket) {
-    const { id: senderId } = this.getUserBySocketId(socket.id);
-    const profile = await db.collection('Users').findOne({_id: ObjectId(targetId)});
-    if (!profile || profile.block.indexOf(senderId) !== -1) return;
+  async sendNotif(targetId) {
     const target = this.getUserById(targetId);
     if (target) {
       this.to(target.socketId).emit('notif');
@@ -87,4 +79,30 @@ class sockets extends io {
 
 export default function(server) {
   return new sockets(server);
+}
+
+export function initSocket(socket, ioServer) {
+  socket.on('disconnect', () => {
+    ioServer.disconnect(socket);
+  });
+
+  socket.on('logout', () => {
+    ioServer.disconnect(socket);
+  });
+
+  socket.on('request', ({ id }) => {
+    ioServer.connect(id, socket);
+  });
+
+  socket.on('visit', ({ id }) => {
+    socket.join('log' + id);
+  });
+
+  socket.on('leavelog', ({ id }) => {
+    socket.leave('log' + id);
+  });
+
+  socket.on('join chat', ({ ids }) => {
+    ids.forEach(id => socket.join('log' + id));
+  });
 }

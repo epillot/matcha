@@ -4,7 +4,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import Avatar from 'material-ui/Avatar';
-import ChangeLog from './ChangeLog';
+import ChangeLog from './ChangeLog/';
 
 const styles = {
   fullContainer: {
@@ -99,6 +99,7 @@ export default class extends Component {
     this.state = {
       message: '',
       error: '',
+      loading: false,
     };
     this.sendMessage = this.sendMessage.bind(this);
     this.renderMsg = this.renderMsg.bind(this);
@@ -125,11 +126,12 @@ export default class extends Component {
       url: '/api/chat/message',
       data: {idTarget, message, ts},
     };
+    this.setState({loading: true})
     try {
       const { data: { error, chatmsg } } = await secureRequest(config);
       if (error === 'nomatch') return this.props.onSendFailed(idTarget);
       else if (error) return this.setState({error});
-      this.setState({message: ''})
+      this.setState({message: '', loading: false});
       this.props.onSend(chatmsg);
     } catch(e) {
       if (e === 'Unauthorized') this.props.onAuthFailed();
@@ -175,6 +177,7 @@ export default class extends Component {
           labelStyle={{fontWeight: 'bold', color: '#94C2ED'}}
           label='send'
           onTouchTap={this.sendMessage}
+          disabled={this.state.loading}
         />
       );
     } else {

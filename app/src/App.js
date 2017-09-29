@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Switch } from 'react-router-dom';
 import Home from './Home';
-import Header from './Header2';
+import Header from './Header/';
 import ActivationForm from './ActivationForm';
 import PrivateRoute from './privateRoute';
 import UnlogguedRoute from './UnlogguedRoute';
 import secureRequest from './secureRequest';
-import MyProfile from './MyProfile';
+import Profile from './Profile/';
 import Suggestion from './Suggestion';
 import Chat from './Chat';
 
@@ -36,10 +36,7 @@ class App extends Component {
     };
     secureRequest(config, (err, response) => {
       let loggued = false;
-      if (!err) {
-        loggued = response.data;
-        //global.socket.emit('logged');
-      }
+      if (!err) loggued = response.data;
       this.setState({loggued});
       if (loggued) this.checkNewMsg();
     });
@@ -81,7 +78,7 @@ class App extends Component {
         <div style={styles.container}>
         <Switch>
           <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
-          <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={MyProfile}/>
+          <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={Profile}/>
           <PrivateRoute path='/message' onRead={() => this.setState({newMsg: false})} loggued={loggued} onLogout={this.onLogout} component={Chat}/>
           <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
           <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>

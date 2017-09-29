@@ -4,8 +4,8 @@ import Subheader from 'material-ui/Subheader';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
 import Chip from 'material-ui/Chip';
-import TagsHandler from './TagsHandler';
-import secureRequest from './secureRequest';
+import TagsHandler from './TagsHandler/';
+import secureRequest from '../../secureRequest';
 
 const styles= {
   root: {
