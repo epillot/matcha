@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Paper from 'material-ui/Paper';
-import Contact from './Contact';
-import Messages from './Messages';
-import secureRequest from './secureRequest';
+import Contact from './Contact/';
+import Messages from './Messages/';
+import secureRequest from '../secureRequest';
 
 
 const styles = {

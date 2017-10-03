@@ -5,10 +5,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import App from './App';
 import io from 'socket.io-client';
-import secureRequest from './secureRequest'
 
 global.socket = io('http://localhost:8000');
-global.secureRequest = secureRequest;
 
 injectTapEventPlugin();
 

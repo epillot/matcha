@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 //import auth from './auth';
 
-class UnlogguedRoute extends Component {
+export default class extends Component {
 
   render() {
     const { component: Component, ...rest } = this.props;
@@ -22,5 +22,3 @@ class UnlogguedRoute extends Component {
     )
   }
 }
-
-export default UnlogguedRoute;

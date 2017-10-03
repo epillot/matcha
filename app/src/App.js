@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Switch } from 'react-router-dom';
-import Home from './Home';
+import Home from './Home/';
 import Header from './Header/';
-import ActivationForm from './ActivationForm';
-import PrivateRoute from './privateRoute';
-import UnlogguedRoute from './UnlogguedRoute';
+import Activation from './Activation/';
+import PrivateRoute from './PrivateRoute/';
+import PublicRoute from './PublicRoute/';
 import secureRequest from './secureRequest';
 import Profile from './Profile/';
-import Suggestion from './Suggestion';
-import Chat from './Chat';
+import Suggestion from './Suggestion/';
+import Chat from './Chat/';
 
 const styles = {
   container: {
@@ -80,8 +80,8 @@ class App extends Component {
           <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
           <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={Profile}/>
           <PrivateRoute path='/message' onRead={() => this.setState({newMsg: false})} loggued={loggued} onLogout={this.onLogout} component={Chat}/>
-          <UnlogguedRoute path='/home' loggued={loggued} component={Home}/>
-          <UnlogguedRoute path='/activation' loggued={loggued} component={ActivationForm}/>
+          <PublicRoute path='/home' loggued={loggued} component={Home}/>
+          <PublicRoute path='/activation' loggued={loggued} component={Activation}/>
         </Switch>
         </div>
       </div>

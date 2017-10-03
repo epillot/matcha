@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import secureRequest from './secureRequest';
+import secureRequest from '../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
-import ProfileCard from './ProfileCard/';
+import ProfileCard from '../ProfileCard/';
 
 const styles = {
   root: {

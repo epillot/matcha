@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Paper from 'material-ui/Paper';
 import RaisedButton from 'material-ui/RaisedButton';
-import FormInput from './FormInput';
+import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import DatePicker from 'material-ui/DatePicker';
 import MenuItem from 'material-ui/MenuItem';
 import Subheader from 'material-ui/Subheader';
 import LinearProgress from 'material-ui/LinearProgress';
-import { signupParser } from './parser';
+import { signupParser } from '../../parser';
 
 const styles = {
   form: {
@@ -101,18 +101,22 @@ export default class extends Component {
       <Paper zDepth={3}>
         <Subheader>Create an account</Subheader>
         <form style={styles.form} onSubmit={this.signupHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
-          <FormInput
+          <TextField
             name='firstname'
+            floatingLabelText='Firstname'
             type='text'
             value={this.state.firstname}
-            error={this.state.errors.firstname}
+            errorText={this.state.errors.firstname}
           />
-          <FormInput
+          <br/>
+          <TextField
             name='lastname'
+            floatingLabelText='Lastname'
             type='text'
             value={this.state.lastname}
-            error={this.state.errors.lastname}
+            errorText={this.state.errors.lastname}
           />
+          <br/>
           <SelectField
             floatingLabelText="sex"
             value={this.state.sexValue}
@@ -128,32 +132,38 @@ export default class extends Component {
             value={this.state.birthday}
             onChange={this.handleDateChange}
           />
-          <FormInput
+          <TextField
             name='login'
+            floatingLabelText='Login'
             type='text'
             value={this.state.login}
-            error={this.state.errors.login}
+            errorText={this.state.errors.login}
           />
-          <FormInput
+          <br/>
+          <TextField
             name='password'
+            floatingLabelText='Password'
             type='password'
             value={this.state.password}
-            error={this.state.errors.password}
+            errorText={this.state.errors.password}
           />
-          <FormInput
+          <br/>
+          <TextField
             name='confirmPassword'
             type='password'
-            label='confirm your password'
+            floatingLabelText='Confirm your password'
             value={this.state.confirmPassword}
-            error={this.state.errors.confirmPassword}
+            errorText={this.state.errors.confirmPassword}
           />
-          <FormInput
+          <br/>
+          <TextField
             name='email'
             type='email'
-            label='email adress'
+            floatingLabelText='Email adress'
             value={this.state.email}
-            error={this.state.errors.email}
+            errorText={this.state.errors.email}
           />
+          <br/>
           <RaisedButton type='submit' label='Signup' primary={true} disabled={this.state.loading}></RaisedButton>
         </form>
         {this.state.loading ? <LinearProgress/> : ''}

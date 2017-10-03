@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import secureRequest from './secureRequest';
+import secureRequest from '../../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import Avatar from 'material-ui/Avatar';
-import ChangeLog from './ChangeLog/';
+import ChangeLog from '../../ChangeLog/';
 
 const styles = {
   fullContainer: {

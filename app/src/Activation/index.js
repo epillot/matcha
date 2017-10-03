@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Paper from 'material-ui/Paper';
 import CircularProgress from 'material-ui/CircularProgress';
-import { activationParser } from './parser';
+import { activationParser } from '../parser';
 import RaisedButton from 'material-ui/RaisedButton';
-import FormInput from './FormInput';
+import TextField from 'material-ui/TextField';
 
 class ActivationForm extends Component {
 
@@ -74,19 +74,23 @@ class ActivationForm extends Component {
         <Paper zDepth={3} style={{padding: 20}}>
           <div style={style}>{this.state.loading ? <CircularProgress/> : ''}</div>
           <form onSubmit={this.activationHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
-          <FormInput
-            name='login'
-            type='text'
-            value={this.state.login}
-            error={this.state.errors.login}
-          ></FormInput>
-          <FormInput
-            name='key'
-            type='text'
-            value={this.state.key}
-            error={this.state.errors.key}
-          ></FormInput>
-          <RaisedButton type='submit' label='Ok' primary={true}></RaisedButton>
+            <TextField
+              name='login'
+              floatingLabelText='Login'
+              type='text'
+              value={this.state.login}
+              errorText={this.state.errors.login}
+            />
+            <br/>
+            <TextField
+              name='key'
+              floatingLabelText='Key'
+              type='text'
+              value={this.state.key}
+              errorText={this.state.errors.key}
+            />
+            <br/>
+            <RaisedButton type='submit' label='Ok' primary={true}></RaisedButton>
           </form>
         </Paper>
       </div>
