@@ -5,9 +5,10 @@ import LinearProgress from 'material-ui/LinearProgress';
 import Subheader from 'material-ui/Subheader';
 import { signinParser } from '../../parser';
 import TextField from 'material-ui/TextField';
+import Divider from 'material-ui/Divider'
 
 const styles = {
-  form: {
+  container: {
     padding: '0 20px 20px 20px',
   },
 };
@@ -76,7 +77,7 @@ export default class extends Component {
     return (
       <div>
         <Subheader>Signin with your account</Subheader>
-        <form style={styles.form} onSubmit={this.signinHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
+        <form style={styles.container} onSubmit={this.signinHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
           <TextField
             name='login'
             floatingLabelText='Login'
@@ -102,6 +103,16 @@ export default class extends Component {
             disabled={this.state.loading}
           />
         </form>
+        <Divider/>
+        <Subheader>Forgot your password ?</Subheader>
+        <div style={styles.container}>
+          <TextField
+            name='email'
+            type='email'
+            floatingLabelText='Email adress'
+            autoComplete="off"
+          />
+        </div>
         {this.state.loading ? <LinearProgress/> : ''}
       </div>
     );

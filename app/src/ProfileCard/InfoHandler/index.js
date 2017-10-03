@@ -57,9 +57,10 @@ export default class extends Component {
                 sexValue={profile.sexValue}
                 birthday={profile.birthday}
                 lookingFor={profile.lookingFor}
-                location={location}
+                loc={profile.loc}
                 onAuthFailed={onAuthFailed}
                 onEdit={data => this.props.onEdit(data)}
+                location={location}
               />
             </div>
           </Tab>

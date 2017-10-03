@@ -11,6 +11,7 @@ const validFields = [
   'login',
   'email',
   'bio',
+  'loc',
 ];
 
 const profileToSend = {

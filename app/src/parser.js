@@ -72,6 +72,10 @@ const parser = {
     return null;
   },
 
+  loc: function(props) {
+    return null;
+  }
+
 };
 
 export function signupParser(input) {

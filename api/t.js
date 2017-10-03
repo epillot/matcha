@@ -4,9 +4,9 @@ import config from './config/config';
 
 MongoClient.connect(config.mongoConfig).then(db => {
   global.db = db;
-  return db.collection('chat').update({}, {
+  return db.collection('Users').update({}, {
     $set: {
-      read: true,
+      popularity: 0,
     }
   }, {multi: true});
 }).then(res => {

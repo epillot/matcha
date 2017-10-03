@@ -53,10 +53,8 @@ export default class extends Component {
 
   onDelete(pic) {
     const { pictures } = this.state;
-    const { profilePic } = this.props;
     pictures.splice(pictures.indexOf(pic), 1);
     this.setState({pictures});
-    if (pic === profilePic) this.props.updateProfilePic(null);
   }
 
   render() {

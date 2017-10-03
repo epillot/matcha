@@ -16,9 +16,9 @@ export default class extends Component {
   }
 
   handleDelete() {
-    if (this.state.loading) return;
+    const { pic, onDelete, onAuthFailed, profilePic } = this.props;
+    if (this.state.loading || pic === profilePic) return;
     this.setState({loading: true});
-    const { pic, onDelete, onAuthFailed } = this.props;
     const config = {
       method: 'delete',
       url: `/api/pictures/${pic}`,
@@ -65,7 +65,7 @@ export default class extends Component {
               <FlatButton
                 label="delete"
                 onTouchTap={this.handleDelete}
-                disabled={loading}
+                disabled={loading || pic === profilePic}
               />
               <FlatButton
                 label="set as profile picture"

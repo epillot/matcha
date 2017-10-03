@@ -34,15 +34,14 @@ export default {
   },
 
   delete: async function(req, res) {
-    const { params: { pic }, user: { id } } = req;
+    const { params: { pic }, user: { id, profile } } = req;
     try {
       const _id = ObjectId(id);
-      const { pictures, profilePic } = await db.collection('Users').findOne({_id});
-      if (pictures.indexOf(pic) === -1) {
+      const { pictures, profilePic } = profile;
+      if (pictures.indexOf(pic) === -1 || pic === profilePic) {
         return res.status(401).send({error: 'Not allowed to delete this picture'});
       }
       const update = {$pull: {pictures: pic}};
-      if (pic === profilePic) update.$set = {profilePic: null};
       db.collection('Users').updateOne({_id}, update);
       res.sendStatus(202);
     } catch (e) { console.log(e); res.sendStatus(500) }

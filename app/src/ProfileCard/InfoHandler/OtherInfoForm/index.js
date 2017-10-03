@@ -5,7 +5,7 @@ import DatePicker from 'material-ui/DatePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import secureRequest from '../../../secureRequest';
-import TextField from 'material-ui/TextField';
+import Geoloc from '../../../Geoloc/';
 
 const maxDate = new Date();
 maxDate.setFullYear(maxDate.getFullYear() - 18);
@@ -19,10 +19,12 @@ export default class extends Component {
       sexValue: props.sexValue,
       birthday: new Date(props.birthday),
       lookingFor: props.lookingFor,
+      loc: props.loc,
     }
     this.handleSexChange = this.handleSexChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
     this.handleLookChange = this.handleLookChange.bind(this);
+    this.handleLocChange = this.handleLocChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -42,9 +44,13 @@ export default class extends Component {
     this.setState({lookingFor, errors});
   }
 
+  handleLocChange(loc) {
+    this.setState({loc});
+  }
+
   handleSubmit(e) {
     e.preventDefault();
-    const fields = ['sexValue', 'birthday', 'lookingFor'];
+    const fields = ['sexValue', 'birthday', 'lookingFor', 'loc'];
     const data = [];
     const errors = {};
     fields.forEach(field => {
@@ -79,7 +85,8 @@ export default class extends Component {
   }
 
   render() {
-    const { sexValue, birthday, lookingFor, errors } = this.state;
+    const { sexValue, birthday, lookingFor, errors, loc } = this.state;
+    const currentLoc = loc.latlng.split(',');
     return (
       <form onSubmit={this.handleSubmit}>
         <SelectField
@@ -108,9 +115,10 @@ export default class extends Component {
           <MenuItem value={3} primaryText="Both" />
         </SelectField>
         <br/>
-        <TextField
-          floatingLabelText='location'
-
+        <Geoloc
+          adress={loc.adress}
+          currentLoc={currentLoc}
+          onUpdate={this.handleLocChange}
         />
         <br/>
         <RaisedButton
@@ -120,7 +128,8 @@ export default class extends Component {
           disabled={
             sexValue === this.props.sexValue &&
             birthday.toString() === new Date (this.props.birthday).toString() &&
-            lookingFor === this.props.lookingFor
+            lookingFor === this.props.lookingFor &&
+            loc === this.props.loc
           }
         />
       </form>

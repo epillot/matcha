@@ -77,6 +77,10 @@ const parser = {
     if (value === '') return 'Empty message';
     if (value.length > 400) return 'Text too long';
     return null;
+  },
+
+  loc: function(props) {
+    return null;
   }
 
 };
