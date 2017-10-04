@@ -19,7 +19,6 @@ const styles = {
     minHeight: '500px',
     maxWidth: '1200px',
     maxHeight: '750px',
-
     border: '3px solid #E0E0E0',
   },
   contact: {

@@ -44,9 +44,7 @@ export default class extends Component {
           marker: {lat, lng}
         });
       }, () => {
-        const { currentLoc } = this.props;
-        const lat = +currentLoc[0];
-        const lng = +currentLoc[1];
+        const { lat, lng } = this.props;
         this.setState({
           open: true,
           marker: {lat, lng}
@@ -62,9 +60,9 @@ export default class extends Component {
     const latlng = lat + ',' + lng;
     try {
       const adress = await getAdress(latlng);
-      const loc = {latlng, adress}
+      const coordinates = [lng, lat];
       this.setState({open: false});
-      this.props.onUpdate(loc);
+      this.props.onUpdate(coordinates, adress);
     } catch(e) { alert('not a valid place') }
   }
 
@@ -84,14 +82,14 @@ export default class extends Component {
       />,
     ];
     const { open, marker } = this.state;
-    const { currentLoc } = this.props;
+    const { lat, lng, adress } = this.props;
     return (
       <div>
         <TextField
           multiLine={true}
           floatingLabelText='location'
           onSelect={this.initMap}
-          value={this.props.adress}
+          value={adress}
         />
         <Dialog
           actions={actions}
@@ -101,8 +99,8 @@ export default class extends Component {
         >
           <Map
             marker={marker}
-            lat={+currentLoc[0]}
-            lng={+currentLoc[1]}
+            lat={lat}
+            lng={lng}
             moveMarker={this.moveMarker}
             googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyA7WL_e2IinaX7y1oGlI75Q2ESRMWO-Nes"
             loadingElement={<div style={{ height: `500px` }} />}

@@ -49,8 +49,11 @@ export default {
       const hash = await bcrypt.hash(password, 10);
       const key = activationKey();
       const latlng = await getLocation();
+      const [ lat, lng ] = latlng.split(',');
+      const coordinates = [+lng, +lat];
+      const type = 'Point';
       const adress = await getAdress(latlng);
-      const loc = {latlng, adress};
+      const loc = {type, coordinates};
       user = {
         firstname,
         lastname,
@@ -64,6 +67,7 @@ export default {
         tags: [],
         bio: '',
         loc,
+        adress,
         ts: Date.now(),
         like: [],
         block: [],

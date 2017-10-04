@@ -2,6 +2,7 @@ import React from 'react';
 import { GoogleMap, Marker, withGoogleMap, withScriptjs } from "react-google-maps";
 
 export default withScriptjs(withGoogleMap(function(props) {
+  console.log(props);
   return (
     <GoogleMap
       onClick={props.moveMarker}

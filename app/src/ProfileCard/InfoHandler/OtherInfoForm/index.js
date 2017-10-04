@@ -20,6 +20,7 @@ export default class extends Component {
       birthday: new Date(props.birthday),
       lookingFor: props.lookingFor,
       loc: props.loc,
+      adress: props.adress,
     }
     this.handleSexChange = this.handleSexChange.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
@@ -44,13 +45,17 @@ export default class extends Component {
     this.setState({lookingFor, errors});
   }
 
-  handleLocChange(loc) {
-    this.setState({loc});
+  handleLocChange(coordinates, adress) {
+    const loc = {
+      type: 'Point',
+      coordinates,
+    }
+    this.setState({loc, adress});
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const fields = ['sexValue', 'birthday', 'lookingFor', 'loc'];
+    const fields = ['sexValue', 'birthday', 'lookingFor', 'loc', 'adress'];
     const data = [];
     const errors = {};
     fields.forEach(field => {
@@ -85,8 +90,8 @@ export default class extends Component {
   }
 
   render() {
-    const { sexValue, birthday, lookingFor, errors, loc } = this.state;
-    const currentLoc = loc.latlng.split(',');
+    const { sexValue, birthday, lookingFor, errors, loc, adress } = this.state;
+    const { coordinates: [ lng, lat ] } = loc;
     return (
       <form onSubmit={this.handleSubmit}>
         <SelectField
@@ -116,8 +121,9 @@ export default class extends Component {
         </SelectField>
         <br/>
         <Geoloc
-          adress={loc.adress}
-          currentLoc={currentLoc}
+          adress={adress}
+          lng={+lng}
+          lat={+lat}
           onUpdate={this.handleLocChange}
         />
         <br/>
@@ -129,7 +135,7 @@ export default class extends Component {
             sexValue === this.props.sexValue &&
             birthday.toString() === new Date (this.props.birthday).toString() &&
             lookingFor === this.props.lookingFor &&
-            loc === this.props.loc
+            adress === this.props.adress
           }
         />
       </form>

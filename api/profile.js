@@ -12,6 +12,7 @@ const validFields = [
   'email',
   'bio',
   'loc',
+  'adress',
 ];
 
 const profileToSend = {
@@ -28,6 +29,7 @@ const profileToSend = {
   bio: 1,
   loc: 1,
   ts: 1,
+  adress: 1,
 };
 
 export default {

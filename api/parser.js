@@ -79,9 +79,27 @@ const parser = {
     return null;
   },
 
-  loc: function(props) {
+  loc: function(value) {
+    if (typeof value !== 'object') return 'invalid value';
+    const keys = Object.keys(value);
+    if (keys.length !== 2 || keys[0] !== 'type' || keys[1] !== 'coordinates') {
+      return 'invalid value';
+    }
+    const { type, coordinates } = value;
+    if (type !== 'Point') return 'invalid type value';
+    if (!Array.isArray(coordinates)) return 'invalid coordinates value';
+    if (coordinates.length !== 2) return 'invalid coordinates value';
+    const [ lng, lat ] = coordinates;
+    if (+lng < -180 || +lng > 180) return 'invalid longitude value';
+    if (+lat < -90 || +lat > 90) return 'invalid latitude value';
     return null;
-  }
+  },
+
+  adress: function(value) {
+    if (typeof value !== 'string') return 'Invalid value';
+    if (value === '') return 'Empty adress';
+    if (value.length > 200) return 'Adress too long';
+  },
 
 };
 

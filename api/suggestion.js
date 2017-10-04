@@ -1,37 +1,49 @@
 import { ObjectId } from 'mongodb';
 
+function getGeoNear(loc, filter) {
+  return {
+    spherical: true,
+    near: loc,
+    distanceField: 'distance',
+    query: filter,
+  };
+}
+
 export default {
 
   get: async function(req, res) {
-    const _id = ObjectId(req.user.id);
+    const { profile: { lookingFor, sexValue, loc, tags }, id } = req.user;
     const users = db.collection('Users');
-    const ToSend = {
-      _id: 1,
-      firstname: 1,
-      lastname: 1,
-      sexValue: 1,
-      birthday: 1,
-      lookingFor: 1,
-      login: 1,
-      profilePic: 1,
-      loc: 1,
-      ts: 1,
-    };
     try {
-      const { lookingFor, sexValue } = await users.findOne({_id});
       const filter = {
-        _id: {$ne: _id},
+        _id: {$ne: ObjectId(id)},
         active: true,
       };
       if (lookingFor !== 3) filter.sexValue = lookingFor;
       filter.lookingFor = {$in: [sexValue, 3]};
-      const matchs = await users.find(filter, ToSend).toArray();
-      matchs.forEach(match => {
-        if (ioServer.isLogged(match._id)) {
-          match.logged = true;
-        }
-      });
-      res.send(matchs)
+      const $geoNear = getGeoNear(loc, filter);
+      const $project = {
+        login: 1,
+        sexValue: 1,
+        birthday: 1,
+        profilePic: 1,
+        distance: 1,
+        communTags: {
+          $size: {
+            $filter: {
+              input: '$tags',
+              cond: {$in: ['$$this', tags]},
+            },
+          },
+        },
+      };
+      const matchs = await users.aggregate([{$geoNear}, {$project}]).toArray();
+      // matchs.forEach(match => {
+      //   if (ioServer.isLogged(match._id)) {
+      //     match.logged = true;
+      //   }
+      // });
+      res.send({matchs})
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
 

@@ -58,6 +58,7 @@ export default class extends Component {
                 birthday={profile.birthday}
                 lookingFor={profile.lookingFor}
                 loc={profile.loc}
+                adress={profile.adress}
                 onAuthFailed={onAuthFailed}
                 onEdit={data => this.props.onEdit(data)}
                 location={location}
