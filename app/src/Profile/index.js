@@ -107,7 +107,7 @@ export default class extends Component {
     const editable = this.props.loggued === this.props.match.params.id;
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
-      const { liked, blocked, reported, pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
+      const { liked, blocked, reported, isMatch, pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
       return (
         <div style={styles.root}>
           {editable ? '' :
@@ -122,7 +122,9 @@ export default class extends Component {
               liked={liked}
               blocked={blocked}
               reported={reported}
+              isMatch={isMatch}
               onAuthFailed={this.props.onLogout}
+              history={this.props.history}
             />
           </div>}
           <div style={styles.profileInfo}>

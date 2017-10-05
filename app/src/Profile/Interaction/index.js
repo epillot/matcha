@@ -6,6 +6,7 @@ import BlockIcon from 'material-ui/svg-icons/notification/do-not-disturb-on';
 import UnblockIcon from 'material-ui/svg-icons/notification/do-not-disturb-off';
 import ReportIcon from 'material-ui/svg-icons/action/visibility';
 import UnreportIcon from 'material-ui/svg-icons/action/visibility-off';
+import MsgIcon from 'material-ui/svg-icons/communication/email';
 import secureRequest from '../../secureRequest';
 
 
@@ -24,6 +25,11 @@ const styles = {
     width: '30px',
     height: '30px',
     color: '#9E9E9E',
+  },
+  msgicon: {
+    width: '30px',
+    height: '30px',
+    color: '#B0BEC5',
   },
   small: {
     width: '60px',
@@ -47,7 +53,7 @@ export default class extends Component {
 
   async interact(action) {
     if (this.state.loading[action]) return;
-    const { loggued, id } = this.props;
+    const { id } = this.props;
     let config = {
       method: 'post',
       url: '/api/interaction',
@@ -84,6 +90,7 @@ export default class extends Component {
 
   render() {
     const { like, block, report, loading } = this.state;
+    const { history, id } = this.props;
     return (
       <div>
         <IconButton
@@ -95,6 +102,15 @@ export default class extends Component {
         >
           {like ? <UnlikeIcon/> : <LikeIcon/>}
         </IconButton>
+        {this.props.isMatch ?
+        <IconButton
+          iconStyle={styles.msgicon}
+          style={styles.small}
+          onTouchTap={() => history.push('/message?' + id)}
+        >
+          <MsgIcon/>
+        </IconButton>
+        : null}
         <IconButton
           iconStyle={styles.blockicon}
           style={styles.small}

@@ -77,7 +77,6 @@ export default class extends Component {
     return new Promise(async (resolve, reject) => {
       try {
         const { data: { contacts } } = await secureRequest(config);
-        console.log(contacts);
         this.setStateIfMounted({contacts}, () => resolve());
       } catch(e) { reject(e) }
     });
@@ -186,14 +185,12 @@ export default class extends Component {
   }
 
   onSendFailed(idContact) {
-    console.log(idContact);
     this.setStateIfMounted(state => {
       const contacts = state.contacts.slice();
       let i;
       for (i = 0; i < contacts.length; i++) {
         if (contacts[i]._id === idContact) break;
       }
-      console.log(i);
       contacts.splice(i, 1);
       return {contacts, conv: false}
     });

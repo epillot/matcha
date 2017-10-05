@@ -51,7 +51,13 @@ export default {
       if (!toSend) return res.send({error: 'No profile found'});
       if (currentUser.like.to.indexOf(idTarget) !== -1) {
         toSend.liked = true;
-      } else toSend.liked = false;
+        if (currentUser.like.from.indexOf(idTarget) !== -1) {
+          toSend.isMatch = true;
+        }
+      } else {
+        toSend.liked = false;
+        toSend.isMatch = false;
+      }
       if (currentUser.block.indexOf(idTarget) !== -1) {
         toSend.blocked = true;
       } else toSend.blocked = false;

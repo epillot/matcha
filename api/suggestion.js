@@ -36,6 +36,9 @@ export default {
             },
           },
         },
+        popularity: {
+          $size: '$like.from'
+        },
       };
       const matchs = await users.aggregate([{$geoNear}, {$project}]).toArray();
       // matchs.forEach(match => {
