@@ -9,6 +9,7 @@ import secureRequest from './secureRequest';
 import Profile from './Profile/';
 import Suggestion from './Suggestion/';
 import Chat from './Chat/';
+import Snackbar from 'material-ui/Snackbar';
 
 const styles = {
   container: {
@@ -23,6 +24,7 @@ class App extends Component {
     this.state = {
       loggued: null,
       newMsg: false,
+      open: false,
     };
     this.onLog = this.onLog.bind(this);
     this.onLogout = this.onLogout.bind(this);
@@ -74,6 +76,7 @@ class App extends Component {
           onLog={this.onLog}
           newMsg={newMsg}
           onNewMsg={() => this.setState({newMsg: true})}
+          onResetPw={() => this.setState({open: true})}
         />
         <div style={styles.container}>
         <Switch>
@@ -84,6 +87,12 @@ class App extends Component {
           <PublicRoute path='/activation' loggued={loggued} component={Activation}/>
         </Switch>
         </div>
+        <Snackbar
+          open={this.state.open}
+          message='Your password has been successfully reinitialized. Check your mails.'
+          autoHideDuration={8000}
+          onRequestClose={() => this.setState({open: false})}
+        />
       </div>
     );
   }

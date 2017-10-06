@@ -48,7 +48,7 @@ class Header extends Component {
   }
 
   render() {
-    const { loggued, history, newMsg, location } = this.props;
+    const { loggued, history, newMsg, location, onResetPw } = this.props;
     const { anchor, open } = this.state;
     return (
       <div>
@@ -78,6 +78,7 @@ class Header extends Component {
                   onLog={this.onLog}
                   setLoading={this.setLoading}
                   history={history}
+                  onResetPw={onResetPw}
                 />
               </Popover>
             </div> :

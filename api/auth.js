@@ -1,4 +1,4 @@
-import { signupParser, signinParser, activationParser } from './parser';
+import parser, { signupParser, signinParser, activationParser } from './parser';
 import bcrypt from 'bcrypt';
 import mailer from './mailer';
 import jwt from 'jsonwebtoken';
@@ -12,6 +12,19 @@ const activationKey = function() {
     key += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return key;
+};
+
+const getRdmPw = function() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const digits = '0123456789';
+  let pw = '';
+  for (let i = 0; i < 6; i++) {
+    pw += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  for (let i = 0; i < 3; i++) {
+    pw += digits.charAt(Math.floor(Math.random() * digits.length));
+  }
+  return pw;
 };
 
 const getLocation = function() {
@@ -35,6 +48,7 @@ const getAdress = function(latlng) {
 export default {
 
   signup: async function(req, res) {
+    if (!req.body) return res.status(400).send('Empty request');
     try {
       const errors = signupParser(req.body);
       if (Object.keys(errors).length !== 0) return res.send(errors);
@@ -84,6 +98,7 @@ export default {
   },
 
   signin: async function(req, res) {
+    if (!req.body) return res.status(400).send('Empty request');
     try {
       const errors = signinParser(req.body);
       if (Object.keys(errors).length !== 0) return res.send(errors);
@@ -103,6 +118,7 @@ export default {
   },
 
   activation: async function(req, res) {
+    if (!req.body) return res.status(400).send('Empty request');
     try {
       const errors = activationParser(req.body);
       if (Object.keys(errors).length !== 0) return res.send(errors);
@@ -113,6 +129,23 @@ export default {
       if (key !== user.key) return res.send({key: 'Invalid key'});
       db.collection('Users').updateOne({login}, {$set: {active: true}});
       res.send({});
+    } catch (e) { console.log(e); res.sendStatus(500) }
+  },
+
+  resetPassword: async function(req, res) {
+    if (!req.body) return res.status(400).send('Empty request');
+    try {
+      const { email } = req.body;
+      const error = parser.email(email);
+      if (error) return res.send({error});
+      const user = await db.collection('Users').findOne({email});
+      if (!user) return res.send({error: 'Email not found'});
+      const newPassword = getRdmPw();
+      const hash = await bcrypt.hash(newPassword, 10);
+      const mail = mailer.createResetPwMail(user.login, newPassword);
+      mailer.sendMail(email, 'Reset your Matcha password', mail['txt'], mail['html']);
+      db.collection('Users').updateOne({email}, {$set: {password: hash}});
+      res.send({error: ''});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
 

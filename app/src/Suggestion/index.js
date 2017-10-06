@@ -6,6 +6,9 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
+import SearchIcon from 'material-ui/svg-icons/action/search';
+import IconButton from 'material-ui/IconButton';
+import SearchHandler from '../SearchHandler/';
 
 const styles = {
   root: {
@@ -19,6 +22,10 @@ const styles = {
   },
   container: {
     padding: '10px',
+  },
+  filter: {
+    paddingRight: '0px',
+    marginRight: '0px',
   }
 };
 
@@ -33,6 +40,7 @@ export default class extends Component {
       locFilter: 1,
       popFilter: 1,
       tagsFilter: 1,
+      open: false,
     };
     this.mounted = true;
     this.handleSort = this.handleSort.bind(this);
@@ -139,7 +147,7 @@ export default class extends Component {
   }
 
   render() {
-    const { matchs, sort, ageFilter, locFilter, popFilter, tagsFilter } = this.state;
+    const { matchs, sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags } = this.state;
     if (matchs === null) return <CircularProgress/>
     else {
       const matchsToDisplay = this.applyFilter();
@@ -147,7 +155,7 @@ export default class extends Component {
         <Paper style={{width: '90%', margin: '30px auto'}}>
           <Toolbar>
             <ToolbarGroup firstChild={true}>
-              <DropDownMenu value={sort} onChange={this.handleSort}>
+              <DropDownMenu value={sort} onChange={this.handleSort} >
                 <MenuItem value={1} primaryText='Localisation' label='Sort by localisation'/>
                 <MenuItem value={2} primaryText='Age' label='Sort by age'/>
                 <MenuItem value={3} primaryText='Popularity' label='Sort by popularity'/>
@@ -156,14 +164,14 @@ export default class extends Component {
             </ToolbarGroup>
             <ToolbarGroup>
               <ToolbarTitle text='Filter'/>
-              <DropDownMenu value={locFilter} onChange={(e, i, v) => this.setState({locFilter: v})}>
+              <DropDownMenu style={styles.filter} value={locFilter} onChange={(e, i, v) => this.setState({locFilter: v})}>
                 <MenuItem value={1} primaryText='none' label='Distance: none'/>
                 <MenuItem value={2} primaryText='< 20km' label='Distance: < 20km'/>
                 <MenuItem value={3} primaryText='< 50km' label='Distance: < 50km'/>
                 <MenuItem value={4} primaryText='< 200km' label='Distance: < 200km'/>
               </DropDownMenu>
               <ToolbarSeparator/>
-              <DropDownMenu value={ageFilter} onChange={(e, i, v) => this.setState({ageFilter: v})}>
+              <DropDownMenu style={styles.filter} value={ageFilter} onChange={(e, i, v) => this.setState({ageFilter: v})}>
                 <MenuItem value={1} primaryText='none' label='Age: none'/>
                 <MenuItem value={2} primaryText='18-25' label='Age: 18-25'/>
                 <MenuItem value={3} primaryText='26-35' label='Age: 26-35'/>
@@ -172,7 +180,7 @@ export default class extends Component {
                 <MenuItem value={6} primaryText='> 70' label='Age: > 70'/>
               </DropDownMenu>
               <ToolbarSeparator/>
-              <DropDownMenu value={popFilter} onChange={(e, i, v) => this.setState({popFilter: v})}>
+              <DropDownMenu style={styles.filter} value={popFilter} onChange={(e, i, v) => this.setState({popFilter: v})}>
                 <MenuItem value={1} primaryText='none' label='Popularity: none'/>
                 <MenuItem value={2} primaryText='> 0' label='Popularity: > 0'/>
                 <MenuItem value={3} primaryText='> 10' label='Popularity: > 10'/>
@@ -180,7 +188,7 @@ export default class extends Component {
                 <MenuItem value={5} primaryText='> 500' label='Popularity: > 500'/>
               </DropDownMenu>
               <ToolbarSeparator/>
-              <DropDownMenu value={tagsFilter} onChange={(e, i, v) => this.setState({tagsFilter: v})}>
+              <DropDownMenu style={styles.filter} value={tagsFilter} onChange={(e, i, v) => this.setState({tagsFilter: v})}>
                 <MenuItem value={1} primaryText='none' label='Commun tags: none'/>
                 <MenuItem value={2} primaryText='1 or more' label='Commun tags: 1 or more'/>
                 <MenuItem value={3} primaryText='2 or more' label='Commun tags: 2 or more'/>
@@ -189,6 +197,11 @@ export default class extends Component {
                 <MenuItem value={6} primaryText='5 or more' label='Commun tags: 5 or more'/>
                 <MenuItem value={7} primaryText='6' label='Commun tags: 6'/>
               </DropDownMenu>
+            </ToolbarGroup>
+            <ToolbarGroup>
+              <IconButton onTouchTap={() => this.setState({open: true})}>
+                <SearchIcon/>
+              </IconButton>
             </ToolbarGroup>
           </Toolbar>
           <div style={styles.root}>
@@ -204,6 +217,11 @@ export default class extends Component {
             : 'No results found'
           }
           </div>
+          <SearchHandler
+            open={open}
+            onClose={() => this.setState({open: false})}
+            tags={tags}
+          />
         </Paper>
       );
     }

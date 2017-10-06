@@ -43,6 +43,11 @@ export default class extends Component {
       if (err) return this.props.onAuthFailed();
       const errors = response.data
       if (Object.keys(errors).length !== 0) return this.setState({errors});
+      this.setState({
+        password: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
       this.props.onEdit([]);
     });
   }

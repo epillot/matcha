@@ -41,6 +41,7 @@ export default function(app) {
   .post('/api/signup', auth.signup)
   .post('/api/activation', auth.activation)
   .post('/api/signin', auth.signin)
+  .post('/api/resetPassword', auth.resetPassword)
 
   .use(expressJwt({secret: config.jwtSecret}))
   .use((err, req, res, next) => {
