@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 import secureRequest from '../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 import ProfilePreview from './ProfilePreview/';
-import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+import { Toolbar, ToolbarGroup, ToolbarTitle, ToolbarSeparator } from 'material-ui/Toolbar';
 import DropDownMenu from 'material-ui/DropDownMenu';
 import MenuItem from 'material-ui/MenuItem';
 import Paper from 'material-ui/Paper';
 import SearchIcon from 'material-ui/svg-icons/action/search';
 import IconButton from 'material-ui/IconButton';
-import SearchHandler from '../SearchHandler/';
+import Filter from '../Filter/';
+import ShowIcon from 'material-ui/svg-icons/navigation/arrow-drop-up';
+import PrevIcon from 'material-ui/svg-icons/navigation/arrow-back';
+import NextIcon from 'material-ui/svg-icons/navigation/arrow-forward';
+
+const nbPerPage = 3;
 
 const styles = {
   root: {
@@ -17,8 +22,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     overflowY: 'auto',
-    minHeight: '200px',
-    maxHeight: '80vh',
+    height: '78vh',
   },
   container: {
     padding: '10px',
@@ -34,17 +38,35 @@ export default class extends Component {
   constructor() {
     super();
     this.state = {
-      matchs: null,
-      sort: 1,
-      ageFilter: 1,
-      locFilter: 1,
-      popFilter: 1,
-      tagsFilter: 1,
+      matchs: [],
+      sort: 0,
+      ageFilter: 0,
+      locFilter: 0,
+      popFilter: 0,
+      tagsFilter: 0,
       open: false,
+      loading: true,
+      end: false,
+      selected: [],
+      tags: null,
     };
     this.mounted = true;
+    this.curPage = 1;
+    this.nbPage = 0;
+    this.mode = 1;
     this.handleSort = this.handleSort.bind(this);
     this.applyFilter = this.applyFilter.bind(this);
+    this.setStateIfMounted = this.setStateIfMounted.bind(this);
+    this.skipPage = this.skipPage.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
+    this.handleDel = this.handleDel.bind(this);
+    this.openHandler = this.openHandler.bind(this);
+    this.getUrl = this.getUrl.bind(this);
+    this.startSuggestions = this.startSuggestions.bind(this);
+  }
+
+  setStateIfMounted(state, cb) {
+    if (this.mounted) this.setState(state, cb);
   }
 
   componentWillUnmount() {
@@ -52,19 +74,96 @@ export default class extends Component {
   }
 
   componentDidMount() {
+    // const config = {
+    //   method: 'get',
+    //   url: '/api/suggestion',
+    // }
+    // secureRequest(config, (err, response) => {
+    //   setTimeout(() => {
+    //     if (err) return this.props.onLogout();
+    //     const { matchs } = response.data;
+    //     if (this.mounted) {
+    //       this.setState({matchs});
+    //     }
+    //   }, 500);
+    // });
+    this.getSuggestions(0);
+  }
+
+  async openHandler() {
+    this.setStateIfMounted({open: true});
     const config = {
       method: 'get',
-      url: '/api/suggestion',
+      url: '/api/alltags'
     }
-    secureRequest(config, (err, response) => {
+    try {
+      const { data } = await secureRequest(config);
+      this.setStateIfMounted({tags: data})
+    } catch(e) {
+      if (e === 'Unauthorized') this.props.onAuthFailed();
+      else console.log(e);
+    }
+  }
+
+  skipPage(n) {
+    this.curPage = this.curPage === 1 && n === -1 ? 1 : this.curPage + n;
+    if (n === 1 && this.curPage > this.nbPage) this.getSuggestions(1); //get next page from server
+    else {
+      this.setStateIfMounted(this.state); //re render with same state and curPage uptaded
+    }
+  }
+
+  getUrl() {
+    let url = '/api/suggestion?page=' + this.curPage + '&nb=' + nbPerPage;
+    const { ageFilter, locFilter, popFilter, tagsFilter, sort, selected } = this.state;
+    url += '&ageFilter=' + ageFilter;
+    url += '&locFilter=' + locFilter;
+    url += '&popFilter=' + popFilter;
+    url += '&tagsFilter=' + tagsFilter;
+    url += '&sort=' + sort;
+    selected.forEach((tag, i) => url += `&tag${i + 1}=${tag}`)
+    return url;
+  }
+
+  startSuggestions() {
+    this.curPage = 1;
+    this.nbPage = 0;
+    this.setStateIfMounted({open: false});
+    this.getSuggestions();
+  }
+
+  async getSuggestions() {
+    const url = this.getUrl();
+    const config = {
+      method: 'get',
+      url,
+    };
+    this.setStateIfMounted({loading: true});
+    try {
+      const { data: { matchs, nbPage } } = await secureRequest(config);
+      console.log(nbPage);
+      if (matchs.length) this.nbPage++;
+      let end;
+      if (matchs.length < nbPerPage) end = this.nbPage || 1;
       setTimeout(() => {
-        if (err) return this.props.onLogout();
-        const { matchs } = response.data;
-        if (this.mounted) {
-          this.setState({matchs});
-        }
+        this.setStateIfMounted(state => {
+          let newMatchs;
+          if (this.curPage === 1) newMatchs = matchs;
+          else {
+            newMatchs = state.matchs.slice();
+            Array.prototype.push.apply(newMatchs, matchs);
+          }
+          return {matchs: newMatchs, loading: false, end};
+        });
       }, 500);
-    });
+    } catch(e) {
+      if (e === 'Unauthorized') this.props.onAuthFailed();
+      else {
+        console.log(e);
+        this.setStateIfMounted({matchs: null, loading: false, end: true});
+      }
+    }
+
   }
 
   getAge(birthday) {
@@ -72,6 +171,7 @@ export default class extends Component {
   }
 
   handleSort(e, i, value) {
+    this.curPage = 1;
     this.setState(state => {
       const matchs = state.matchs.slice();
       switch (value) {
@@ -103,128 +203,132 @@ export default class extends Component {
   }
 
   getDistanceLimit(filter) {
-    if (filter === 1) return null;
-    if (filter === 2) return 20000;
-    if (filter === 3) return 50000;
-    if (filter === 4) return 200000;
+    if (filter === 0) return null;
+    if (filter === 1) return 20000;
+    if (filter === 2) return 50000;
+    if (filter === 3) return 200000;
   }
 
   getAgeLimit(filter) {
-    if (filter === 1) return null;
-    if (filter === 2) return [18, 25];
-    if (filter === 3) return [26, 35];
-    if (filter === 4) return [36, 50];
-    if (filter === 5) return [51, 70];
-    if (filter === 6) return [71, 100];
+    if (filter === 0) return null;
+    if (filter === 1) return [18, 25];
+    if (filter === 2) return [26, 35];
+    if (filter === 3) return [36, 50];
+    if (filter === 4) return [51, 70];
+    if (filter === 5) return [71, 100];
   }
 
   getPopLimit(filter) {
-    if (filter === 1) return null;
-    if (filter === 2) return 1;
-    if (filter === 3) return 10;
-    if (filter === 4) return 100;
-    if (filter === 5) return 500;
+    if (filter === 0) return null;
+    if (filter === 1) return 1;
+    if (filter === 2) return 10;
+    if (filter === 3) return 100;
+    if (filter === 4) return 500;
   }
 
   applyFilter() {
     const { matchs, ageFilter, locFilter, popFilter, tagsFilter } = this.state;
-    let result = matchs.slice();
-    const distanceLimit = this.getDistanceLimit(locFilter);
-    if (distanceLimit) result = result.filter(match => match.distance < distanceLimit);
-    const ageLimit = this.getAgeLimit(ageFilter);
-    if (ageLimit) {
-      const [ ageMin, ageMax ] = ageLimit;
-      result = result.filter(match => {
-        const age = this.getAge(match.birthday);
-        return age >= ageMin && age <= ageMax;
-      });
-    }
-    const popLimit = this.getPopLimit(popFilter);
-    if (popLimit) result = result.filter(match => match.popularity >= popLimit);
-    const tagsLimit = tagsFilter - 1;
-    if (tagsLimit) result = result.filter(match => match.communTags >= tagsLimit);
+    if (matchs === null) return null;
+    const start = (this.curPage - 1) * nbPerPage;
+    let result = matchs.slice(start, start + nbPerPage);
+    // const distanceLimit = this.getDistanceLimit(locFilter);
+    // if (distanceLimit) result = result.filter(match => match.distance < distanceLimit);
+    // const ageLimit = this.getAgeLimit(ageFilter);
+    // if (ageLimit) {
+    //   const [ ageMin, ageMax ] = ageLimit;
+    //   result = result.filter(match => {
+    //     const age = this.getAge(match.birthday);
+    //     return age >= ageMin && age <= ageMax;
+    //   });
+    // }
+    // const popLimit = this.getPopLimit(popFilter);
+    // if (popLimit) result = result.filter(match => match.popularity >= popLimit);
+    // const tagsLimit = tagsFilter;
+    // if (tagsLimit) result = result.filter(match => match.communTags >= tagsLimit);
     return result;
   }
 
+  handleSelect(tag, index) {
+    this.setState(state => {
+      const selected = this.state.selected.slice();
+      if (index !== -1 && selected.length < 3 && selected.indexOf(tag) === -1) {
+        selected.push(tag);
+      }
+      return {selected};
+    });
+  }
+
+  handleDel(tag) {
+    this.setState(state => {
+      const selected = this.state.selected.slice();
+      selected.splice(selected.indexOf(tag), 1);
+      return {selected};
+    });
+  }
+
   render() {
-    const { matchs, sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags } = this.state;
-    if (matchs === null) return <CircularProgress/>
-    else {
-      const matchsToDisplay = this.applyFilter();
-      return (
-        <Paper style={{width: '90%', margin: '30px auto'}}>
-          <Toolbar>
-            <ToolbarGroup firstChild={true}>
-              <DropDownMenu value={sort} onChange={this.handleSort} >
-                <MenuItem value={1} primaryText='Localisation' label='Sort by localisation'/>
-                <MenuItem value={2} primaryText='Age' label='Sort by age'/>
-                <MenuItem value={3} primaryText='Popularity' label='Sort by popularity'/>
-                <MenuItem value={4} primaryText='Commun tags' label='Sort by commun tags'/>
-              </DropDownMenu>
-            </ToolbarGroup>
-            <ToolbarGroup>
-              <ToolbarTitle text='Filter'/>
-              <DropDownMenu style={styles.filter} value={locFilter} onChange={(e, i, v) => this.setState({locFilter: v})}>
-                <MenuItem value={1} primaryText='none' label='Distance: none'/>
-                <MenuItem value={2} primaryText='< 20km' label='Distance: < 20km'/>
-                <MenuItem value={3} primaryText='< 50km' label='Distance: < 50km'/>
-                <MenuItem value={4} primaryText='< 200km' label='Distance: < 200km'/>
-              </DropDownMenu>
-              <ToolbarSeparator/>
-              <DropDownMenu style={styles.filter} value={ageFilter} onChange={(e, i, v) => this.setState({ageFilter: v})}>
-                <MenuItem value={1} primaryText='none' label='Age: none'/>
-                <MenuItem value={2} primaryText='18-25' label='Age: 18-25'/>
-                <MenuItem value={3} primaryText='26-35' label='Age: 26-35'/>
-                <MenuItem value={4} primaryText='36-50' label='Age: 36-50'/>
-                <MenuItem value={5} primaryText='51-70' label='Age: 51-70'/>
-                <MenuItem value={6} primaryText='> 70' label='Age: > 70'/>
-              </DropDownMenu>
-              <ToolbarSeparator/>
-              <DropDownMenu style={styles.filter} value={popFilter} onChange={(e, i, v) => this.setState({popFilter: v})}>
-                <MenuItem value={1} primaryText='none' label='Popularity: none'/>
-                <MenuItem value={2} primaryText='> 0' label='Popularity: > 0'/>
-                <MenuItem value={3} primaryText='> 10' label='Popularity: > 10'/>
-                <MenuItem value={4} primaryText='> 100' label='Popularity: > 100'/>
-                <MenuItem value={5} primaryText='> 500' label='Popularity: > 500'/>
-              </DropDownMenu>
-              <ToolbarSeparator/>
-              <DropDownMenu style={styles.filter} value={tagsFilter} onChange={(e, i, v) => this.setState({tagsFilter: v})}>
-                <MenuItem value={1} primaryText='none' label='Commun tags: none'/>
-                <MenuItem value={2} primaryText='1 or more' label='Commun tags: 1 or more'/>
-                <MenuItem value={3} primaryText='2 or more' label='Commun tags: 2 or more'/>
-                <MenuItem value={4} primaryText='3 or more' label='Commun tags: 3 or more'/>
-                <MenuItem value={5} primaryText='4 or more' label='Commun tags: 4 or more'/>
-                <MenuItem value={6} primaryText='5 or more' label='Commun tags: 5 or more'/>
-                <MenuItem value={7} primaryText='6' label='Commun tags: 6'/>
-              </DropDownMenu>
-            </ToolbarGroup>
-            <ToolbarGroup>
-              <IconButton onTouchTap={() => this.setState({open: true})}>
-                <SearchIcon/>
-              </IconButton>
-            </ToolbarGroup>
-          </Toolbar>
-          <div style={styles.root}>
-            {matchsToDisplay.length ?
-              matchsToDisplay.map(match =>
-                <div style={styles.container} key={match._id}>
-                  <ProfilePreview
-                    onClick={() => this.props.history.push('/profile/' + match._id)}
-                    profile={match}
-                  />
-                </div>
-              )
-            : 'No results found'
-          }
-          </div>
-          <SearchHandler
-            open={open}
-            onClose={() => this.setState({open: false})}
-            tags={tags}
-          />
-        </Paper>
-      );
-    }
+    const { matchs, sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags, loading, end, selected, loadingTags } = this.state;
+    const matchsToDisplay = this.applyFilter();
+    return (
+      <Paper style={{width: '90%', minWidth: '720px', margin: '30px auto'}}>
+        <Toolbar>
+          <ToolbarGroup>
+            <ToolbarTitle text='Options and Search'/>
+            <IconButton
+              style={{width: '50px', height: '50px', padding: '12,5px'}}
+              iconStyle={{width: '30px', height: '30px'}}
+              onTouchTap={this.openHandler}
+            >
+              <ShowIcon/>
+            </IconButton>
+          </ToolbarGroup>
+          <ToolbarGroup>
+            <ToolbarTitle text={'Page ' + this.curPage}/>
+            <IconButton
+              onTouchTap={() => this.skipPage(-1)}
+              disabled={this.curPage === 1 || loading}
+            >
+              <PrevIcon/>
+            </IconButton>
+            <IconButton
+              onTouchTap={() => this.skipPage(1)}
+              disabled={loading || (!!end && this.curPage >= end)}
+            >
+              <NextIcon/>
+            </IconButton>
+          </ToolbarGroup>
+        </Toolbar>
+        <div style={styles.root}>
+          { loading  ? <CircularProgress/> : matchsToDisplay === null ? <p>An error occured</p> :
+            matchsToDisplay.length ?
+            matchsToDisplay.map(match =>
+              <div style={styles.container} key={match._id}>
+                <ProfilePreview
+                  onClick={() => this.props.history.push('/profile/' + match._id)}
+                  profile={match}
+                />
+              </div>
+            )
+          : 'No results found'
+        }
+        </div>
+        <Filter
+          startSuggestions={this.startSuggestions}
+          open={open}
+          tags={tags}
+          onClose={() => this.setState({open: false})}
+          ageFilter={ageFilter}
+          locFilter={locFilter}
+          popFilter={popFilter}
+          tagsFilter={tagsFilter}
+          sort={sort}
+          selected={selected}
+          onSelect={this.handleSelect}
+          onDel={this.handleDel}
+          onCheck={(type, range) => this.setState( state => ({[type]: range === state[type] ? 0 : range}) )}
+        />
+      </Paper>
+    );
   }
 
 }

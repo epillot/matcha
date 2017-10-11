@@ -72,7 +72,7 @@ export default {
         firstname,
         lastname,
         sexValue,
-        birthday,
+        birthday: new Date(birthday),
         lookingFor: 3,
         login,
         password: hash,

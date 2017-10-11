@@ -136,7 +136,10 @@ export default {
             if (typeof value === 'string') value = value.trim();
             if (field === 'bio') value = value.replace(/[\n ]+/g, ' ');
             if (error = parser[field](value)) errors[field] = error;
-            else update[field] = value;
+            else {
+              if (field === 'birthday') value = new Date(value);
+              update[field] = value;
+            }
           });
           if (Object.keys(errors).length === 0) {
             if (update.login) {

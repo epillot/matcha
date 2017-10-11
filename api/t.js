@@ -1,22 +1,15 @@
-import { MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, ObjectId} from 'mongodb';
 import config from './config/config';
-
 
 MongoClient.connect(config.mongoConfig).then(db => {
   global.db = db;
-  return db.collection('Users').find({_id: {$ne: ObjectId('598483259c23dc36620de2b1')}}, {_id: 1}).toArray();
+  const datelimit = new Date();
+  datelimit.setFullYear(datelimit.getFullYear() - 50)
+  return db.collection('Users').find({birthday: {$lte : datelimit}}).toArray();
 }).then(res => {
-
-  const ids = res.map(id => id._id.toString());
-
-
-  return db.collection('Users').updateOne({_id: ObjectId('598483259c23dc36620de2b1')}, {
-    $set: {
-      bio: '',
-    }
-  });
+  res.forEach(r => console.log(r.login))
 }).then(res => {
-  console.log('success ', res);
+  console.log('success ');
   db.close(() => { process.exit(0) })
 }).catch(e => {
   console.log(e);

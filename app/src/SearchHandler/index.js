@@ -3,6 +3,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import Checkbox from 'material-ui/Checkbox';
 import Subheader from 'material-ui/Subheader';
+import TagsSelector from './TagsSelector/';
 
 const styles = {
   root: {
@@ -125,29 +126,7 @@ export default class extends Component {
               label="500 or more"
             />
           </div>
-          <div style={styles.ageRange}>
-            <Subheader>Popularity</Subheader>
-            <Checkbox
-              onCheck={() => this.handleCheck('popRange', 1)}
-              checked={popRange === 1}
-              label="1 or more"
-            />
-            <Checkbox
-              onCheck={() => this.handleCheck('popRange', 2)}
-              checked={popRange === 2}
-              label="10 or more"
-            />
-            <Checkbox
-              onCheck={() => this.handleCheck('popRange', 3)}
-              checked={popRange === 3}
-              label="100 or more"
-            />
-            <Checkbox
-              onCheck={() => this.handleCheck('popRange', 4)}
-              checked={popRange === 4}
-              label="500 or more"
-            />
-          </div>
+          <TagsSelector/>
         </div>
       </Dialog>
     );

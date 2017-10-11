@@ -7,7 +7,7 @@ import secureRequest from '../../../secureRequest';
 
 export default class extends Component {
 
-  constructor(props) {
+  constructor() {
     super();
     this.state = {
       loading: false,

@@ -15,6 +15,7 @@ const styles = {
   top: {
     display: 'flex',
     alignItems: 'center',
+    marginBottom: '10px',
   },
   popularity: {
     fontSize: '20px',
@@ -34,14 +35,12 @@ export default function(props) {
   return (
     <div style={styles.root} onClick={props.onClick}>
       <div style={styles.top}><LikeIcon/> <span style={styles.popularity}>{popularity}</span></div>
-      <p>
-        <span style={styles.login}>{login}</span>
-      </p>
       <div>
         <Avatar size={130} src={`/static/${pp}`}/>
       </div>
       <p>
-        {`${sex}, ${age}`}
+        <span style={styles.login}>{login}</span>
+        <span>{` ${sex}, ${age}`}</span>
       </p>
       <p>
         {`${communTags} commun tag(s)`}
