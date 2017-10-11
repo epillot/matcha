@@ -90,15 +90,16 @@ export default class extends Component {
 
   render() {
     const { like, block, report, loading } = this.state;
-    const { history, id } = this.props;
+    const { history, id, canLike } = this.props;
+
     return (
       <div>
         <IconButton
           iconStyle={styles.likeicon}
           style={styles.small}
-          tooltip={like ? 'Unlike this profile' : 'Like this profile'}
+          tooltip={!canLike ? 'You must have a profile picture to like other people' : like ? 'Unlike this profile' : 'Like this profile'}
           onTouchTap={() => this.interact('like')}
-          disabled={!!loading.like}
+          disabled={!!loading.like || !canLike}
         >
           {like ? <UnlikeIcon/> : <LikeIcon/>}
         </IconButton>

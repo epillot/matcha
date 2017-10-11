@@ -22,7 +22,8 @@ const styles = {
   profileInfo: {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     width: '430px',
@@ -38,6 +39,7 @@ export default class extends Component {
       profile: null,
       loading: false,
       error: '',
+      asProfilePic: false,
     }
     this.mounted = true;
     this.setStateIfMounted = this.setStateIfMounted.bind(this);
@@ -66,11 +68,11 @@ export default class extends Component {
       url: '/api/profile/' + id,
     };
     try {
-      const { data: { error, profile } } = await secureRequest(config);
+      const { data: { error, profile, asProfilePic } } = await secureRequest(config);
       if (error) this.setStateIfMounted({profile: false, error});
       else {
         global.socket.emit('visit', {id});
-        this.setStateIfMounted({profile});
+        this.setStateIfMounted({profile, asProfilePic});
         if (id !== this.props.loggued) {
           config = {
             method: 'post',
@@ -103,7 +105,7 @@ export default class extends Component {
 
 
   render() {
-    const { profile } = this.state;
+    const { profile, asProfilePic } = this.state;
     const editable = this.props.loggued === this.props.match.params.id;
     if (profile === null) return <CircularProgress/>;
     else if (profile !== false) {
@@ -118,6 +120,7 @@ export default class extends Component {
               id={profile._id}
             />
             <Interaction
+              canLike={asProfilePic}
               id={profile._id}
               liked={liked}
               blocked={blocked}

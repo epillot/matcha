@@ -9,6 +9,7 @@ const styles = {
   root: {
     width: '300px',
     maxWidth: '100%',
+    marginRight: '10px'
   },
   profilePicContainer: {
     width: '300px',
@@ -42,8 +43,6 @@ export default class extends Component {
   render() {
     const { open, profile } = this.state;
     const { editable } = this.props;
-    if (this.props.clickable) styles.root.cursor = 'pointer';
-    else delete styles.root.cursor;
     const { firstname, lastname, login, sexValue, birthday, lookingFor, adress } = profile;
     const pp = this.props.profile.profilePic || 'default.jpg';
     const age = new Date().getFullYear() - new Date(birthday).getFullYear();
@@ -79,7 +78,11 @@ export default class extends Component {
             disabled={true}
           />
           <ListItem
-            primaryText={`${sex}, ${age}, ${adress}`}
+            primaryText={`${sex}, ${age}`}
+            disabled={true}
+          />
+          <ListItem
+            primaryText={`${adress}`}
             disabled={true}
           />
           <ListItem

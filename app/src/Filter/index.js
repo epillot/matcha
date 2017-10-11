@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Checkbox from 'material-ui/Checkbox';
 import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
@@ -27,7 +27,7 @@ const styles = {
 
 export default function(props) {
 
-  const { ageFilter, locFilter, popFilter, tagsFilter, sort, onCheck, open, onClose, tags } = props;
+  const { ageFilter, locFilter, popFilter, tagsFilter, sort, onCheck, open, onClose, tags, selected } = props;
   const actions = [
     <FlatButton
       label='Cancel'
@@ -218,7 +218,7 @@ export default function(props) {
           <Subheader>Tags</Subheader>
           <TagsSelector
             tags={tags}
-            selected={props.selected}
+            selected={selected}
             onSelect={props.onSelect}
             onDel={props.onDel}
           />
@@ -229,11 +229,19 @@ export default function(props) {
           style={{marginRight: '20px'}}
           label='Get suggestions'
           secondary={true}
-          onTouchTap={props.startSuggestions}
+          onTouchTap={() => props.startSuggestions(1)}
         />
         <RaisedButton
           label='Search from all'
           secondary={true}
+          onTouchTap={() => props.startSuggestions(2)}
+          disabled={
+            ageFilter === 0 &&
+            locFilter === 0 &&
+            popFilter === 0 &&
+            tagsFilter === 0 &&
+            selected.length === 0
+          }
         />
       </div>
     </Dialog>

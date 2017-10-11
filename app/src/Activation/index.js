@@ -70,8 +70,9 @@ class ActivationForm extends Component {
       justifyContent: 'center'
     };
     return (
-      <div className='container'>
-        <Paper zDepth={3} style={{padding: 20}}>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+        <h1>Active your account</h1>
+        <Paper zDepth={3} style={{padding: 20, width: '50%', minWidth: '300px'}}>
           <div style={style}>{this.state.loading ? <CircularProgress/> : ''}</div>
           <form onSubmit={this.activationHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
             <TextField
@@ -80,6 +81,8 @@ class ActivationForm extends Component {
               type='text'
               value={this.state.login}
               errorText={this.state.errors.login}
+              autoComplete='off'
+              fullWidth={true}
             />
             <br/>
             <TextField
@@ -88,6 +91,8 @@ class ActivationForm extends Component {
               type='text'
               value={this.state.key}
               errorText={this.state.errors.key}
+              autoComplete='off'
+              fullWidth={true}
             />
             <br/>
             <RaisedButton type='submit' label='Ok' primary={true}></RaisedButton>

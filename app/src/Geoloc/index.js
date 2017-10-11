@@ -21,13 +21,23 @@ export default class extends Component {
     this.state = {
       open: false,
     }
+    this.mounted = true;
     this.moveMarker = this.moveMarker.bind(this);
     this.initMap = this.initMap.bind(this);
     this.updatePos = this.updatePos.bind(this);
+    this.setStateIfMounted = this.setStateIfMounted.bind(this)
+  }
+
+  componentWillUnmount() {
+    this.mounted = false;
+  }
+
+  setStateIfMounted(state, cb) {
+    if (this.mounted) this.setState(state, cb);
   }
 
   moveMarker(pos) {
-    this.setState({
+    this.setStateIfMounted({
       marker: {
         lat: pos.latLng.lat(),
         lng: pos.latLng.lng(),
@@ -39,13 +49,13 @@ export default class extends Component {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(pos => {
         const { latitude: lat, longitude: lng } = pos.coords;
-        this.setState({
+        this.setStateIfMounted({
           open: true,
           marker: {lat, lng}
         });
       }, () => {
         const { lat, lng } = this.props;
-        this.setState({
+        this.setStateIfMounted({
           open: true,
           marker: {lat, lng}
         });
@@ -61,7 +71,7 @@ export default class extends Component {
     try {
       const adress = await getAdress(latlng);
       const coordinates = [lng, lat];
-      this.setState({open: false});
+      this.setStateIfMounted({open: false});
       this.props.onUpdate(coordinates, adress);
     } catch(e) { alert('not a valid place') }
   }
@@ -77,7 +87,7 @@ export default class extends Component {
       <FlatButton
         label="Cancel"
         primary={true}
-        onTouchTap={() => this.setState({open: false})}
+        onTouchTap={() => this.setStateIfMounted({open: false})}
         disabled={false}
       />,
     ];
@@ -95,7 +105,7 @@ export default class extends Component {
           actions={actions}
           open={open}
           modal={true}
-          onRequestClose={() => this.setState({open: false})}
+          onRequestClose={() => this.setStateIfMounted({open: false})}
         >
           <Map
             marker={marker}

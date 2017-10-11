@@ -2,18 +2,15 @@ import React, { Component } from 'react';
 import secureRequest from '../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 import ProfilePreview from './ProfilePreview/';
-import { Toolbar, ToolbarGroup, ToolbarTitle, ToolbarSeparator } from 'material-ui/Toolbar';
-import DropDownMenu from 'material-ui/DropDownMenu';
-import MenuItem from 'material-ui/MenuItem';
+import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
-import SearchIcon from 'material-ui/svg-icons/action/search';
 import IconButton from 'material-ui/IconButton';
 import Filter from '../Filter/';
 import ShowIcon from 'material-ui/svg-icons/navigation/arrow-drop-up';
 import PrevIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import NextIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 
-const nbPerPage = 3;
+const nbPerPage = 8;
 
 const styles = {
   root: {
@@ -46,16 +43,14 @@ export default class extends Component {
       tagsFilter: 0,
       open: false,
       loading: true,
-      end: false,
       selected: [],
       tags: null,
+      nbPage: 1,
     };
     this.mounted = true;
     this.curPage = 1;
     this.nbPage = 0;
     this.mode = 1;
-    this.handleSort = this.handleSort.bind(this);
-    this.applyFilter = this.applyFilter.bind(this);
     this.setStateIfMounted = this.setStateIfMounted.bind(this);
     this.skipPage = this.skipPage.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
@@ -63,6 +58,7 @@ export default class extends Component {
     this.openHandler = this.openHandler.bind(this);
     this.getUrl = this.getUrl.bind(this);
     this.startSuggestions = this.startSuggestions.bind(this);
+    this.getMatchsToDisplay = this.getMatchsToDisplay.bind(this);
   }
 
   setStateIfMounted(state, cb) {
@@ -74,20 +70,7 @@ export default class extends Component {
   }
 
   componentDidMount() {
-    // const config = {
-    //   method: 'get',
-    //   url: '/api/suggestion',
-    // }
-    // secureRequest(config, (err, response) => {
-    //   setTimeout(() => {
-    //     if (err) return this.props.onLogout();
-    //     const { matchs } = response.data;
-    //     if (this.mounted) {
-    //       this.setState({matchs});
-    //     }
-    //   }, 500);
-    // });
-    this.getSuggestions(0);
+    this.getSuggestions();
   }
 
   async openHandler() {
@@ -100,21 +83,21 @@ export default class extends Component {
       const { data } = await secureRequest(config);
       this.setStateIfMounted({tags: data})
     } catch(e) {
-      if (e === 'Unauthorized') this.props.onAuthFailed();
+      if (e === 'Unauthorized') this.props.onLogout();
       else console.log(e);
     }
   }
 
   skipPage(n) {
     this.curPage = this.curPage === 1 && n === -1 ? 1 : this.curPage + n;
-    if (n === 1 && this.curPage > this.nbPage) this.getSuggestions(1); //get next page from server
+    if (n === 1 && this.curPage > this.nbPage) this.getSuggestions(); //Page not loaded yet, get next page from server
     else {
-      this.setStateIfMounted(this.state); //re render with same state and curPage uptaded
+      this.setStateIfMounted(this.state); //Page already loded, re render with same state and curPage uptaded
     }
   }
 
   getUrl() {
-    let url = '/api/suggestion?page=' + this.curPage + '&nb=' + nbPerPage;
+    let url = '/api/people?page=' + this.curPage + '&nb=' + nbPerPage + '&mode=' + this.mode;
     const { ageFilter, locFilter, popFilter, tagsFilter, sort, selected } = this.state;
     url += '&ageFilter=' + ageFilter;
     url += '&locFilter=' + locFilter;
@@ -125,7 +108,8 @@ export default class extends Component {
     return url;
   }
 
-  startSuggestions() {
+  startSuggestions(mode) {
+    this.mode = mode;
     this.curPage = 1;
     this.nbPage = 0;
     this.setStateIfMounted({open: false});
@@ -141,10 +125,7 @@ export default class extends Component {
     this.setStateIfMounted({loading: true});
     try {
       const { data: { matchs, nbPage } } = await secureRequest(config);
-      console.log(nbPage);
       if (matchs.length) this.nbPage++;
-      let end;
-      if (matchs.length < nbPerPage) end = this.nbPage || 1;
       setTimeout(() => {
         this.setStateIfMounted(state => {
           let newMatchs;
@@ -153,14 +134,14 @@ export default class extends Component {
             newMatchs = state.matchs.slice();
             Array.prototype.push.apply(newMatchs, matchs);
           }
-          return {matchs: newMatchs, loading: false, end};
+          return {matchs: newMatchs, loading: false, nbPage};
         });
       }, 500);
     } catch(e) {
-      if (e === 'Unauthorized') this.props.onAuthFailed();
+      if (e === 'Unauthorized') this.props.onLogout();
       else {
         console.log(e);
-        this.setStateIfMounted({matchs: null, loading: false, end: true});
+        this.setStateIfMounted({matchs: null, loading: false, nbPage: 1});
       }
     }
 
@@ -170,81 +151,12 @@ export default class extends Component {
     return new Date().getFullYear() - new Date(birthday).getFullYear();
   }
 
-  handleSort(e, i, value) {
-    this.curPage = 1;
-    this.setState(state => {
-      const matchs = state.matchs.slice();
-      switch (value) {
-        case 1:
-          matchs.sort((m1, m2) => m1.distance - m2.distance);
-          break;
-        case 2:
-          matchs.sort((m1, m2) => {
-            let diff = this.getAge(m1.birthday) - this.getAge(m2.birthday);
-            return diff ? diff : m1.distance - m2.distance;
-          });
-          break;
-        case 3:
-          matchs.sort((m1, m2) => {
-            let diff = m2.popularity - m1.popularity;
-            return diff ? diff : m1.distance - m2.distance;
-          });
-          break;
-        case 4:
-          matchs.sort((m1, m2) => {
-            let diff = m2.communTags - m1.communTags;
-            return diff ? diff : m1.distance - m2.distance;
-          });
-          break;
-        default:
-      }
-      return {matchs, sort: value}
-    });
-  }
 
-  getDistanceLimit(filter) {
-    if (filter === 0) return null;
-    if (filter === 1) return 20000;
-    if (filter === 2) return 50000;
-    if (filter === 3) return 200000;
-  }
-
-  getAgeLimit(filter) {
-    if (filter === 0) return null;
-    if (filter === 1) return [18, 25];
-    if (filter === 2) return [26, 35];
-    if (filter === 3) return [36, 50];
-    if (filter === 4) return [51, 70];
-    if (filter === 5) return [71, 100];
-  }
-
-  getPopLimit(filter) {
-    if (filter === 0) return null;
-    if (filter === 1) return 1;
-    if (filter === 2) return 10;
-    if (filter === 3) return 100;
-    if (filter === 4) return 500;
-  }
-
-  applyFilter() {
-    const { matchs, ageFilter, locFilter, popFilter, tagsFilter } = this.state;
+  getMatchsToDisplay() {
+    const { matchs } = this.state;
     if (matchs === null) return null;
     const start = (this.curPage - 1) * nbPerPage;
     let result = matchs.slice(start, start + nbPerPage);
-    // const distanceLimit = this.getDistanceLimit(locFilter);
-    // if (distanceLimit) result = result.filter(match => match.distance < distanceLimit);
-    // const ageLimit = this.getAgeLimit(ageFilter);
-    // if (ageLimit) {
-    //   const [ ageMin, ageMax ] = ageLimit;
-    //   result = result.filter(match => {
-    //     const age = this.getAge(match.birthday);
-    //     return age >= ageMin && age <= ageMax;
-    //   });
-    // }
-    // const popLimit = this.getPopLimit(popFilter);
-    // if (popLimit) result = result.filter(match => match.popularity >= popLimit);
-    // const tagsLimit = tagsFilter;
-    // if (tagsLimit) result = result.filter(match => match.communTags >= tagsLimit);
     return result;
   }
 
@@ -267,8 +179,8 @@ export default class extends Component {
   }
 
   render() {
-    const { matchs, sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags, loading, end, selected, loadingTags } = this.state;
-    const matchsToDisplay = this.applyFilter();
+    const { sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags, loading, selected, nbPage } = this.state;
+    const matchsToDisplay = this.getMatchsToDisplay();
     return (
       <Paper style={{width: '90%', minWidth: '720px', margin: '30px auto'}}>
         <Toolbar>
@@ -283,7 +195,7 @@ export default class extends Component {
             </IconButton>
           </ToolbarGroup>
           <ToolbarGroup>
-            <ToolbarTitle text={'Page ' + this.curPage}/>
+            <ToolbarTitle text={'Page ' + this.curPage + '/' + nbPage}/>
             <IconButton
               onTouchTap={() => this.skipPage(-1)}
               disabled={this.curPage === 1 || loading}
@@ -292,7 +204,7 @@ export default class extends Component {
             </IconButton>
             <IconButton
               onTouchTap={() => this.skipPage(1)}
-              disabled={loading || (!!end && this.curPage >= end)}
+              disabled={loading || (this.curPage >= nbPage)}
             >
               <NextIcon/>
             </IconButton>

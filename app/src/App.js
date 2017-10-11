@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Home from './Home/';
 import Header from './Header/';
 import Activation from './Activation/';
@@ -17,6 +17,8 @@ const styles = {
   }
 }
 
+const notFound = () => <p>Page not found</p>
+
 class App extends Component {
 
   constructor() {
@@ -25,10 +27,12 @@ class App extends Component {
       loggued: null,
       newMsg: false,
       open: false,
+      message: '',
     };
     this.onLog = this.onLog.bind(this);
     this.onLogout = this.onLogout.bind(this);
     this.checkNewMsg = this.checkNewMsg.bind(this);
+    this.displaySnackBar = this.displaySnackBar.bind(this);
   }
 
   componentWillMount() {
@@ -42,6 +46,10 @@ class App extends Component {
       this.setState({loggued});
       if (loggued) this.checkNewMsg();
     });
+  }
+
+  displaySnackBar(message) {
+    this.setState({open: true, message})
   }
 
   checkNewMsg() {
@@ -76,20 +84,21 @@ class App extends Component {
           onLog={this.onLog}
           newMsg={newMsg}
           onNewMsg={() => this.setState({newMsg: true})}
-          onResetPw={() => this.setState({open: true})}
+          onResetPw={this.displaySnackBar}
         />
         <div style={styles.container}>
-        <Switch>
-          <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
-          <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={Profile}/>
-          <PrivateRoute path='/message' onRead={() => this.setState({newMsg: false})} loggued={loggued} onLogout={this.onLogout} component={Chat}/>
-          <PublicRoute path='/home' loggued={loggued} component={Home}/>
-          <PublicRoute path='/activation' loggued={loggued} component={Activation}/>
-        </Switch>
+          <Switch>
+            <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
+            <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={Profile}/>
+            <PrivateRoute path='/message' onRead={() => this.setState({newMsg: false})} loggued={loggued} onLogout={this.onLogout} component={Chat}/>
+            <PublicRoute path='/home' loggued={loggued} component={Home}/>
+            <PublicRoute path='/activation' loggued={loggued} component={Activation}/>
+            <Route path='*' component={notFound}/>
+          </Switch>
         </div>
         <Snackbar
           open={this.state.open}
-          message='Your password has been successfully reinitialized. Check your mails.'
+          message={this.state.message}
           autoHideDuration={8000}
           onRequestClose={() => this.setState({open: false})}
         />

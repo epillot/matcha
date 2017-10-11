@@ -1,20 +1,19 @@
 import { MongoClient, ObjectId} from 'mongodb';
 import config from './config/config';
 
-MongoClient.connect(config.mongoConfig).then(db => {
-  global.db = db;
-  const datelimit = new Date();
-  datelimit.setFullYear(datelimit.getFullYear() - 50)
-  return db.collection('Users').find({birthday: {$lte : datelimit}}).toArray();
-}).then(res => {
-  res.forEach(r => console.log(r.login))
-}).then(res => {
-  console.log('success ');
-  db.close(() => { process.exit(0) })
-}).catch(e => {
-  console.log(e);
-  db.close(() => { process.exit(1) });
-});
+// MongoClient.connect(config.mongoConfig).then(db => {
+//   global.db = db;
+//   const datelimit = new Date();
+//   return db.collection('Users').find({tags: {$all : ['dragon', 'GOT', 'poney']}}).toArray();
+// }).then(res => {
+//   res.forEach(r => console.log(r.login))
+// }).then(res => {
+//   console.log('success ');
+//   db.close(() => { process.exit(0) })
+// }).catch(e => {
+//   console.log(e);
+//   db.close(() => { process.exit(1) });
+// });
 
 // const getRdmPw = function() {
 //   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -30,3 +29,10 @@ MongoClient.connect(config.mongoConfig).then(db => {
 // }
 //
 // for (let i = 0; i < 10; i++) { console.log(getRdmPw()) }
+
+const a = 'lol'
+
+const b = parseInt(a)
+
+
+console.log(b <= 0);

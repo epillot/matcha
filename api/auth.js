@@ -83,7 +83,10 @@ export default {
         loc,
         adress,
         ts: Date.now(),
-        like: [],
+        like: {
+          to: [],
+          from: [],
+        },
         block: [],
         report: [],
         key,

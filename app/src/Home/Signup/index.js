@@ -11,6 +11,10 @@ import LinearProgress from 'material-ui/LinearProgress';
 import { signupParser } from '../../parser';
 
 const styles = {
+  root: {
+    minWidth: '300px',
+    width: '50%'
+  },
   form: {
     padding: '0 20px 20px 20px',
   },
@@ -98,7 +102,7 @@ export default class extends Component {
 
   render() {
     return (
-      <Paper zDepth={3}>
+      <Paper zDepth={3} style={styles.root}>
         <Subheader>Create an account</Subheader>
         <form style={styles.form} onSubmit={this.signupHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
           <TextField
@@ -107,6 +111,8 @@ export default class extends Component {
             type='text'
             value={this.state.firstname}
             errorText={this.state.errors.firstname}
+            autoComplete="off"
+            fullWidth={true}
           />
           <br/>
           <TextField
@@ -115,6 +121,8 @@ export default class extends Component {
             type='text'
             value={this.state.lastname}
             errorText={this.state.errors.lastname}
+            autoComplete="off"
+            fullWidth={true}
           />
           <br/>
           <SelectField
@@ -122,6 +130,7 @@ export default class extends Component {
             value={this.state.sexValue}
             onChange={this.handleSexChange}
             errorText={this.state.errors.sexValue}
+            fullWidth={true}
           >
             <MenuItem value={1} primaryText="Man" />
             <MenuItem value={2} primaryText="Woman" />
@@ -131,6 +140,7 @@ export default class extends Component {
             maxDate={maxDate}
             value={this.state.birthday}
             onChange={this.handleDateChange}
+            fullWidth={true}
           />
           <TextField
             name='login'
@@ -138,6 +148,8 @@ export default class extends Component {
             type='text'
             value={this.state.login}
             errorText={this.state.errors.login}
+            autoComplete="off"
+            fullWidth={true}
           />
           <br/>
           <TextField
@@ -146,6 +158,8 @@ export default class extends Component {
             type='password'
             value={this.state.password}
             errorText={this.state.errors.password}
+            autoComplete="off"
+            fullWidth={true}
           />
           <br/>
           <TextField
@@ -154,6 +168,8 @@ export default class extends Component {
             floatingLabelText='Confirm your password'
             value={this.state.confirmPassword}
             errorText={this.state.errors.confirmPassword}
+            autoComplete="off"
+            fullWidth={true}
           />
           <br/>
           <TextField
@@ -162,6 +178,7 @@ export default class extends Component {
             floatingLabelText='Email adress'
             value={this.state.email}
             errorText={this.state.errors.email}
+            fullWidth={true}
           />
           <br/>
           <RaisedButton type='submit' label='Signup' primary={true} disabled={this.state.loading}></RaisedButton>

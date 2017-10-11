@@ -91,7 +91,7 @@ export default class extends Component {
         this.setState({loadingReset: false});
         if (error) return this.setState({emailErr: error});
         this.setState({email: ''});
-        this.props.onResetPw();
+        this.props.onResetPw('Your password has been successfully reinitialized. Check your mails.');
       }
     } catch (e) { console.log(e) }
   }

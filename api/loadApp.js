@@ -7,7 +7,7 @@ import path from 'path';
 import pictures from './pictures';
 import tags from './tags';
 import auth from './auth';
-import suggestion from './suggestion';
+import people from './people';
 import notifications from './notifications';
 import interactionHandler from './interaction';
 import { ObjectId } from 'mongodb';
@@ -26,17 +26,7 @@ export default function(app) {
   app.use(morgan('dev'))
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
-  // .use((req, res, next) => {
-  //   var ip = req.headers['x-forwarded-for'] ||
-  //    req.connection.remoteAddress ||
-  //    req.socket.remoteAddress ||
-  //    req.connection.socket.remoteAddress;
-  //   console.log(ip);
-  //   ipInfo(ip, (err, res) => {
-  //     console.log(res || err);
-  //     next()
-  //   })
-  // })
+
 
   .post('/api/signup', auth.signup)
   .post('/api/activation', auth.activation)
@@ -57,12 +47,6 @@ export default function(app) {
     req.user.profile = user;
     res.set('x-requested-by', id);
     next();
-    // if (USERS.indexOf(id) === -1) {
-    //   USERS.push(id);
-    //   IO.sockets.emit('logged', {id});
-    //   console.log(USERS);
-    // }
-    // next();
   })
 
   .get('/api/auth', auth.get)
@@ -83,6 +67,5 @@ export default function(app) {
   .get('/api/chat/messages/:id', chat.getConv)
   .patch('/api/chat/messages/:id', chat.setAsRead)
   .post('/api/chat/message', chat.postMsg)
-  .get('/api/suggestion', suggestion.get)
-  //.put('/api/pictures/:pic', pictures.setProfilePic);
+  .get('/api/people', people.get)
 };

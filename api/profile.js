@@ -42,12 +42,34 @@ export default {
         profile: currentUser,
       },
     } = req;
-    let _id;
+    const profileToSend = {
+      _id: 1,
+      firstname: 1,
+      lastname: 1,
+      sexValue: 1,
+      birthday: 1,
+      lookingFor: 1,
+      login: 1,
+      pictures: 1,
+      profilePic: 1,
+      tags: 1,
+      bio: 1,
+      loc: 1,
+      ts: 1,
+      adress: 1,
+      popularity: {
+        $size: '$like.from',
+      },
+    };
     if (idTarget === idCurrentUser) profileToSend.email = 1;
+    let _id;
     try { _id = ObjectId(idTarget) }
     catch (e) { return res.send({error: 'No profile found'}) }
     try {
-      const toSend = await db.collection('Users').findOne({_id}, profileToSend);
+      const cursor = db.collection('Users').aggregate();
+      cursor.match({_id})
+      .project(profileToSend);
+      const toSend = await cursor.next();
       if (!toSend) return res.send({error: 'No profile found'});
       if (currentUser.like.to.indexOf(idTarget) !== -1) {
         toSend.liked = true;
@@ -65,7 +87,8 @@ export default {
         toSend.reported = true;
       } else toSend.reported = false;
       if (ioServer.isLogged(idTarget)) toSend.logged = true;
-      res.send({profile: toSend});
+      let asProfilePic = !!currentUser.profilePic;
+      res.send({profile: toSend, asProfilePic});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
 
