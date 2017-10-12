@@ -58,7 +58,10 @@ export default {
       ts: 1,
       adress: 1,
       popularity: {
-        $size: '$like.from',
+        $add: [
+          {$multiply: [{$size: '$like.from'}, 10]},
+          {$floor: {$divide: ['$nbVisit', 10]}}
+        ]
       },
     };
     if (idTarget === idCurrentUser) profileToSend.email = 1;
@@ -89,6 +92,9 @@ export default {
       if (ioServer.isLogged(idTarget)) toSend.logged = true;
       let asProfilePic = !!currentUser.profilePic;
       res.send({profile: toSend, asProfilePic});
+      if (idTarget !== idCurrentUser) {
+        db.collection('Users').updateOne({_id}, {$inc: {nbVisit: 1}});
+      }
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
 

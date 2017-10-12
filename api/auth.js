@@ -90,7 +90,8 @@ export default {
         block: [],
         report: [],
         key,
-        active: false
+        active: false,
+        nbVisit: 0,
       };
       const mail = mailer.createConfirmationMail(user.firstname, key);
       mailer.sendMail(user.email, 'Confirm your inscription to Matcha', mail['txt'], mail['html']);

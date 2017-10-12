@@ -89,20 +89,22 @@ export default class extends Component {
     try {
       const { data, status } = await axios.post('/api/signup', input);
       setTimeout(() => {
-        if (status === 201) this.props.history.push('/activation');
-         else if (this.mounted) {
+        if (status === 201) {
+          this.props.history.push('/activation');
+          this.props.onSignup('Thanks for your inscription to matcha. Check your mail to finish your inscription.');
+        } else if (this.mounted) {
           this.setState({
             errors: data,
             loading: false,
           });
         }
-      }, 2000);
+      }, 1000);
     } catch (e) { console.log(e) }
   }
 
   render() {
     return (
-      <Paper zDepth={3} style={styles.root}>
+      <Paper zDepth={1} style={styles.root}>
         <Subheader>Create an account</Subheader>
         <form style={styles.form} onSubmit={this.signupHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
           <TextField
@@ -179,6 +181,7 @@ export default class extends Component {
             value={this.state.email}
             errorText={this.state.errors.email}
             fullWidth={true}
+            autoComplete="off"
           />
           <br/>
           <RaisedButton type='submit' label='Signup' primary={true} disabled={this.state.loading}></RaisedButton>

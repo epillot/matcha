@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import parser from '../../../parser';
+import parser from '../../../../parser';
 import DatePicker from 'material-ui/DatePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
-import secureRequest from '../../../secureRequest';
-import Geoloc from '../../../Geoloc/';
+import secureRequest from '../../../../secureRequest';
+import Geoloc from '../../../../Geoloc/';
 
 const maxDate = new Date();
 maxDate.setFullYear(maxDate.getFullYear() - 18);

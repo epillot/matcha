@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import { editPasswordParser } from '../../../parser';
-import secureRequest from '../../../secureRequest';
+import { editPasswordParser } from '../../../../parser';
+import secureRequest from '../../../../secureRequest';
 import TextField from 'material-ui/TextField';
 
 export default class extends Component {

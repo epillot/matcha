@@ -4,8 +4,7 @@ import Subheader from 'material-ui/Subheader';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-
-import TagsSelector from '../TagsSelector/';
+import TagsSelector from './TagsSelector/';
 
 const styles = {
   root: {
@@ -114,21 +113,21 @@ export default function(props) {
             labelStyle={styles.label}
             onCheck={() => onCheck('popFilter', 1)}
             checked={popFilter === 1}
-            label="1 or more"
+            label="10 or more"
           />
           <Checkbox
             iconStyle={styles.icon}
             labelStyle={styles.label}
             onCheck={() => onCheck('popFilter', 2)}
             checked={popFilter === 2}
-            label="10 or more"
+            label="50 or more"
           />
           <Checkbox
             iconStyle={styles.icon}
             labelStyle={styles.label}
             onCheck={() => onCheck('popFilter', 3)}
             checked={popFilter === 3}
-            label="100 or more"
+            label="200 or more"
           />
           <Checkbox
             iconStyle={styles.icon}
@@ -167,20 +166,6 @@ export default function(props) {
             onCheck={() => onCheck('tagsFilter', 4)}
             checked={tagsFilter === 4}
             label="4 or more"
-          />
-          <Checkbox
-            iconStyle={styles.icon}
-            labelStyle={styles.label}
-            onCheck={() => onCheck('tagsFilter', 5)}
-            checked={tagsFilter === 5}
-            label="5 or more"
-          />
-          <Checkbox
-            iconStyle={styles.icon}
-            labelStyle={styles.label}
-            onCheck={() => onCheck('tagsFilter', 6)}
-            checked={tagsFilter === 6}
-            label="6"
           />
         </div>
         <div style={styles.range}>

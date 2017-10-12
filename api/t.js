@@ -1,19 +1,22 @@
 import { MongoClient, ObjectId} from 'mongodb';
 import config from './config/config';
 
-// MongoClient.connect(config.mongoConfig).then(db => {
-//   global.db = db;
-//   const datelimit = new Date();
-//   return db.collection('Users').find({tags: {$all : ['dragon', 'GOT', 'poney']}}).toArray();
-// }).then(res => {
-//   res.forEach(r => console.log(r.login))
-// }).then(res => {
-//   console.log('success ');
-//   db.close(() => { process.exit(0) })
-// }).catch(e => {
-//   console.log(e);
-//   db.close(() => { process.exit(1) });
-// });
+MongoClient.connect(config.mongoConfig).then(db => {
+  global.db = db;
+  const datelimit = new Date();
+
+  return db.collection('Users').find({}).toArray();
+}).then(res => {
+  return Promise.all(res.map(r => {
+    const rdm = Math.floor(Math.random() * 100) + 50;
+    return db.collection('Users').updateOne({_id: r._id}, {$set: {nbVisit: rdm}});
+  }));
+}).then(() => {
+  db.close(() => { process.exit(0) })
+}).catch(e => {
+  console.log(e);
+  db.close(() => { process.exit(1) });
+});
 
 // const getRdmPw = function() {
 //   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -29,10 +32,3 @@ import config from './config/config';
 // }
 //
 // for (let i = 0; i < 10; i++) { console.log(getRdmPw()) }
-
-const a = 'lol'
-
-const b = parseInt(a)
-
-
-console.log(b <= 0);

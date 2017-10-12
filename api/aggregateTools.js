@@ -92,9 +92,9 @@ export function getGeoNear(loc, id, query, sexValue, lookingFor, block) {
 function getPopFilter(popFilter) {
   let min = 0; //default
 
-  if (popFilter === '1') min = 1;
-  else if (popFilter === '2') min = 10;
-  else if (popFilter === '3') min = 100;
+  if (popFilter === '1') min = 10;
+  else if (popFilter === '2') min = 50;
+  else if (popFilter === '3') min = 200;
   else if (popFilter === '4') min = 500;
 
   return {
@@ -140,7 +140,10 @@ export function initProject(tags) {
       },
     },
     popularity: {
-      $size: '$like.from',
+      $add: [
+        {$multiply: [{$size: '$like.from'}, 10]},
+        {$floor: {$divide: ['$nbVisit', 10]}}
+      ]
     },
   };
 }

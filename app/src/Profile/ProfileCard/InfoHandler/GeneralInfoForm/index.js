@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
-import parser from '../../../parser';
-import secureRequest from '../../../secureRequest';
+import parser from '../../../../parser';
+import secureRequest from '../../../../secureRequest';
 import FontIcon from 'material-ui/FontIcon';
 import TextField from 'material-ui/TextField';
 

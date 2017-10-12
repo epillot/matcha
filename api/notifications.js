@@ -35,7 +35,7 @@ export default {
       if (!profileTo) {
         return res.status(400).send('trying to send notification to a non-existent user');
       }
-      if (profileTo.block.indexOf(id) !== -1) return res.end();
+      if (profileTo.block.indexOf(id) !== -1 || !profile.profilePic) return res.end();
       const notif = {
         to,
         from: {

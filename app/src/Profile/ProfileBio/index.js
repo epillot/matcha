@@ -7,7 +7,7 @@ import BioHandler from './BioHandler/';
 
 const styles = {
   root: {
-    height: '180px',
+    height: '210px',
   },
   text: {
      wordWrap: 'break-word',

@@ -8,7 +8,7 @@ export default {
     try {
       const _id = ObjectId(req.user.id);
       const { pictures: { length } } = await db.collection('Users').findOne({_id});
-      if (length >= 5) return res.send('Max upload');
+      if (length >= 5) return res.send({error: 'You can\'t upload more than 5 pictures.'});
       next();
     } catch (e) {
       console.log(e);
@@ -16,7 +16,15 @@ export default {
     }
   },
 
+  // checkError(err) {
+  //     console.log(err);
+  //     return res.sendStatus(400);
+  //   }
+  //   next();
+  // },
+
   post: async function(req, res) {
+    if (!req.file) res.send({error: 'ulpoad failed'});
     const { user: { id }, file: { filename } } = req;
     sharp(`uploads/tmp/${filename}`)
     .resize(720, 540)
@@ -27,10 +35,10 @@ export default {
         try {
           const _id = ObjectId(id);
           db.collection('Users').updateOne({_id}, {$push: {pictures: filename}});
-          res.status(201).send(filename);
+          res.status(201).send({filename});
         } catch (e) { console.log(e); res.sendStatus(500) }
       });
-    }).catch(err => { console.log(err); res.sendStatus(500) });
+    }).catch(err => { res.send({error: 'Not a valid file'}) });
   },
 
   delete: async function(req, res) {

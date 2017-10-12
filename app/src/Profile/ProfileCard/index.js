@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Paper from 'material-ui/Paper'
+import Paper from 'material-ui/Paper';
 import {List, ListItem} from 'material-ui/List';
 import FontIcon from 'material-ui/FontIcon';
 import IconButton from 'material-ui/IconButton';
@@ -19,6 +19,10 @@ const styles = {
     width: '100%',
     height: '100%',
   },
+  info: {
+    maxHeight: '200px',
+    overflowY: 'auto',
+  }
 }
 
 export default class extends Component {
@@ -43,7 +47,7 @@ export default class extends Component {
   render() {
     const { open, profile } = this.state;
     const { editable } = this.props;
-    const { firstname, lastname, login, sexValue, birthday, lookingFor, adress } = profile;
+    const { firstname, lastname, login, sexValue, birthday, lookingFor, adress, popularity } = profile;
     const pp = this.props.profile.profilePic || 'default.jpg';
     const age = new Date().getFullYear() - new Date(birthday).getFullYear();
     const interestedBy = lookingFor === 3 ? 'men and women' : lookingFor === 2 ? 'women' : 'men'
@@ -53,7 +57,7 @@ export default class extends Component {
         <div style={styles.profilePicContainer}>
           <img style={styles.profilePic} src={`/static/${pp}`} alt=''/>
         </div>
-        <List>
+        <List style={styles.info}>
           <ListItem
             primaryText={`${firstname} ${lastname}`}
             secondaryText={`Alias ${login}`}
@@ -79,6 +83,10 @@ export default class extends Component {
           />
           <ListItem
             primaryText={`${sex}, ${age}`}
+            disabled={true}
+          />
+          <ListItem
+            primaryText={`Popularity score: ${popularity}`}
             disabled={true}
           />
           <ListItem

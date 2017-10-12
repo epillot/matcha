@@ -18,7 +18,10 @@ export default class extends Component {
       <div>
         <h1 style={styles.h1}>Welcome to Matcha</h1>
         <div style={styles.signupContainer}>
-          <Signup history={this.props.history}/>
+          <Signup
+            history={this.props.history}
+            onSignup={this.props.onSignup}
+          />
         </div>
       </div>
     );

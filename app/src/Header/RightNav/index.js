@@ -171,6 +171,7 @@ export default class extends Component {
           delNotif={this.delNotif}
           getNotif={this.getNotif}
           history={history}
+          onAuthFailed={this.props.onLogout}
         />
         <ChatIcon
           onTouchTap={() => history.push('/message')}

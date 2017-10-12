@@ -1,12 +1,27 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Paper from 'material-ui/Paper';
-import CircularProgress from 'material-ui/CircularProgress';
+import LinearProgress from 'material-ui/LinearProgress';
 import { activationParser } from '../parser';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
-class ActivationForm extends Component {
+const styles = {
+  title: {
+    fontFamily: 'sans-serif',
+    color: 'grey',
+    paddingTop: '20px',
+    textAlign: 'center',
+  },
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '60vh',
+  },
+};
+
+export default class extends Component {
 
   constructor() {
     super();
@@ -53,6 +68,7 @@ class ActivationForm extends Component {
       setTimeout(() => {
         if (Object.keys(data).length === 0) {
           this.props.history.push('/home?signin');
+          this.props.onActivation('Your account is now active, you can signin.');
         } else if (this.mounted) {
           this.setState({
             errors: data,
@@ -64,43 +80,40 @@ class ActivationForm extends Component {
   }
 
   render() {
-    const style = {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center'
-    };
     return (
-      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-        <h1>Active your account</h1>
-        <Paper zDepth={3} style={{padding: 20, width: '50%', minWidth: '300px'}}>
-          <div style={style}>{this.state.loading ? <CircularProgress/> : ''}</div>
-          <form onSubmit={this.activationHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
-            <TextField
-              name='login'
-              floatingLabelText='Login'
-              type='text'
-              value={this.state.login}
-              errorText={this.state.errors.login}
-              autoComplete='off'
-              fullWidth={true}
-            />
-            <br/>
-            <TextField
-              name='key'
-              floatingLabelText='Key'
-              type='text'
-              value={this.state.key}
-              errorText={this.state.errors.key}
-              autoComplete='off'
-              fullWidth={true}
-            />
-            <br/>
-            <RaisedButton type='submit' label='Ok' primary={true}></RaisedButton>
-          </form>
-        </Paper>
+      <div>
+        <h2 style={styles.title}>Active your account</h2>
+        <div style={styles.container}>
+          <div style={{width: '50%', minWidth: '300px'}}>
+            <Paper zDepth={1} style={{padding: '0px 20px 20px 20px'}}>
+              <form onSubmit={this.activationHandler} onChange={this.handleChange} onSelect={this.handleSelect}>
+                <TextField
+                  name='login'
+                  floatingLabelText='Login'
+                  type='text'
+                  value={this.state.login}
+                  errorText={this.state.errors.login}
+                  autoComplete='off'
+                  fullWidth={true}
+                />
+                <br/>
+                <TextField
+                  name='key'
+                  floatingLabelText='Key'
+                  type='text'
+                  value={this.state.key}
+                  errorText={this.state.errors.key}
+                  autoComplete='off'
+                  fullWidth={true}
+                />
+                <br/>
+                <RaisedButton type='submit' label='Ok' primary={true}></RaisedButton>
+              </form>
+            </Paper>
+            {this.state.loading ? <LinearProgress/> : ''}
+          </div>
+        </div>
       </div>
     );
   }
 }
-
-export default ActivationForm;

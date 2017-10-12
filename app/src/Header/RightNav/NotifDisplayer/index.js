@@ -16,10 +16,12 @@ const styles = {
     maxHeight: '350px',
     minHeight: '200px',
     padding: '15px',
+    overflowY: 'auto',
   },
   notifHeader: {
     display: 'flex',
     justifyContent: 'spaceBetween',
+    backgroundColor: '#E0E0E0'
   },
   read: {
     backgroundColor: '#FFFFFF',
@@ -67,7 +69,7 @@ export default class extends Component {
       url: '/api/notifications/' + id,
     };
     secureRequest(config, (err, response) => {
-      if (err) return this.props.onLogout();
+      if (err) return this.props.onAuthFailed();
       this.props.delNotif(id);
       this.setState({loading: {[id]: false}});
     });

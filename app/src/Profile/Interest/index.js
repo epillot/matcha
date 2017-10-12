@@ -122,6 +122,7 @@ export default class extends Component {
                 onAdd={this.onAdd}
                 location={this.props.location}
                 addTagToDb={this.addTagToDb}
+                onAuthFailed={this.props.onAuthFailed}
               />
             </div> : ''}
         </div>

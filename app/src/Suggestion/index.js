@@ -5,7 +5,7 @@ import ProfilePreview from './ProfilePreview/';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
-import Filter from '../Filter/';
+import Filter from './Filter/';
 import ShowIcon from 'material-ui/svg-icons/navigation/arrow-drop-up';
 import PrevIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import NextIcon from 'material-ui/svg-icons/navigation/arrow-forward';
@@ -19,7 +19,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     overflowY: 'auto',
-    height: '78vh',
+    minHeight: '65vh',
   },
   container: {
     padding: '10px',
@@ -75,6 +75,7 @@ export default class extends Component {
 
   async openHandler() {
     this.setStateIfMounted({open: true});
+    if (this.state.tags !== null) return;
     const config = {
       method: 'get',
       url: '/api/alltags'
@@ -83,7 +84,7 @@ export default class extends Component {
       const { data } = await secureRequest(config);
       this.setStateIfMounted({tags: data})
     } catch(e) {
-      if (e === 'Unauthorized') this.props.onLogout();
+      if (e === 'Unauthorized') this.props.onAuthFailed();
       else console.log(e);
     }
   }
@@ -138,7 +139,7 @@ export default class extends Component {
         });
       }, 500);
     } catch(e) {
-      if (e === 'Unauthorized') this.props.onLogout();
+      if (e === 'Unauthorized') this.props.onAuthFailed();
       else {
         console.log(e);
         this.setStateIfMounted({matchs: null, loading: false, nbPage: 1});
@@ -182,7 +183,10 @@ export default class extends Component {
     const { sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags, loading, selected, nbPage } = this.state;
     const matchsToDisplay = this.getMatchsToDisplay();
     return (
-      <Paper style={{width: '90%', minWidth: '720px', margin: '30px auto'}}>
+      <div>
+      <div style={{height: '20px'}}>
+      </div>
+      <Paper style={{width: '90%', minWidth: '720px', margin: 'auto'}}>
         <Toolbar>
           <ToolbarGroup>
             <ToolbarTitle text='Options and Search'/>
@@ -240,6 +244,7 @@ export default class extends Component {
           onCheck={(type, range) => this.setState( state => ({[type]: range === state[type] ? 0 : range}) )}
         />
       </Paper>
+      </div>
     );
   }
 

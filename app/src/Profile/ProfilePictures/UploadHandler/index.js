@@ -59,13 +59,14 @@ export default class extends Component {
     secureRequest(config, (err, response) => {
       setTimeout(() => {
         if (err) return this.props.onAuthFailed();
-        if (response.data === 'Max upload') {
+        if (response.data.error) {
           return this.setState({
-            error: 'You can\'t upload more than 5 pictures.',
+            error: response.data.error,
             loading: false,
+            file: [],
           });
         }
-        this.props.onUpload(response.data);
+        this.props.onUpload(response.data.filename);
         this.handleClose();
       }, 1000);
     });

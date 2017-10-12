@@ -3,7 +3,7 @@ import secureRequest from '../secureRequest';
 import CircularProgress from 'material-ui/CircularProgress';
 import ProfileBio from './ProfileBio/';
 import ProfilePictures from './ProfilePictures/';
-import ProfileCard from '../ProfileCard/';
+import ProfileCard from './ProfileCard/';
 import Interset from './Interest/';
 import ChangeLog from '../ChangeLog/';
 import Interaction from './Interaction/';
@@ -29,6 +29,12 @@ const styles = {
     width: '430px',
     position: 'relative',
   },
+  fullContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '75vh',
+  }
 }
 
 export default class extends Component {
@@ -107,7 +113,7 @@ export default class extends Component {
   render() {
     const { profile, asProfilePic } = this.state;
     const editable = this.props.loggued === this.props.match.params.id;
-    if (profile === null) return <CircularProgress/>;
+    if (profile === null) return <div style={styles.fullContainer}><CircularProgress/></div>;
     else if (profile !== false) {
       const { liked, blocked, reported, isMatch, pictures, profilePic, logged, ts, bio, tags, ...rest } = profile;
       return (
@@ -126,7 +132,7 @@ export default class extends Component {
               blocked={blocked}
               reported={reported}
               isMatch={isMatch}
-              onAuthFailed={this.props.onLogout}
+              onAuthFailed={this.props.onAuthFailed}
               history={this.props.history}
             />
           </div>}
@@ -134,18 +140,18 @@ export default class extends Component {
             <ProfileCard
               profile={{profilePic, ...rest}}
               location={this.props.location}
-              onAuthFailed={this.props.onLogout}
+              onAuthFailed={this.props.onAuthFailed}
               editable={editable}
             />
             <div style={styles.container}>
               <ProfileBio
                 bio={bio}
-                onAuthFailed={this.props.onLogout}
+                onAuthFailed={this.props.onAuthFailed}
                 location={this.props.location}
                 editable={editable}
               />
               <Interset
-                onAuthFailed={this.props.onLogout}
+                onAuthFailed={this.props.onAuthFailed}
                 tags={tags}
                 location={this.props.location}
                 editable={editable}
@@ -155,13 +161,17 @@ export default class extends Component {
           <ProfilePictures
             editable={editable}
             location={this.props.location}
-            onAuthFailed={this.props.onLogout}
+            onAuthFailed={this.props.onAuthFailed}
             profilePic={profilePic}
             pictures={pictures}
             updateProfilePic={this.updateProfilePic}
           />
         </div>
       );
-    } else return <p>{this.state.error}</p>;
+    } else return (
+      <div style={styles.fullContainer}>
+        <p>{this.state.error}</p>
+      </div>
+    );
   }
 }

@@ -14,10 +14,22 @@ import Snackbar from 'material-ui/Snackbar';
 const styles = {
   container: {
     marginTop: '70px',
-  }
+  },
+  fullContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '75vh',
+  },
+  footer: {
+    position: 'relative',
+    width: '95%',
+    height: '30px',
+    margin: '40px auto 20px auto'
+  },
 }
 
-const notFound = () => <p>Page not found</p>
+const notFound = () => <div style={styles.fullContainer}><p>Page not found</p></div>
 
 class App extends Component {
 
@@ -88,11 +100,37 @@ class App extends Component {
         />
         <div style={styles.container}>
           <Switch>
-            <PrivateRoute exact path='/' loggued={loggued} onLogout={this.onLogout} component={Suggestion}/>
-            <PrivateRoute path='/profile/:id' loggued={loggued} onLogout={this.onLogout} component={Profile}/>
-            <PrivateRoute path='/message' onRead={() => this.setState({newMsg: false})} loggued={loggued} onLogout={this.onLogout} component={Chat}/>
-            <PublicRoute path='/home' loggued={loggued} component={Home}/>
-            <PublicRoute path='/activation' loggued={loggued} component={Activation}/>
+            <PrivateRoute
+              exact path='/'
+              loggued={loggued}
+              onAuthFailed={this.onLogout}
+              component={Suggestion}
+            />
+            <PrivateRoute
+              path='/profile/:id'
+              loggued={loggued}
+              onLogout={this.onLogout}
+              component={Profile}
+            />
+            <PrivateRoute
+              path='/message'
+              onRead={() => this.setState({newMsg: false})}
+              loggued={loggued}
+              onAuthFailed={this.onLogout}
+              component={Chat}
+            />
+            <PublicRoute
+              path='/home'
+              loggued={loggued}
+              component={Home}
+              onSignup={this.displaySnackBar}
+            />
+            <PublicRoute
+              path='/activation'
+              loggued={loggued}
+              component={Activation}
+              onActivation={this.displaySnackBar}
+            />
             <Route path='*' component={notFound}/>
           </Switch>
         </div>
@@ -102,6 +140,14 @@ class App extends Component {
           autoHideDuration={8000}
           onRequestClose={() => this.setState({open: false})}
         />
+        <div style={styles.footer}>
+          <hr/>
+          <div style={{position: 'absolute', right: '0'}}>
+            <a href='https://github.com/epillot/matcha' target='_blank' rel='noopener noreferrer'>
+              <img style={{width: '22px', height: '22px'}} src='/static/github' alt='github'/>
+            </a>
+          </div>
+        </div>
       </div>
     );
   }
