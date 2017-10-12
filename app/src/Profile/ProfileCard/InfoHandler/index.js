@@ -71,6 +71,7 @@ export default class extends Component {
                 location={location}
                 onAuthFailed={onAuthFailed}
                 onEdit={data => this.props.onEdit(data)}
+                onUpdatePw={this.props.onUpdatePw}
               />
             </div>
           </Tab>

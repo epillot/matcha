@@ -76,6 +76,7 @@ export default class extends Component {
                   location={this.props.location}
                   onAuthFailed={this.props.onAuthFailed}
                   onEdit={this.onEdit}
+                  onUpdatePw={this.props.onUpdatePw}
                 />
               </IconButton> : null
             }

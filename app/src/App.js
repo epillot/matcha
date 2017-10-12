@@ -111,6 +111,7 @@ class App extends Component {
               loggued={loggued}
               onLogout={this.onLogout}
               component={Profile}
+              onUpdatePw={this.displaySnackBar}
             />
             <PrivateRoute
               path='/message'

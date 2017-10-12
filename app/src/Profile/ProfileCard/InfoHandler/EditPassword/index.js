@@ -49,6 +49,7 @@ export default class extends Component {
         confirmPassword: ''
       });
       this.props.onEdit([]);
+      this.props.onUpdatePw('Your password has been updated');
     });
   }
 

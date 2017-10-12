@@ -142,6 +142,7 @@ export default class extends Component {
               location={this.props.location}
               onAuthFailed={this.props.onAuthFailed}
               editable={editable}
+              onUpdatePw={this.props.onUpdatePw}
             />
             <div style={styles.container}>
               <ProfileBio
