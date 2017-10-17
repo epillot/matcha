@@ -117,7 +117,7 @@ export default {
           if (profile.tags.length > 5) {
             return res.send({error: 'You can\'t have more than 6 tags on your profile'});
           }
-          if (typeof data !== 'string' || !data.match(/^[a-zA-Z0-9-$']{3,12}$/)) {
+          if (typeof data !== 'string' || !data.match(/^[a-zA-Z0-9- $']{3,25}$/)) {
             return res.send({error: 'Invalid tag'});
           }
           if (profile.tags.indexOf(data) !== -1) {

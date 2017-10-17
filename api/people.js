@@ -13,7 +13,7 @@ export default {
 
     let { page, nb, sort, popFilter, tagsFilter } = query;
     nb = parseInt(nb);
-    if (isNaN(nb) || nb <= 0 || nb > 8) nb = 8;
+    if (isNaN(nb) || nb <= 0 || nb > 20) nb = 8;
     page = parseInt(page);
     if (isNaN(page) || page <= 0) page = 1;
     const users = db.collection('Users');
@@ -24,17 +24,13 @@ export default {
       const sortObj = tools.getSortObj(sort);
 
       const cursor = users.aggregate();
+
       cursor.geoNear(geoNear)
+
       .project(firstProject)
       .project(tools.finalProject)
-      .match(filter);
-
-      const { length } = await cursor.toArray();
-      const nbPage = Math.ceil(length / nb) || 1
-
-      if (page > nbPage) page = nbPage;
-
-      cursor.sort(sortObj)
+      .match(filter)
+      .sort(sortObj)
       .skip((page - 1) * nb)
       .limit(+nb)
 
@@ -49,7 +45,7 @@ export default {
       // ]).toArray();
 
       const matchs = await cursor.toArray();
-      res.send({matchs, nbPage})
+      res.send({matchs});
     } catch (e) { console.log(e); res.sendStatus(500) }
   },
 

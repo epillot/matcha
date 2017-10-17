@@ -81,7 +81,8 @@ export function getGeoNear(loc, id, query, sexValue, lookingFor, block) {
     spherical: true,
     near: loc,
     distanceField: 'distance',
-    query: filter
+    query: filter,
+    limit: 2000,
   };
 
   if (distanceLimit) geoNear.maxDistance = distanceLimit * 1000;
@@ -153,7 +154,7 @@ const distScoreObj = {
     if: {$lte: ['$distance', 50 * 1000]},
     then: {
       $add: [
-        200,
+        300,
         {$divide: [{$subtract: [50 * 1000, '$distance']}, 1000]},
       ]
     },
@@ -162,7 +163,7 @@ const distScoreObj = {
         if: {$lte: ['$distance', 100 * 1000]},
         then: {
           $add: [
-            100,
+            200,
             {$divide: [{$subtract: [100 * 1000, '$distance']}, 1000]},
           ]
         },
@@ -184,7 +185,7 @@ const scoreObj = {
   $let: {
     vars: {
       dist: distScoreObj,
-      tag: {$multiply: ['$communTags', 20]},
+      tag: {$multiply: ['$communTags', 50]},
       pop: {$divide: ['$popularity', 1]},
     },
     in: {$add: ['$$dist', '$$tag', '$$pop']}

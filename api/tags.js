@@ -14,7 +14,7 @@ export default {
     const { tag } = req.body;
     try {
       const { tags } = await db.collection('Tags').findOne({});
-      if (tags.indexOf(tag) === -1 && tag.match(/^[a-zA-Z0-9-$']{3,12}$/)) {
+      if (tags.indexOf(tag) === -1 && tag.match(/^[a-zA-Z0-9 -$']{3,25}$/)) {
         db.collection('Tags').updateOne({}, {$push: {tags: tag}});
       }
       res.end();

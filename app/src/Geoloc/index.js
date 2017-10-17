@@ -37,6 +37,8 @@ export default class extends Component {
   }
 
   moveMarker(pos) {
+    console.log('lat: ' + pos.latLng.lat());
+    console.log('lng :' + pos.latLng.lng());
     this.setStateIfMounted({
       marker: {
         lat: pos.latLng.lat(),

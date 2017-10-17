@@ -27,7 +27,7 @@ export default class extends Component {
     const { tag } = this.state;
     if (this.props.tags.length > 5)
       return this.setState({error: 'You can\'t have more than 6 tags on your profile'});
-    if (!tag.match(/^[a-zA-Z0-9-$']{3,12}$/))
+    if (!tag.match(/^[a-zA-Z0-9- $']{3,25}$/))
       return this.setState({error: 'Invalid tag'});
     if (this.props.tags.indexOf(tag) !== -1)
       return this.setState({error: 'This tag is already active on your profile'});
@@ -59,7 +59,7 @@ export default class extends Component {
       <FlatButton
         label="Add"
         primary={true}
-        disabled={!tag.match(/^[a-zA-Z0-9-$']{3,12}$/) || loading}
+        disabled={!tag.match(/^[a-zA-Z0-9- $']{3,25}$/) || loading}
         onTouchTap={this.handleAdd}
       />,
       <FlatButton
@@ -79,7 +79,7 @@ export default class extends Component {
         {!this.props.loading ?
           <AutoComplete
             floatingLabelText="Select or enter a tag of interest"
-            hintText='3-12 characters'
+            hintText='3-25 characters'
             errorText={error}
             filter={AutoComplete.caseInsensitiveFilter}
             onUpdateInput={tag => this.setState({tag, error: ''})}

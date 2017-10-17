@@ -206,23 +206,3 @@ axios.get(url1).then( ({ data }) => {
   });
 
 });
-
-
-
-
-// MongoClient.connect(config.mongoConfig).then(db => {
-//   global.db = db;
-//   const datelimit = new Date();
-//
-//   return db.collection('Users').find({}).toArray();
-// }).then(res => {
-//   return Promise.all(res.map(r => {
-//     const rdm = Math.floor(Math.random() * 100) + 50;
-//     return db.collection('Users').updateOne({_id: r._id}, {$set: {nbVisit: rdm}});
-//   }));
-// }).then(() => {
-//   db.close(() => { process.exit(0) })
-// }).catch(e => {
-//   console.log(e);
-//   db.close(() => { process.exit(1) });
-// });

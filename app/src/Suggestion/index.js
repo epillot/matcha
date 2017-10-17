@@ -10,7 +10,7 @@ import ShowIcon from 'material-ui/svg-icons/navigation/arrow-drop-up';
 import PrevIcon from 'material-ui/svg-icons/navigation/arrow-back';
 import NextIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 
-const nbPerPage = 8;
+const nbPerPage = 20;
 
 const styles = {
   root: {
@@ -45,7 +45,7 @@ export default class extends Component {
       loading: true,
       selected: [],
       tags: null,
-      nbPage: 1,
+      end: false,
     };
     this.mounted = true;
     this.curPage = 1;
@@ -125,24 +125,24 @@ export default class extends Component {
     };
     this.setStateIfMounted({loading: true});
     try {
-      const { data: { matchs, nbPage } } = await secureRequest(config);
+      const { data: { matchs } } = await secureRequest(config);
+      let end = false;
       if (matchs.length) this.nbPage++;
-      setTimeout(() => {
-        this.setStateIfMounted(state => {
-          let newMatchs;
-          if (this.curPage === 1) newMatchs = matchs;
-          else {
-            newMatchs = state.matchs.slice();
-            Array.prototype.push.apply(newMatchs, matchs);
-          }
-          return {matchs: newMatchs, loading: false, nbPage};
-        });
-      }, 500);
+      if (matchs.length < nbPerPage) end = this.nbPage || 1
+      this.setStateIfMounted(state => {
+        let newMatchs;
+        if (this.curPage === 1) newMatchs = matchs;
+        else {
+          newMatchs = state.matchs.slice();
+          Array.prototype.push.apply(newMatchs, matchs);
+        }
+        return {matchs: newMatchs, loading: false, end};
+      });
     } catch(e) {
       if (e === 'Unauthorized') this.props.onAuthFailed();
       else {
         console.log(e);
-        this.setStateIfMounted({matchs: null, loading: false, nbPage: 1});
+        this.setStateIfMounted({matchs: null, loading: false, end: 1});
       }
     }
 
@@ -180,7 +180,7 @@ export default class extends Component {
   }
 
   render() {
-    const { sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags, loading, selected, nbPage } = this.state;
+    const { sort, ageFilter, locFilter, popFilter, tagsFilter, open, tags, loading, selected, end } = this.state;
     const matchsToDisplay = this.getMatchsToDisplay();
     return (
       <div>
@@ -199,7 +199,7 @@ export default class extends Component {
             </IconButton>
           </ToolbarGroup>
           <ToolbarGroup>
-            <ToolbarTitle text={'Page ' + this.curPage + '/' + nbPage}/>
+            <ToolbarTitle text={'Page ' + this.curPage}/>
             <IconButton
               onTouchTap={() => this.skipPage(-1)}
               disabled={this.curPage === 1 || loading}
@@ -208,7 +208,7 @@ export default class extends Component {
             </IconButton>
             <IconButton
               onTouchTap={() => this.skipPage(1)}
-              disabled={loading || (this.curPage >= nbPage)}
+              disabled={loading || end && (this.curPage >= end)}
             >
               <NextIcon/>
             </IconButton>

@@ -220,13 +220,6 @@ export default function(props) {
           label='Search from all'
           secondary={true}
           onTouchTap={() => props.startSuggestions(2)}
-          disabled={
-            ageFilter === 0 &&
-            locFilter === 0 &&
-            popFilter === 0 &&
-            tagsFilter === 0 &&
-            selected.length === 0
-          }
         />
       </div>
     </Dialog>
